@@ -1,15 +1,18 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../../lib/progression';
+import { useGameReward } from '../../../../hooks/useGameReward';
+import { WinPulse } from '../../../../components/WinPulse';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ConfettiCannon from 'react-native-confetti-cannon';
 import GameHeader from '../../../../components/GameHeader';
 import { useTheme } from '../../../../components/ThemeContext';
 import { useXP } from '../../../../components/XPContext';
+import { playSfx } from '../../../../lib/sound/SoundPack';
 
 const ROUNDS = 5;
 const CIRCLES = 10; // show 10 circles
 const XP_PER_CORRECT = 10; // medium games: +10 points per correct answer
-const XP_REWARD = 40; // Bonus for completing the game
+const XP_REWARD = 18; // Medium
 const FLASH_TIME = 500;
 
 function getRandomSequence(length: number, max: number) {
@@ -22,7 +25,8 @@ function getRandomSequence(length: number, max: number) {
 }
 
 export default function SequenceTapMediumGame() {
-  const { addXp, incrementCompletedGame } = useXP();
+  const { incrementCompletedGame } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
   const router = useRouter();
   const { theme } = useTheme();
   const [round, setRound] = useState(0);
@@ -67,7 +71,7 @@ export default function SequenceTapMediumGame() {
   useEffect(() => {
     if (phase === 'success') {
       setShowConfetti(true);
-      addXp(XP_REWARD);
+      void awardFor('Medium');
       incrementCompletedGame({ category: 'focus', difficulty: 'medium' });
     }
     // eslint-disable-next-line
@@ -79,12 +83,12 @@ export default function SequenceTapMediumGame() {
     setUserInput(nextInput);
     if (sequence[nextInput.length - 1] !== idx) {
       setFeedback('✘ Wrong order! Try again.');
-      setPhase('fail');
+      playSfx('wrong'); setPhase('fail');
       return;
     }
     if (nextInput.length === sequence.length) {
       if (round + 1 === ROUNDS) {
-        setPhase('success');
+        playSfx('correct'); setPhase('success');
       } else {
         setRound(r => r + 1);
         setPhase('show');
@@ -114,7 +118,7 @@ export default function SequenceTapMediumGame() {
         gameInstructions="Watch the sequence of circles, then tap them in the same order. Be accurate—one mistake ends the run!"
       />
       <View style={styles.gameContent}>
-        {showConfetti && <ConfettiCannon count={100} origin={{ x: 200, y: 0 }} fadeOut autoStart explosionSpeed={400} fallSpeed={1800} />}
+        {showConfetti && <WinPulse active />}
         <Text style={[styles.title, { color: theme.text }]}>Sequence Tap</Text>
       <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Watch the sequence, then tap the circles in the same order. {round + 1} / {ROUNDS}</Text>
       <View style={styles.circlesGrid}>

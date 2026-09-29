@@ -1,15 +1,17 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../../lib/progression';
+import { useGameReward } from '../../../../hooks/useGameReward';
+import { WinPulse } from '../../../../components/WinPulse';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ConfettiCannon from 'react-native-confetti-cannon';
 import GameHeader from '../../../../components/GameHeader';
 import { useTheme } from '../../../../components/ThemeContext';
 import { useXP } from '../../../../components/XPContext';
 
 const STREAK_TO_WIN = 5;
 const XP_PER_CORRECT = 15; // hard games: +15 points per correct answer
-const XP_REWARD = 50; // Bonus for completing the game
-const MAX_XP = 35;
+const XP_REWARD = 28;
+const MAX_XP = 28;
 const FULL_WIDTH = Dimensions.get('window').width;
 
 // Each puzzle: { board: 4x4 array (0=empty), solution: 4x4 array }
@@ -96,7 +98,8 @@ function getRandomPuzzle(usedIds: number[] = []) {
 export default function MiniSudokuGame() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { addXp } = useXP();
+  const { plan } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
   const { theme } = useTheme();
   const [currentP, setCurrentP] = useState<any>(null);
   const [usedIds, setUsedIds] = useState<number[]>([]);
@@ -111,11 +114,9 @@ export default function MiniSudokuGame() {
   const [showHelp, setShowHelp] = useState(false);
   const difficulty = (params.difficulty as string) || 'easy';
   function xpForDifficulty(level: string) {
-    switch (level) {
-      case 'hard': return 35;
-      case 'medium': return 25;
-      default: return 15;
-    }
+    if (level === 'hard') return sessionXp('Hard');
+    if (level === 'medium') return sessionXp('Medium');
+    return sessionXp('Easy');
   }
   const cardAnim = useRef(new Animated.Value(1)).current;
 
@@ -216,7 +217,7 @@ export default function MiniSudokuGame() {
 
   useEffect(() => {
     if (win && !xpAwarded) {
-      addXp(xpForDifficulty(difficulty));
+      void award(xpForDifficulty(difficulty));
       setShowConfetti(true);
       setXpAwarded(true);
     }
@@ -255,7 +256,7 @@ export default function MiniSudokuGame() {
         />
         <View style={[styles.gameContent, { justifyContent: 'center', alignItems: 'center' }]}>
           {showConfetti && (
-            <ConfettiCannon count={120} origin={{ x: FULL_WIDTH / 2, y: 0 }} fadeOut autoStart explosionSpeed={420} fallSpeed={2100} />
+            <WinPulse active />
           )}
           <Text style={[styles.bigText, { color: theme.text, fontSize: 34, marginBottom: 18 }]}>You Win!</Text>
           <Text style={[styles.winText, { color: theme.textSecondary, fontSize: 18, marginBottom: 18, textAlign: 'center' }]}>Streak: {STREAK_TO_WIN} correct in a row</Text>

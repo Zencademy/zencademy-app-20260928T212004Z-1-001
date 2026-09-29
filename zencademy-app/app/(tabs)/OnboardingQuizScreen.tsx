@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import * as Notifications from 'expo-notifications';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
@@ -14,6 +16,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../../components/AuthContext';
 import { useTheme } from '../../components/ThemeContext';
 import { useXP } from '../../components/XPContext';
 import { FadeRise } from '../../components/ui/motion';
@@ -151,9 +154,9 @@ const QUESTIONS: Question[] = [
   },
 ];
 
-type Stage = 'welcome' | 'name' | 'brief' | 'quiz' | 'result';
+type Stage = 'welcome' | 'name' | 'brief' | 'quiz' | 'result' | 'permissions';
 
-type Props = { onFinish?: () => void };
+type Props = { onFinish?: () => void | Promise<void> };
 
 function scoreMindType(answers: MindTypeId[]): MindTypeId {
   const tally: Partial<Record<MindTypeId, number>> = {};
@@ -171,20 +174,35 @@ function scoreMindType(answers: MindTypeId[]): MindTypeId {
   return preference.find((p) => top.includes(p)) || top[0] || 'Focus Champion';
 }
 
+async function requestNotifPermission() {
+  try {
+    const { status: existing } = await Notifications.getPermissionsAsync();
+    if (existing === 'granted') return true;
+    const { status } = await Notifications.requestPermissionsAsync();
+    return status === 'granted';
+  } catch {
+    return false;
+  }
+}
+
 export default function OnboardingQuizScreen({ onFinish }: Props) {
   const { theme } = useTheme();
+  const { clearNewUserFlag } = useAuth();
   const { name: existingName, setName, setBrainType, setOnboardingChecked } = useXP();
+  const params = useLocalSearchParams<{ retake?: string }>();
+  const isRetake = params.retake === '1' || params.retake === 'true';
 
-  const [stage, setStage] = useState<Stage>('welcome');
+  const [stage, setStage] = useState<Stage>(isRetake ? 'brief' : 'welcome');
   const [displayName, setDisplayName] = useState(existingName && existingName !== 'Member' ? existingName : '');
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [answers, setAnswers] = useState<MindTypeId[]>([]);
   const [resultId, setResultId] = useState<MindTypeId | null>(null);
   const [saving, setSaving] = useState(false);
+  const [notifStatus, setNotifStatus] = useState<'idle' | 'granted' | 'denied'>('idle');
   const progressAnim = useRef(new Animated.Value(0)).current;
 
-  const progress = stage === 'quiz' ? (step + (selected !== null ? 0.35 : 0)) / QUESTIONS.length : stage === 'result' ? 1 : 0;
+  const progress = stage === 'quiz' ? (step + (selected !== null ? 0.35 : 0)) / QUESTIONS.length : stage === 'result' || stage === 'permissions' ? 1 : 0;
 
   useEffect(() => {
     Animated.timing(progressAnim, {
@@ -196,29 +214,47 @@ export default function OnboardingQuizScreen({ onFinish }: Props) {
 
   const profile = useMemo(() => (resultId ? MIND_PROFILES[resultId] : null), [resultId]);
 
-  const complete = async (mind: MindTypeId, nameValue: string) => {
+  const finishAndGo = async (mind: MindTypeId, nameValue: string, nextRoute?: string) => {
     setSaving(true);
     try {
-      const clean = nameValue.trim() || 'Member';
-      await setName(clean);
+      const clean = nameValue.trim() || existingName || 'Member';
+      if (!isRetake || clean !== existingName) await setName(clean);
       await setBrainType(mind);
-      await setOnboardingChecked(true);
-      onFinish?.();
-      router.replace('/(tabs)');
+      // Retake only updates mind type — never resets XP/coins/onboarding flag incorrectly
+      if (!isRetake) {
+        await setOnboardingChecked(true);
+        await clearNewUserFlag();
+        await onFinish?.();
+      }
+      if (nextRoute) {
+        router.replace(nextRoute as never);
+      } else if (isRetake) {
+        router.back();
+      } else {
+        router.replace('/(tabs)');
+      }
     } catch {
-      await setOnboardingChecked(true);
-      onFinish?.();
-      router.replace('/(tabs)');
+      if (!isRetake) {
+        await setOnboardingChecked(true);
+        await onFinish?.();
+      }
+      if (isRetake) router.back();
+      else router.replace('/(tabs)');
     } finally {
       setSaving(false);
     }
   };
 
   const skip = async () => {
+    if (isRetake) {
+      router.back();
+      return;
+    }
     setSaving(true);
     try {
       await setOnboardingChecked(true);
-      onFinish?.();
+      await clearNewUserFlag();
+      await onFinish?.();
       router.replace('/(tabs)');
     } finally {
       setSaving(false);
@@ -228,6 +264,7 @@ export default function OnboardingQuizScreen({ onFinish }: Props) {
   const chooseOption = (index: number) => {
     if (selected !== null) return;
     setSelected(index);
+    void Haptics.selectionAsync();
     const choice = QUESTIONS[step].options[index].type;
     const next = [...answers, choice];
     setTimeout(() => {
@@ -249,7 +286,7 @@ export default function OnboardingQuizScreen({ onFinish }: Props) {
     <View style={styles.header}>
       {showSkip ? (
         <Pressable onPress={() => { void skip(); }} hitSlop={12} style={styles.headerSide}>
-          <Text style={[type.label, { color: theme.textTertiary }]}>Skip</Text>
+          <Text style={[type.label, { color: theme.textTertiary }]}>{isRetake ? 'Close' : 'Skip'}</Text>
         </Pressable>
       ) : (
         <View style={styles.headerSide} />
@@ -346,10 +383,16 @@ export default function OnboardingQuizScreen({ onFinish }: Props) {
           <View style={styles.screenPad}>
             <Header />
             <FadeRise>
-              <Text style={[type.label, { color: theme.textTertiary, marginBottom: 10 }]}>Mind type</Text>
-              <Text style={[type.title, { color: theme.text }]}>How you think shapes how you train</Text>
+              <Text style={[type.label, { color: theme.textTertiary, marginBottom: 10 }]}>
+                {isRetake ? 'Retake mind type' : 'Mind type'}
+              </Text>
+              <Text style={[type.title, { color: theme.text }]}>
+                {isRetake ? 'Update how you think' : 'How you think shapes how you train'}
+              </Text>
               <Text style={[type.subtitle, { color: theme.textSecondary, marginTop: 10 }]}>
-                Answer honestly. There are no wrong choices — only a clearer starting profile.
+                {isRetake
+                  ? 'Your XP, coins, and streak stay exactly as they are. Only your mind type updates.'
+                  : 'Answer honestly. There are no wrong choices — only a clearer starting profile.'}
               </Text>
             </FadeRise>
             <FadeRise delay={70}>
@@ -499,14 +542,65 @@ export default function OnboardingQuizScreen({ onFinish }: Props) {
 
             <Pressable
               disabled={saving}
-              onPress={() => { void complete(profile.id, displayName); }}
+              onPress={() => {
+                if (isRetake) {
+                  void finishAndGo(profile.id, displayName);
+                } else {
+                  setStage('permissions');
+                }
+              }}
               style={[styles.primaryBtn, { backgroundColor: theme.primary, marginTop: 24, opacity: saving ? 0.6 : 1 }]}
             >
               <Text style={[type.button, { color: theme.buttonText }]}>
-                {saving ? 'Saving…' : 'Enter Zencademy'}
+                {isRetake ? (saving ? 'Saving…' : 'Save mind type') : 'Continue'}
               </Text>
             </Pressable>
           </ScrollView>
+        )}
+
+        {stage === 'permissions' && profile && (
+          <View style={styles.screenPad}>
+            <Header showSkip={false} />
+            <FadeRise>
+              <Text style={[type.label, { color: theme.textTertiary, marginBottom: 10 }]}>Stay sharp</Text>
+              <Text style={[type.title, { color: theme.text }]}>Turn on reminders?</Text>
+              <Text style={[type.subtitle, { color: theme.textSecondary, marginTop: 10 }]}>
+                One streak saver per day and optional training nudges. You can change this anytime in Settings.
+              </Text>
+            </FadeRise>
+            <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border, marginVertical: 28 }]}>
+              <View style={styles.infoRow}>
+                <Ionicons name="notifications-outline" size={18} color={theme.primary} />
+                <Text style={[type.body, { color: theme.text, flex: 1 }]}>
+                  {notifStatus === 'granted'
+                    ? 'Notifications enabled'
+                    : notifStatus === 'denied'
+                      ? 'Permission declined — you can enable later'
+                      : 'Protect your streak with one evening reminder'}
+                </Text>
+              </View>
+            </View>
+            <Pressable
+              disabled={saving}
+              onPress={async () => {
+                const ok = await requestNotifPermission();
+                setNotifStatus(ok ? 'granted' : 'denied');
+                await finishAndGo(profile.id, displayName, profile.startRoute);
+              }}
+              style={[styles.primaryBtn, { backgroundColor: theme.primary, opacity: saving ? 0.6 : 1 }]}
+            >
+              <Text style={[type.button, { color: theme.buttonText }]}>
+                {saving ? 'Saving…' : profile.startLabel}
+              </Text>
+            </Pressable>
+            <Pressable
+              disabled={saving}
+              onPress={() => { void finishAndGo(profile.id, displayName); }}
+              style={[styles.primaryBtn, { backgroundColor: 'transparent', borderWidth: 1, borderColor: theme.border, marginTop: 10 }]}
+            >
+              <Text style={[type.button, { color: theme.text }]}>Enter Home instead</Text>
+            </Pressable>
+          </View>
         )}
       </KeyboardAvoidingView>
     </SafeAreaView>

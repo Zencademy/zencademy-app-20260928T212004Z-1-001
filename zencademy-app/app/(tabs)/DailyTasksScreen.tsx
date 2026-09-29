@@ -1,3 +1,4 @@
+import { WinPulse } from '../../components/WinPulse';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -7,7 +8,6 @@ import {
     Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet,
     Text, TextInput, TouchableOpacity, View
 } from 'react-native';
-import ConfettiCannon from 'react-native-confetti-cannon';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../components/ThemeContext";
 import { AppHeader } from "../../components/ui/AppHeader";
@@ -102,14 +102,7 @@ export default function DailyTasksScreen({ embedded = false }: { embedded?: bool
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]} edges={embedded ? ['bottom'] : ['top', 'bottom']}>
       {showConfetti && (
-        <ConfettiCannon
-          count={36}
-          origin={{ x: 180, y: 0 }}
-          fadeOut
-          fallSpeed={2800}
-          explosionSpeed={500}
-          colors={[theme.primary, theme.text, "#888"]}
-        />
+        <WinPulse active />
       )}
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
         {!embedded ? (

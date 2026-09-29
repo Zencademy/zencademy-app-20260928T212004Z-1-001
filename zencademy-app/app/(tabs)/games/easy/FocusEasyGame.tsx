@@ -5,18 +5,18 @@ import GameHeader from '../../../../components/GameHeader';
 import { LightConfetti } from '../../../../components/LightConfetti';
 import { useTheme } from '../../../../components/ThemeContext';
 import { useGameReward } from '../../../../hooks/useGameReward';
-import { planXpBonus, coinsForXp } from '../../../../lib/progression';
+import { coinsForXp, sessionXp } from '../../../../lib/progression';
 import { useXP } from '../../../../components/XPContext';
+import { playSfx } from '../../../../lib/sound/SoundPack';
 
 const ROUNDS = 15;
 const ROWS = 3;
 const CIRCLES_PER_ROW = 7;
 const CIRCLES = ROWS * CIRCLES_PER_ROW;
-const BASE_REWARD_EASY = 12;
 
 export default function FocusEasyGame() {
   const { incrementCompletedGame, plan } = useXP();
-  const { award, reset } = useGameReward();
+  const { awardFor, reset } = useGameReward();
   const router = useRouter();
   const { theme } = useTheme();
   const [round, setRound] = useState(0);
@@ -26,12 +26,12 @@ export default function FocusEasyGame() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [key, setKey] = useState(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const rewardXp = sessionXp('Easy', plan);
 
   useEffect(() => {
     if (phase === 'success') {
       setShowConfetti(true);
-      const planBonus = planXpBonus(plan);
-      void award(BASE_REWARD_EASY + planBonus);
+      void awardFor('Easy');
       void incrementCompletedGame({ category: 'focus', difficulty: 'easy' } as never);
     }
     return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
@@ -68,6 +68,7 @@ export default function FocusEasyGame() {
   function handleCircleTap(idx: number) {
     if (phase !== 'playing') return;
     if (idx === correctIdx) {
+      playSfx('correct');
       if (round + 1 === ROUNDS) {
         setPhase('success');
       } else {
@@ -76,6 +77,7 @@ export default function FocusEasyGame() {
         regenerateTargets(next);
       }
     } else {
+      playSfx('wrong');
       setPhase('fail');
     }
   }
@@ -109,7 +111,7 @@ export default function FocusEasyGame() {
         onBack={() => router.replace('/games/AttentionTrainingScreen')}
         gameTitle="Focus Easy"
         gameDescription="Test your focus and attention by tapping only the highlighted circle while avoiding distractors."
-        gameInstructions="Tap ONLY the highlighted circle. Avoid any other circles. Win to earn +10 points (Lite +10, Elite +25 bonus). Tapping a wrong circle ends the game."
+        gameInstructions="Tap ONLY the highlighted circle. Avoid distractors. Complete all rounds for +12 XP (+ plan bonus)."
       />
       <View style={styles.gameContent}>
         <LightConfetti active={showConfetti} />
@@ -144,8 +146,8 @@ export default function FocusEasyGame() {
       {phase === 'success' && (
         <View style={[styles.resultCard, { backgroundColor: theme.card }]}>
           <Text style={styles.successText}>✔️ Great focus! You avoided all distractors.</Text>
-          <Text style={[styles.xpText, { color: theme.xp }]}>+{BASE_REWARD_EASY + planXpBonus(plan)} XP</Text>
-          <Text style={[styles.xpText, { color: theme.coin, marginTop: 4 }]}>+{coinsForXp(BASE_REWARD_EASY + planXpBonus(plan))} coins</Text>
+          <Text style={[styles.xpText, { color: theme.xp }]}>+{rewardXp} XP</Text>
+          <Text style={[styles.xpText, { color: theme.coin, marginTop: 4 }]}>+{coinsForXp(rewardXp)} coins</Text>
           {plan === 'elite' && (
             <Text style={[styles.xpText, { color: theme.text }]}>+25 XP (Elite bonus)</Text>
           )}

@@ -2,6 +2,7 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { BackHandler, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { PracticeDoneModal } from '../../../../components/PracticeDoneModal';
 
 const exercises = [
   {
@@ -90,8 +91,13 @@ export default function JointRotationsGame() {
       setShowDone(false);
       setStarted(true);
       intervalRef.current = setInterval(() => {
-        setTimer(prev => {
-          if (prev >= 29) setShowDone(true);
+        setTimer((prev) => {
+          if (prev >= 29) {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            setStarted(false);
+            setShowDone(true);
+            return 30;
+          }
           return prev + 1;
         });
       }, 1000);
@@ -214,17 +220,26 @@ export default function JointRotationsGame() {
         )}
 
         {/* Mark as Done */}
-        {showDone && !started && (
-          <TouchableOpacity style={styles.doneBtn} onPress={() => {
-            setTimer(0);
-            setShowDone(false);
-          }}>
-            <Text style={styles.doneBtnText}>Mark as Done</Text>
-          </TouchableOpacity>
-        )}
+        {showDone && !started ? (
+          <Text style={{ textAlign: 'center', marginTop: 12, color: '#17181c', fontWeight: '600' }}>Session finished — claim your reward</Text>
+        ) : null}
 
         <View style={{ height: 60 }} />
       </ScrollView>
+
+      <PracticeDoneModal
+        visible={showDone && !started}
+        difficulty="Easy"
+        title="Joint rotations complete"
+        onAgain={() => {
+          setTimer(0);
+          setShowDone(false);
+        }}
+        onExit={() => {
+          setShowDone(false);
+          router.replace('/PhysicalTraining/MobilityTrainingScreen');
+        }}
+      />
     </SafeAreaView>
   );
 }

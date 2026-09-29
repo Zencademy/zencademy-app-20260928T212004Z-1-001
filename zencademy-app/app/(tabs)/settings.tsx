@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../../components/AuthContext';
 import { ACCENT_PRESETS, AccentId, useTheme } from '../../components/ThemeContext';
+import { useSound } from '../../lib/sound/SoundPack';
 
 interface SettingsItemProps {
   icon: string;
@@ -101,6 +102,7 @@ export default function SettingsScreen() {
   const router = useRouter();
   const { logout } = useAuth();
   const { theme, themeMode, toggleTheme, accentId, setAccentId } = useTheme();
+  const { enabled: soundsEnabled, setEnabled: setSoundsEnabled } = useSound();
 
   const handleLogout = () => {
     Alert.alert(
@@ -205,6 +207,20 @@ export default function SettingsScreen() {
                 })}
               </View>
             </View>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>Sound</Text>
+          <View style={[styles.sectionContent, { backgroundColor: theme.card, borderColor: theme.borderLight }]}>
+            <SettingsItem
+              icon="volume-high-outline"
+              title="Game sounds"
+              subtitle={soundsEnabled ? 'Babing on wins, taps, and unlocks' : 'Muted — silent feedback only'}
+              showSwitch={true}
+              switchValue={soundsEnabled}
+              onSwitchChange={setSoundsEnabled}
+            />
           </View>
         </View>
 

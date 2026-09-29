@@ -2,6 +2,7 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { BackHandler, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { PracticeDoneModal } from '../../../components/PracticeDoneModal';
 
 const exercises = [
   {
@@ -72,19 +73,24 @@ export default function BoxBreathingGame() {
   const [timer, setTimer] = useState(0);
   const [showDone, setShowDone] = useState(false);
   const [showTips, setShowTips] = useState(false);
-  const intervalRef = useRef(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const handleStartStop = () => {
     if (started) {
-      clearInterval(intervalRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
       setStarted(false);
     } else {
       setTimer(0);
       setShowDone(false);
       setStarted(true);
       intervalRef.current = setInterval(() => {
-        setTimer(prev => {
-          if (prev >= 119) setShowDone(true);
+        setTimer((prev) => {
+          if (prev >= 119) {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            setStarted(false);
+            setShowDone(true);
+            return 120;
+          }
           return prev + 1;
         });
       }, 1000);
@@ -92,7 +98,9 @@ export default function BoxBreathingGame() {
   };
 
   useEffect(() => {
-    return () => clearInterval(intervalRef.current);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -143,7 +151,7 @@ export default function BoxBreathingGame() {
                     setShowTips(false);
                     setTimer(0);
                     setShowDone(false);
-                    clearInterval(intervalRef.current);
+                    if (intervalRef.current) clearInterval(intervalRef.current);
                   }
                 }}
                 activeOpacity={started ? 1 : 0.8}
@@ -198,16 +206,27 @@ export default function BoxBreathingGame() {
         )}
 
         {showDone && !started && (
-          <TouchableOpacity style={styles.doneBtn} onPress={() => {
-            setTimer(0);
-            setShowDone(false);
-          }}>
-            <Text style={styles.doneBtnText}>Mark as Done</Text>
+          <TouchableOpacity style={styles.doneBtn} onPress={() => setShowDone(true)}>
+            <Text style={styles.doneBtnText}>Claim reward</Text>
           </TouchableOpacity>
         )}
 
         <View style={{ height: 60 }} />
       </ScrollView>
+
+      <PracticeDoneModal
+        visible={showDone && !started && timer >= 120}
+        difficulty="Easy"
+        title="Breathing complete"
+        onAgain={() => {
+          setTimer(0);
+          setShowDone(false);
+        }}
+        onExit={() => {
+          setShowDone(false);
+          router.replace('/PhysicalTraining/BreathingTrainingScreen');
+        }}
+      />
     </SafeAreaView>
   );
 }

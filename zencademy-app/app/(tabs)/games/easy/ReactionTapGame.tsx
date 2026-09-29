@@ -1,3 +1,6 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../../lib/progression';
+import { useGameReward } from '../../../../hooks/useGameReward';
+import { WinPulse } from '../../../../components/WinPulse';
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -10,22 +13,22 @@ import {
     TouchableWithoutFeedback,
     View,
 } from "react-native";
-import ConfettiCannon from 'react-native-confetti-cannon';
 import GameHeader from '../../../../components/GameHeader';
 import { useTheme } from '../../../../components/ThemeContext';
 import { useXP } from '../../../../components/XPContext';
 
 const ROUNDS = 5;
 const XP_PER_CORRECT = 5; // easy games: +5 points per correct answer
-const XP_REWARD = 25; // Bonus for completing the game
-const MAX_XP = 15;
+const XP_REWARD = 12;
+const MAX_XP = 12;
 const FULL_WIDTH = Dimensions.get('window').width;
 const LIGHT_COUNT = 5;
 const TOO_SLOW = 700; // ms
 
 export default function ReactionF1Game() {
   const router = useRouter();
-  const { addXp } = useXP();
+  const { plan } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
   const { theme } = useTheme();
 
   const [round, setRound] = useState(0);
@@ -44,9 +47,9 @@ export default function ReactionF1Game() {
     : 0;
   const wins = reactionTimes.filter(x => typeof x === "number" && x <= TOO_SLOW).length;
   const xp =
-    wins === ROUNDS ? MAX_XP :
-    wins >= 3 ? Math.floor(MAX_XP * 0.7) :
-    wins >= 1 ? Math.floor(MAX_XP * 0.4) :
+    wins === ROUNDS ? sessionXp('Easy', plan) :
+    wins >= 3 ? partialSessionXp('Easy', 0.7, plan) :
+    wins >= 1 ? partialSessionXp('Easy', 0.4, plan) :
     0;
 
   function clearAllTimers() {
@@ -93,7 +96,7 @@ export default function ReactionF1Game() {
     if (round >= ROUNDS) {
       setPhase("done");
       if (xp > 0) setShowConfetti(true);
-      if (xp > 0) addXp(xp);
+      if (xp > 0) void award(xp);
       return;
     }
     startRedLightsSequence();
@@ -213,14 +216,7 @@ export default function ReactionF1Game() {
           gameInstructions="Tap the circles as quickly as possible when they appear. Each correct tap gives you +5 points!"
         />
         <View style={styles.gameContent}>
-          <ConfettiCannon
-            count={55}
-            origin={{ x: FULL_WIDTH / 2, y: -22 }}
-            fadeOut
-            autoStart
-            explosionSpeed={410}
-            fallSpeed={2100}
-          />
+          <WinPulse active />
           <View style={[styles.successCard, { backgroundColor: theme.card }]}>
             <Text style={[styles.successText, { color: theme.primary }]}>Success!</Text>
             <Text style={[styles.successTime, { color: theme.textSecondary }]}>Reaction: {reactionTimes[reactionTimes.length - 1]} ms</Text>
@@ -241,14 +237,7 @@ export default function ReactionF1Game() {
         />
         <View style={styles.gameContent}>
           {showConfetti && (
-            <ConfettiCannon
-              count={100}
-              origin={{ x: FULL_WIDTH / 2, y: -22 }}
-              fadeOut
-              autoStart
-              explosionSpeed={410}
-              fallSpeed={3100}
-            />
+            <WinPulse active />
           )}
           <Text style={[styles.bigText, { color: theme.text }]}>Race Complete!</Text>
           <Text style={[styles.xpResult, { color: theme.text }]}>

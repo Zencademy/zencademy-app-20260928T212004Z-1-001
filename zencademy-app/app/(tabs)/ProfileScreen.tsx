@@ -227,7 +227,7 @@ export default function ProfileScreen() {
   const xpToLevel = getXpForLevel(level);
 
   const goRetakeBrainTest = () => {
-    router.push({ pathname: "/OnboardingQuizScreen" });
+    router.push({ pathname: "/OnboardingQuizScreen", params: { retake: "1" } });
   };
 
   return (

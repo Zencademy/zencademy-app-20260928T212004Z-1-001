@@ -1,3 +1,4 @@
+import { WinPulse } from '../../components/WinPulse';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -9,7 +10,6 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import ConfettiCannon from 'react-native-confetti-cannon';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../components/AuthContext";
 import { useScreensaver } from "../../components/ScreensaverContext";
@@ -279,7 +279,7 @@ export default function JournalScreen({ goHome, goMenu, goJournal, openMenu }: P
     <Animated.View style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }} edges={['bottom']}>
         {showConfetti && (
-          <ConfettiCannon count={40} origin={{ x: 200, y: -16 }} fadeOut autoStart explosionSpeed={380} fallSpeed={1900} colors={[theme.primary, theme.text, '#888']} />
+          <WinPulse active />
         )}
 
         {showFeedback && (

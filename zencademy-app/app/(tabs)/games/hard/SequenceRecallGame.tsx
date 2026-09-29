@@ -1,3 +1,5 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../../lib/progression';
+import { useGameReward } from '../../../../hooks/useGameReward';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -7,7 +9,7 @@ import { useXP } from '../../../../components/XPContext';
 
 const { width } = Dimensions.get('window');
 // Hard: flat +20 on success; plan bonuses (Lite +10, Elite +25)
-const BASE_REWARD_HARD = 20;
+const BASE_REWARD_HARD = 28;
 const GRID_ROWS = 4;
 const GRID_COLS = 6;
 const TOTAL_CELLS = GRID_ROWS * GRID_COLS;
@@ -20,7 +22,8 @@ function getRandomSequence(len: number) {
 }
 
 export default function SequenceRecallGame() {
-  const { addXP, incrementCompletedGame, plan } = useXP();
+  const { incrementCompletedGame, plan } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
   const router = useRouter();
   const { theme } = useTheme();
   const [seqLen, setSeqLen] = useState(INIT_SEQ);
@@ -81,7 +84,7 @@ export default function SequenceRecallGame() {
         setFailed(false);
         setScore(score + 1);
         const planBonus = plan === 'elite' ? 25 : (plan === 'lite' ? 10 : 0);
-        addXP(BASE_REWARD_HARD + planBonus);
+        void awardFor('Hard');
         incrementCompletedGame({ category: 'memory', difficulty: 'hard' });
       }
     }

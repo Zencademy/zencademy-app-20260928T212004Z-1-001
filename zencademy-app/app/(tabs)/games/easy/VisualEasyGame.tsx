@@ -1,7 +1,9 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../../lib/progression';
+import { useGameReward } from '../../../../hooks/useGameReward';
+import { WinPulse } from '../../../../components/WinPulse';
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Dimensions, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import ConfettiCannon from 'react-native-confetti-cannon';
 import GameHeader from '../../../../components/GameHeader';
 import { useTheme } from '../../../../components/ThemeContext';
 import { useXP } from '../../../../components/XPContext';
@@ -39,9 +41,9 @@ const QUESTIONS = [
 ];
 
 const XP_PER_CORRECT = 5; // easy games: +5 points per correct answer
-const XP_REWARD = 25; // Bonus for completing the game
+const XP_REWARD = 12;
 const QUESTIONS_PER_GAME = 5;
-const MAX_XP = 15;
+const MAX_XP = 12;
 const FULL_WIDTH = Dimensions.get('window').width;
 
 function getGameQuestions() {
@@ -59,7 +61,8 @@ function shuffleArray(array) {
 
 export default function VisualEasyGame() {
   const router = useRouter();
-  const { addXp } = useXP();
+  const { plan } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
   const { theme } = useTheme();
 
   const [questions, setQuestions] = useState([]);
@@ -132,7 +135,7 @@ export default function VisualEasyGame() {
     }
   }
 
-  const xpThisGame = Math.min(score, QUESTIONS_PER_GAME) === QUESTIONS_PER_GAME ? MAX_XP : Math.floor(MAX_XP * score / QUESTIONS_PER_GAME);
+  const xpThisGame = partialSessionXp('Easy', Math.min(score, QUESTIONS_PER_GAME) / QUESTIONS_PER_GAME, plan);
 
   useEffect(() => {
     if (
@@ -142,7 +145,7 @@ export default function VisualEasyGame() {
       xpThisGame > 0 &&
       !xpAwarded
     ) {
-      addXp(xpThisGame);
+      void award(xpThisGame);
       setShowConfetti(true);
       setXpAwarded(true);
     }
@@ -191,14 +194,7 @@ export default function VisualEasyGame() {
         />
         <View style={styles.gameContent}>
           {showConfetti && (
-            <ConfettiCannon
-              count={140}
-              origin={{ x: FULL_WIDTH / 2, y: -22 }}
-              fadeOut
-              autoStart
-              explosionSpeed={410}
-              fallSpeed={3100}
-            />
+            <WinPulse active />
           )}
           <Text style={[styles.bigText, { color: theme.text }]}>🎉 Game Completed!</Text>
           <Text style={[styles.xpResult, { color: theme.text }]}>

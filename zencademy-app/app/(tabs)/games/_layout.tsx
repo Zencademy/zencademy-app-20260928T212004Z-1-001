@@ -1,5 +1,7 @@
-import { Slot, usePathname, useRouter } from 'expo-router';
+import { Slot, useFocusEffect, usePathname, useRouter } from 'expo-router';
+import { useCallback } from 'react';
 import { Text } from 'react-native';
+import { useScreensaver } from '../../../components/ScreensaverContext';
 import { useTheme } from '../../../components/ThemeContext';
 import { useXP } from '../../../components/XPContext';
 import { PrimaryButton, Screen } from '../../../components/ui/Screen';
@@ -12,6 +14,19 @@ export default function GamesLayout() {
   const { level } = useXP();
   const { theme } = useTheme();
   const router = useRouter();
+  const { setEnabled, dismiss } = useScreensaver();
+
+  useFocusEffect(
+    useCallback(() => {
+      setEnabled(false);
+      dismiss();
+      return () => {
+        setEnabled(false);
+        dismiss();
+      };
+    }, [setEnabled, dismiss])
+  );
+
   if (!exercise) return <Slot />;
   const needed = unlockLevelFor(exercise.difficulty);
   if (level >= needed) return <Slot />;

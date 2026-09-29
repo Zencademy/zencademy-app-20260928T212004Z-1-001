@@ -7,6 +7,7 @@ import { useTheme } from '../../components/ThemeContext';
 import { AppHeader } from '../../components/ui/AppHeader';
 import { ebookCoinPrice } from '../../lib/progression';
 import { BUYABLE_EBOOK_IDS, ebookPlanPrice } from '../../lib/ebookAccess';
+import { getEbookContent } from '../../lib/ebookContent/catalog';
 
 type Ebook = {
   id: string;
@@ -103,12 +104,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Essential principles for building strength and endurance.',
     category: 'Fitness',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.9,
     icon: <MaterialCommunityIcons name="dumbbell" size={32} color="#23242b" />,
     isPremium: false,
     requiredLevel: 10,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Quick Reactor', 'Focus Champion', 'Strategic Thinker']
   },
   {
@@ -117,12 +118,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Advanced training methods for peak physical performance.',
     category: 'Fitness',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.9,
     icon: <MaterialCommunityIcons name="weight-lifter" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 25,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Quick Reactor', 'Focus Champion', 'Strategic Thinker']
   },
   {
@@ -131,12 +132,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Understanding nutrition for optimal health and performance.',
     category: 'Fitness',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.5,
     icon: <MaterialCommunityIcons name="food-apple" size={32} color="#23242b" />,
     isPremium: false,
     requiredLevel: 5,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Strategic Thinker', 'Memory Master']
   },
   {
@@ -145,12 +146,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Deep dive into nutrition science and optimization.',
     category: 'Fitness',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.8,
     icon: <MaterialCommunityIcons name="flask" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 20,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Pattern Pro', 'Memory Master']
   },
 
@@ -161,12 +162,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Techniques to improve memory, focus, and mental performance.',
     category: 'Mental',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.7,
     icon: <MaterialCommunityIcons name="brain" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 15,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Memory Master', 'Focus Champion', 'Logic Guru']
   },
   {
@@ -175,12 +176,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Advanced techniques for laser-sharp focus and concentration.',
     category: 'Mental',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.8,
     icon: <MaterialCommunityIcons name="target" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 20,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Focus Champion', 'Strategic Thinker', 'Logic Guru']
   },
   {
@@ -189,12 +190,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Advanced cognitive enhancement for elite performance.',
     category: 'Mental',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.9,
     icon: <MaterialCommunityIcons name="lightning-bolt" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 30,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Quick Reactor', 'Logic Guru', 'Focus Champion']
   },
   {
@@ -203,12 +204,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Techniques to enhance memory and learning capabilities.',
     category: 'Mental',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.6,
     icon: <MaterialCommunityIcons name="memory" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 25,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Memory Master', 'Pattern Pro', 'Logic Guru']
   },
 
@@ -219,12 +220,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Building productive routines for personal growth.',
     category: 'Productivity',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.6,
     icon: <Feather name="check-circle" size={32} color="#23242b" />,
     isPremium: false,
     requiredLevel: 8,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Strategic Thinker', 'Focus Champion', 'Quick Reactor']
   },
   {
@@ -233,12 +234,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Advanced productivity and time management strategies.',
     category: 'Productivity',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.7,
     icon: <MaterialCommunityIcons name="clock-outline" size={32} color="#23242b" />,
     isPremium: false,
     requiredLevel: 12,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Strategic Thinker', 'Focus Champion', 'Logic Guru']
   },
   {
@@ -247,12 +248,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Developing leadership skills and personal influence.',
     category: 'Productivity',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.6,
     icon: <MaterialCommunityIcons name="account-group" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 25,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Strategic Thinker', 'Creative Visionary', 'Focus Champion']
   },
   {
@@ -261,12 +262,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Master the art of setting and achieving meaningful goals.',
     category: 'Productivity',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.7,
     icon: <MaterialCommunityIcons name="target" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 18,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Strategic Thinker', 'Focus Champion', 'Logic Guru']
   },
 
@@ -277,12 +278,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Understanding the fundamental principles of quantum mechanics.',
     category: 'Science',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.8,
     icon: <MaterialCommunityIcons name="atom" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 35,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Pattern Pro', 'Memory Master']
   },
   {
@@ -291,12 +292,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Introduction to AI, machine learning, and neural networks.',
     category: 'Technology',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.9,
     icon: <MaterialCommunityIcons name="robot" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 20,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Pattern Pro', 'Creative Visionary']
   },
   {
@@ -305,12 +306,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Understanding blockchain technology and digital currencies.',
     category: 'Technology',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.7,
     icon: <MaterialCommunityIcons name="bitcoin" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 18,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Pattern Pro', 'Strategic Thinker']
   },
   {
@@ -319,12 +320,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Learn the basics of programming and software development.',
     category: 'Technology',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.8,
     icon: <MaterialCommunityIcons name="code-braces" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 15,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Creative Visionary', 'Pattern Pro']
   },
   {
@@ -333,12 +334,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Introduction to data analysis, statistics, and visualization.',
     category: 'Science',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.7,
     icon: <MaterialCommunityIcons name="chart-line" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 20,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Pattern Pro', 'Memory Master']
   },
 
@@ -349,12 +350,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Key events and figures that shaped human civilization.',
     category: 'Education',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.6,
     icon: <MaterialCommunityIcons name="earth" size={32} color="#23242b" />,
     isPremium: false,
     requiredLevel: 5,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Memory Master', 'Pattern Pro', 'Strategic Thinker']
   },
   {
@@ -363,12 +364,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Ancient wisdom applied to contemporary challenges.',
     category: 'Education',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.8,
     icon: <MaterialCommunityIcons name="lightbulb" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 25,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Creative Visionary', 'Strategic Thinker']
   },
   {
@@ -377,12 +378,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Understanding markets, money, and economic principles.',
     category: 'Education',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.7,
     icon: <MaterialCommunityIcons name="trending-up" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 15,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Pattern Pro', 'Strategic Thinker']
   },
   {
@@ -391,12 +392,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Understanding human behavior and mental processes.',
     category: 'Science',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.8,
     icon: <MaterialCommunityIcons name="brain" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 18,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Pattern Pro', 'Memory Master', 'Logic Guru']
   },
 
@@ -407,12 +408,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Starting and growing successful businesses.',
     category: 'Business',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.8,
     icon: <MaterialCommunityIcons name="briefcase" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 30,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Strategic Thinker', 'Creative Visionary', 'Quick Reactor']
   },
   {
@@ -421,12 +422,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Building wealth through smart financial decisions.',
     category: 'Business',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.7,
     icon: <MaterialCommunityIcons name="wallet" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 12,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Strategic Thinker', 'Memory Master']
   },
   {
@@ -435,12 +436,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Understanding markets and building investment portfolios.',
     category: 'Business',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.9,
     icon: <MaterialCommunityIcons name="chart-line" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 35,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Pattern Pro', 'Strategic Thinker']
   },
 
@@ -451,12 +452,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Unlocking creativity and innovative problem-solving.',
     category: 'Creativity',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.6,
     icon: <MaterialCommunityIcons name="palette" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 10,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Creative Visionary', 'Pattern Pro', 'Quick Reactor']
   },
   {
@@ -465,12 +466,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Creating digital artwork and visual content.',
     category: 'Creativity',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.7,
     icon: <MaterialCommunityIcons name="brush" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 15,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Creative Visionary', 'Focus Champion', 'Pattern Pro']
   },
   {
@@ -479,12 +480,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Developing powerful writing and communication skills.',
     category: 'Creativity',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.8,
     icon: <MaterialCommunityIcons name="pen" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 12,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Creative Visionary', 'Memory Master', 'Focus Champion']
   },
 
@@ -495,12 +496,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Building healthy and fulfilling relationships.',
     category: 'Lifestyle',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.7,
     icon: <MaterialCommunityIcons name="heart" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 15,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Pattern Pro', 'Memory Master', 'Creative Visionary']
   },
   {
@@ -509,12 +510,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Effective parenting strategies for modern families.',
     category: 'Lifestyle',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.8,
     icon: <MaterialCommunityIcons name="baby-face" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 18,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Strategic Thinker', 'Memory Master', 'Focus Champion']
   },
   {
@@ -523,12 +524,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Simplifying life through intentional living.',
     category: 'Lifestyle',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.6,
     icon: <MaterialCommunityIcons name="home" size={32} color="#23242b" />,
     isPremium: false,
     requiredLevel: 8,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Focus Champion', 'Strategic Thinker', 'Logic Guru']
   },
 
@@ -539,12 +540,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Exploring spirituality and personal transformation.',
     category: 'Spirituality',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.8,
     icon: <MaterialCommunityIcons name="star" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 20,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Creative Visionary', 'Pattern Pro', 'Strategic Thinker']
   },
   {
@@ -553,12 +554,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Ancient wisdom from Eastern traditions.',
     category: 'Spirituality',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.7,
     icon: <MaterialCommunityIcons name="flower" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 18,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Creative Visionary', 'Memory Master', 'Pattern Pro']
   },
   {
@@ -567,12 +568,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Integrating mindfulness into everyday activities.',
     category: 'Spirituality',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.6,
     icon: <MaterialCommunityIcons name="meditation" size={32} color="#23242b" />,
     isPremium: false,
     requiredLevel: 12,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Focus Champion', 'Creative Visionary', 'Strategic Thinker']
   },
 
@@ -583,12 +584,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'How the brain learns and retains information.',
     category: 'Science',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.9,
     icon: <MaterialCommunityIcons name="brain" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 40,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Memory Master', 'Pattern Pro']
   },
   {
@@ -597,12 +598,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Exploring consciousness through quantum physics.',
     category: 'Science',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.8,
     icon: <MaterialCommunityIcons name="atom" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 35,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Creative Visionary', 'Pattern Pro']
   },
   {
@@ -611,12 +612,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Optimizing human performance through science.',
     category: 'Science',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.7,
     icon: <MaterialCommunityIcons name="flask" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 30,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Quick Reactor', 'Focus Champion']
   },
   {
@@ -625,12 +626,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Emerging technologies that will shape our future.',
     category: 'Technology',
-    pages: 0, // Under development
+    pages: 40,
     rating: 4.8,
     icon: <MaterialCommunityIcons name="rocket" size={32} color="#23242b" />,
     isPremium: true,
     requiredLevel: 25,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Creative Visionary', 'Logic Guru', 'Pattern Pro']
   },
 
@@ -641,12 +642,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Comprehensive guide to achieving peak performance in all areas of life.',
     category: 'Premium',
-    pages: 0, // Under development
+    pages: 40,
     rating: 5.0,
     icon: <MaterialCommunityIcons name="crown" size={32} color="#ffd700" />,
     isPremium: true,
     requiredLevel: 50,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Strategic Thinker', 'Focus Champion', 'Quick Reactor']
   },
   {
@@ -655,12 +656,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Cutting-edge techniques for supercharging your mental capabilities.',
     category: 'Premium',
-    pages: 0, // Under development
+    pages: 40,
     rating: 5.0,
     icon: <MaterialCommunityIcons name="brain" size={32} color="#ffd700" />,
     isPremium: true,
     requiredLevel: 60,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Logic Guru', 'Memory Master', 'Pattern Pro']
   },
   {
@@ -669,12 +670,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Unlock your creative potential and master innovative thinking.',
     category: 'Premium',
-    pages: 0, // Under development
+    pages: 40,
     rating: 5.0,
     icon: <MaterialCommunityIcons name="lightbulb" size={32} color="#ffd700" />,
     isPremium: true,
     requiredLevel: 45,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Creative Visionary', 'Pattern Pro', 'Quick Reactor']
   },
   {
@@ -683,12 +684,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Complete system for building sustainable wealth and financial freedom.',
     category: 'Premium',
-    pages: 0, // Under development
+    pages: 40,
     rating: 5.0,
     icon: <MaterialCommunityIcons name="treasure-chest" size={32} color="#ffd700" />,
     isPremium: true,
     requiredLevel: 55,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Strategic Thinker', 'Logic Guru', 'Memory Master']
   },
   {
@@ -697,12 +698,12 @@ const ebooks: Ebook[] = [
     author: 'Zencademy',
     description: 'Complete roadmap for transforming every aspect of your life.',
     category: 'Premium',
-    pages: 0, // Under development
+    pages: 40,
     rating: 5.0,
     icon: <MaterialCommunityIcons name="star" size={32} color="#ffd700" />,
     isPremium: true,
     requiredLevel: 40,
-    status: 'under-development',
+    status: 'available',
     recommendedFor: ['Strategic Thinker', 'Creative Visionary', 'Focus Champion']
   }
 ];
@@ -742,7 +743,13 @@ export default function EbookScreen() {
   };
 
   const normalizedEbooks = useMemo(() => (
-    ebooks.map(e => ({ ...e, requiredLevel: computeRequiredLevel(e) }))
+    ebooks.map((e) => {
+      const content = getEbookContent(e.id);
+      const withContent = content
+        ? { ...e, pages: content.pages, status: 'available' as const, isPremium: content.isPremium }
+        : e;
+      return { ...withContent, requiredLevel: computeRequiredLevel(withContent) };
+    })
   ), []);
 
   const filteredEbooks = normalizedEbooks.filter(ebook => {
@@ -754,42 +761,13 @@ export default function EbookScreen() {
 
   const isOwned = (ebook: Ebook) => ownedEbooks.includes(ebook.id);
   /** Prefer catalog / access-plan prices for buyable titles. */
-  const priceOf = (ebook: Ebook) => ebookPlanPrice(ebook.id) ?? ebookCoinPrice(ebook);
+  const priceOf = (ebook: Ebook) => getEbookContent(ebook.id)?.price ?? ebookPlanPrice(ebook.id) ?? ebookCoinPrice(ebook);
 
   const openEbook = (ebook: Ebook) => {
-    if (ebook.status === 'under-development') {
-      Alert.alert('Not ready', 'This title is still in production.');
-      return;
-    }
-    switch (ebook.title) {
-      case 'Mindful Living Guide':
-        router.push('/ebooks/wellness/MindfulLivingGuide');
-        break;
-      case 'Stress Management':
-        router.push('/ebooks/wellness/StressManagement');
-        break;
-      case 'Advanced Meditation Techniques':
-        router.push('/ebooks/wellness/AdvancedMeditationTechniques');
-        break;
-      case 'Mind-Body Connection':
-        router.push('/ebooks/wellness/MindBodyConnection');
-        break;
-      case 'Holistic Health & Wellness':
-        router.push('/ebooks/wellness/HolisticHealthWellness');
-        break;
-      case 'Physical Training Fundamentals':
-        router.push('/ebooks/fitness/PhysicalTrainingFundamentals');
-        break;
-      default:
-        Alert.alert('Coming soon', 'This title is not live yet.');
-    }
+    router.push(`/ebooks/${ebook.id}` as any);
   };
 
   const handleEbookPress = async (ebook: Ebook) => {
-    if (ebook.status === 'under-development') {
-      Alert.alert('Not ready', 'This title is still in production.');
-      return;
-    }
     if (isOwned(ebook)) {
       openEbook(ebook);
       return;
@@ -834,7 +812,7 @@ export default function EbookScreen() {
           <Text style={[styles.levelText, { color: theme.text }]}>{coins} coins · buy titles</Text>
         </View>
         <Text style={{ marginTop: 8, fontSize: 12, color: theme.textSecondary, lineHeight: 17 }}>
-          Access plan: 5 live for coins now · more titles preview/planned without content yet. Owned stays unlocked.
+          All 47 titles are live — unlock with coins, then open the full reader with chapters and progress.
         </Text>
       </View>
 
@@ -880,86 +858,72 @@ export default function EbookScreen() {
             const price = priceOf(ebook);
             const forSale = PURCHASABLE.has(ebook.id) && ebook.status === 'available';
             const locked = !owned && !forSale;
+            const content = getEbookContent(ebook.id);
+            const chapterCount = content?.chapters.length ?? 5;
             return (
               <TouchableOpacity
                 key={ebook.id}
                 style={[
                   styles.ebookCard,
-                  { backgroundColor: theme.card, borderColor: theme.border },
-                  locked && { opacity: 0.7, backgroundColor: theme.surface }
+                  { backgroundColor: theme.card, borderColor: owned ? theme.primary : theme.border },
+                  locked && { opacity: 0.72, backgroundColor: theme.surface },
+                  owned && { borderWidth: 1.5 },
                 ]}
                 onPress={() => { void handleEbookPress(ebook); }}
                 disabled={busyId === ebook.id}
+                activeOpacity={0.85}
               >
                 <View style={styles.ebookHeader}>
-                  <View style={[
-                    styles.ebookIcon,
-                    { backgroundColor: theme.surface },
-                    locked && { backgroundColor: theme.border }
-                  ]}>
+                  <View
+                    style={[
+                      styles.ebookIcon,
+                      { backgroundColor: owned ? `${theme.primary}18` : theme.surface },
+                      locked && { backgroundColor: theme.border },
+                    ]}
+                  >
                     {ebook.icon}
                   </View>
                   <View style={styles.badgeContainer}>
-                    {ebook.isPremium && (
-                      <View style={styles.premiumBadge}>
-                        <Ionicons name="star" size={12} color="#fff" />
+                    {owned ? (
+                      <View style={[styles.ownedPill, { backgroundColor: theme.success }]}>
+                        <Text style={styles.ownedPillText}>Owned</Text>
                       </View>
-                    )}
-                    {!owned && (
-                      <View style={styles.lockBadge}>
-                        <Ionicons name={forSale ? 'cash-outline' : 'lock-closed'} size={12} color="#fff" />
+                    ) : null}
+                    {ebook.isPremium && !owned ? (
+                      <View style={[styles.premiumBadge, { backgroundColor: theme.coin }]}>
+                        <Ionicons name="star" size={12} color="#111" />
                       </View>
-                    )}
+                    ) : null}
+                    {!owned && forSale ? (
+                      <View style={[styles.lockBadge, { backgroundColor: theme.coin }]}>
+                        <Ionicons name="cash-outline" size={12} color="#111" />
+                      </View>
+                    ) : null}
                   </View>
                 </View>
 
                 <View style={styles.ebookContent}>
-                  <Text style={[styles.ebookTitle, { color: theme.text }, locked && { color: theme.textSecondary }]}>{ebook.title}</Text>
-                  <Text style={[styles.ebookAuthor, { color: theme.textSecondary }]}>by {ebook.author}</Text>
-                  <Text style={[styles.ebookDescription, { color: theme.textSecondary }, locked && { color: theme.textTertiary }]} numberOfLines={2}>
+                  <Text style={[styles.ebookTitle, { color: theme.text }, locked && { color: theme.textSecondary }]}>
+                    {ebook.title}
+                  </Text>
+                  <Text style={[styles.ebookAuthor, { color: theme.textSecondary }]}>{ebook.category} · Zencademy</Text>
+                  <Text
+                    style={[styles.ebookDescription, { color: theme.textSecondary }, locked && { color: theme.textTertiary }]}
+                    numberOfLines={2}
+                  >
                     {ebook.description}
                   </Text>
 
-                  {ebook.status === 'under-development' && (
-                    <View style={[styles.statusBadge, { backgroundColor: theme.warning }]}>
-                      <Text style={[styles.statusBadgeText, { color: '#111' }]}>In production</Text>
-                    </View>
-                  )}
-
-                  {ebook.recommendedFor && ebook.recommendedFor.length > 0 && (
-                    <View style={styles.recommendationsContainer}>
-                      <Text style={[styles.recommendationsTitle, { color: theme.text }]}>Best for:</Text>
-                      <View style={styles.recommendationsList}>
-                        {ebook.recommendedFor.slice(0, 2).map((mindType, index) => (
-                          <View key={index} style={[styles.recommendationTag, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-                            <Text style={[styles.recommendationText, { color: theme.textSecondary }]}>{mindType}</Text>
-                          </View>
-                        ))}
-                        {ebook.recommendedFor.length > 2 && (
-                          <View style={[styles.recommendationTag, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-                            <Text style={[styles.recommendationText, { color: theme.textSecondary }]}>+{ebook.recommendedFor.length - 2} more</Text>
-                          </View>
-                        )}
-                      </View>
-                    </View>
-                  )}
-
                   <View style={styles.ebookMeta}>
                     <View style={styles.metaItem}>
-                      <Feather name="file-text" size={14} color={theme.textSecondary} />
+                      <Feather name="book-open" size={13} color={theme.textSecondary} />
                       <Text style={[styles.metaText, { color: theme.textSecondary }]}>
-                        {ebook.status === 'under-development' ? 'Soon' : `${ebook.pages} pages`}
+                        {chapterCount} ch · {ebook.pages} pages
                       </Text>
                     </View>
                     <View style={styles.metaItem}>
-                      <Ionicons name="star" size={14} color={theme.coin} />
+                      <Ionicons name="star" size={13} color={theme.coin} />
                       <Text style={[styles.metaText, { color: theme.textSecondary }]}>{ebook.rating}</Text>
-                    </View>
-                    <View style={styles.metaItem}>
-                      <Ionicons name="cash-outline" size={14} color={theme.coin} />
-                      <Text style={[styles.metaText, { color: theme.textSecondary }]}>
-                        {owned ? 'Owned' : price != null ? `${price}c` : '—'}
-                      </Text>
                     </View>
                   </View>
 
@@ -968,14 +932,19 @@ export default function EbookScreen() {
                       <Text style={[styles.categoryTagText, { color: theme.textSecondary }]}>{ebook.category}</Text>
                     </View>
                     {owned ? (
-                      <TouchableOpacity style={[styles.readButton, { backgroundColor: theme.primary }]} onPress={() => openEbook(ebook)}>
-                        <Text style={[styles.readButtonText, { color: theme.buttonText }]}>Open</Text>
+                      <TouchableOpacity
+                        style={[styles.readButton, { backgroundColor: theme.primary }]}
+                        onPress={() => openEbook(ebook)}
+                      >
+                        <Text style={[styles.readButtonText, { color: theme.buttonText }]}>Read</Text>
                         <Feather name="arrow-right" size={16} color={theme.buttonText} />
                       </TouchableOpacity>
                     ) : forSale && price != null ? (
                       <TouchableOpacity
                         style={[styles.readButton, { backgroundColor: coins >= price ? theme.coin : theme.border }]}
-                        onPress={() => { void handleEbookPress(ebook); }}
+                        onPress={() => {
+                          void handleEbookPress(ebook);
+                        }}
                         disabled={busyId === ebook.id}
                       >
                         <Text style={[styles.readButtonText, { color: coins >= price ? '#111' : theme.textSecondary }]}>
@@ -1122,15 +1091,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   ebookCard: {
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
+    borderRadius: 18,
+    padding: 18,
+    marginBottom: 14,
     borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
   },
   ebookCardLocked: {
     opacity: 0.6,
@@ -1163,6 +1127,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#666',
     borderRadius: 12,
     padding: 4,
+  },
+  ownedPill: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  ownedPillText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.2,
   },
   ebookContent: {
     flex: 1,

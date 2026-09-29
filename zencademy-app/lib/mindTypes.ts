@@ -13,6 +13,9 @@ export type MindProfile = {
   body: string;
   strengths: string[];
   train: string[];
+  /** First training route after onboarding */
+  startRoute: string;
+  startLabel: string;
 };
 
 export const MIND_PROFILES: Record<MindTypeId, MindProfile> = {
@@ -23,6 +26,8 @@ export const MIND_PROFILES: Record<MindTypeId, MindProfile> = {
     body: 'You prefer evidence over impulse. When others guess, you model. Train logic and critical sets to sharpen this edge.',
     strengths: ['Structured reasoning', 'Problem decomposition', 'Precision under ambiguity'],
     train: ['Logic', 'Critical thinking', 'Metacognition'],
+    startRoute: '/games/LogicTrainingScreen',
+    startLabel: 'Start Logic Easy',
   },
   'Memory Master': {
     id: 'Memory Master',
@@ -31,6 +36,8 @@ export const MIND_PROFILES: Record<MindTypeId, MindProfile> = {
     body: 'Detail sticks with you. Names, sequences, and prior context come back on demand. Memory and verbal drills compound that advantage.',
     strengths: ['Retention', 'Recall under load', 'Associative linking'],
     train: ['Memory', 'Verbal', 'Attention'],
+    startRoute: '/games/MemoryTrainingScreen',
+    startLabel: 'Start Memory Easy',
   },
   'Focus Champion': {
     id: 'Focus Champion',
@@ -39,6 +46,8 @@ export const MIND_PROFILES: Record<MindTypeId, MindProfile> = {
     body: 'You can hold a single target longer than most. That makes deep work natural — and makes attention training especially high-leverage.',
     strengths: ['Sustained attention', 'Task lock-in', 'Noise resistance'],
     train: ['Attention', 'Focus sessions', 'Breathwork'],
+    startRoute: '/games/easy/FocusEasyGame',
+    startLabel: 'Start Focus Easy',
   },
   'Strategic Thinker': {
     id: 'Strategic Thinker',
@@ -47,6 +56,8 @@ export const MIND_PROFILES: Record<MindTypeId, MindProfile> = {
     body: 'You see second-order effects and plan ahead. Strategy and executive exercises keep that foresight sharp.',
     strengths: ['Forward planning', 'Trade-off clarity', 'Systems view'],
     train: ['Executive', 'Critical thinking', 'Goal review'],
+    startRoute: '/games/GoalReviewGame',
+    startLabel: 'Start Goal Review',
   },
   'Pattern Pro': {
     id: 'Pattern Pro',
@@ -55,6 +66,8 @@ export const MIND_PROFILES: Record<MindTypeId, MindProfile> = {
     body: 'Connections appear early for you — in visuals, sequences, and behavior. Visual and pattern work turns that instinct into skill.',
     strengths: ['Pattern detection', 'Visual synthesis', 'Transfer learning'],
     train: ['Visual', 'Speed patterns', 'Creativity'],
+    startRoute: '/games/VisualTrainingScreen',
+    startLabel: 'Start Visual Easy',
   },
   'Quick Reactor': {
     id: 'Quick Reactor',
@@ -63,6 +76,8 @@ export const MIND_PROFILES: Record<MindTypeId, MindProfile> = {
     body: 'Speed without panic is your edge. Reaction and speed drills raise the ceiling without sacrificing control.',
     strengths: ['Processing speed', 'Adaptive switching', 'Decisive action'],
     train: ['Speed', 'Attention', 'Coordination'],
+    startRoute: '/games/SpeedTrainingScreen',
+    startLabel: 'Start Speed Easy',
   },
 };
 

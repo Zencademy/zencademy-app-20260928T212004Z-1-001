@@ -1,15 +1,18 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../../lib/progression';
+import { useGameReward } from '../../../../hooks/useGameReward';
+import { WinPulse } from '../../../../components/WinPulse';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ConfettiCannon from 'react-native-confetti-cannon';
 import GameHeader from '../../../../components/GameHeader';
 import { useTheme } from '../../../../components/ThemeContext';
 import { useXP } from '../../../../components/XPContext';
+import { playSfx } from '../../../../lib/sound/SoundPack';
 
 const ROUNDS = 8;
 const CIRCLES = 16;
 // Medium: flat +15 on success (no per-correct), with plan bonuses
-const BASE_REWARD_MEDIUM = 15;
+const BASE_REWARD_MEDIUM = 18;
 const FLASH_TIME = 1000;
 const DISTRACTOR_MIN = 1;
 const DISTRACTOR_MAX = 2;
@@ -28,7 +31,8 @@ function getRandomIndices(count: number, max: number, exclude: number[] = []) {
 }
 
 export default function ColorCountFocus() {
-  const { addXp, incrementCompletedGame, plan } = useXP();
+  const { incrementCompletedGame, plan } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
   const router = useRouter();
   const { theme } = useTheme();
   const [round, setRound] = useState(0);
@@ -66,8 +70,7 @@ export default function ColorCountFocus() {
   useEffect(() => {
     if (phase === 'success') {
       setShowConfetti(true);
-      const planBonus = plan === 'elite' ? 25 : (plan === 'lite' ? 10 : 0);
-      addXp(BASE_REWARD_MEDIUM + planBonus);
+      void awardFor('Medium');
       incrementCompletedGame({ category: 'focus', difficulty: 'medium' });
     }
     // eslint-disable-next-line
@@ -92,7 +95,7 @@ export default function ColorCountFocus() {
     if (phase !== 'guess') return;
     if (val === flashIndices.length) {
       if (round + 1 === ROUNDS) {
-        setPhase('success');
+        playSfx('correct'); setPhase('success');
       } else {
         setCorrectCount(c => c + 1);
         setRound(r => r + 1);
@@ -100,7 +103,7 @@ export default function ColorCountFocus() {
       }
     } else {
       setFeedback(`✘ Wrong! ${flashIndices.length} ${targetColor} circles flashed.`);
-      setPhase('fail');
+      playSfx('wrong'); setPhase('fail');
     }
   }
 
@@ -126,7 +129,7 @@ export default function ColorCountFocus() {
         gameInstructions="Watch carefully! Sometimes target is red, other times blue. As you progress, more distractor colors appear. Guess the exact number to win (+15 XP, bonuses: Lite +10, Elite +25)."
       />
       <View style={styles.gameContent}>
-        {showConfetti && <ConfettiCannon count={100} origin={{ x: 200, y: 0 }} fadeOut autoStart explosionSpeed={400} fallSpeed={1800} />}
+        {showConfetti && <WinPulse active />}
         <Text style={[styles.title, { color: theme.text }]}>Count the {targetColor === 'red' ? 'Red' : 'Blue'}</Text>
       <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Watch carefully! Target color now: <Text style={{color: targetColor==='red'? '#d44' : '#3a86ff', fontWeight:'bold'}}>{targetColor.toUpperCase()}</Text>.</Text>
       <Text style={[styles.progress, { color: theme.text }]}>{round + 1} / {ROUNDS}</Text>
@@ -167,7 +170,8 @@ export default function ColorCountFocus() {
       {phase === 'success' && (
         <View style={[styles.resultCard, { backgroundColor: theme.card }]}>
           <Text style={[styles.successText, { color: theme.text }]}>✔️ Great focus! You completed the challenge.</Text>
-          <Text style={[styles.xpText, { color: theme.text }]}>+{BASE_REWARD_MEDIUM} XP (game)</Text>
+          <Text style={[styles.xpText, { color: theme.text }]}>+{sessionXp('Medium', plan)} XP</Text>
+          <Text style={[styles.xpText, { color: theme.coin, marginTop: 4 }]}>+{coinsForXp(sessionXp('Medium', plan))} coins</Text>
           {plan === 'elite' && (<Text style={[styles.xpText, { color: theme.text }]}>+25 XP (Elite bonus)</Text>)}
           {plan === 'lite' && (<Text style={[styles.xpText, { color: theme.text }]}>+10 XP (Lite bonus)</Text>)}
           <View style={{ flexDirection: 'row', gap: 10, marginTop: 8 }}>

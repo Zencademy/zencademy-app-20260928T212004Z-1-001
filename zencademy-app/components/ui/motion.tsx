@@ -25,16 +25,14 @@ export function CountUp({
   replayKey?: number | string;
 }) {
   const anim = useRef(new Animated.Value(0)).current;
-  const [display, setDisplay] = useState(0);
-  const [visible, setVisible] = useState(false);
-  const fromRef = useRef(0);
+  const [display, setDisplay] = useState(value);
+  const fromRef = useRef(value);
 
   useEffect(() => {
     const from = fromZero ? 0 : fromRef.current;
     anim.stopAnimation();
     anim.setValue(0);
     setDisplay(from);
-    setVisible(true);
     const id = anim.addListener(({ value: t }) => {
       setDisplay(Math.round(from + (value - from) * t));
     });
@@ -48,11 +46,11 @@ export function CountUp({
       setDisplay(value);
     });
     return () => anim.removeListener(id);
-  }, [value, duration, fromZero, replayKey]);
+  }, [value, duration, fromZero, replayKey, anim]);
 
   const label = formatter ? formatter(display) : display.toLocaleString();
   return (
-    <Text style={[style, !visible ? { opacity: 0 } : null]}>
+    <Text style={style}>
       {prefix}{label}{suffix}
     </Text>
   );

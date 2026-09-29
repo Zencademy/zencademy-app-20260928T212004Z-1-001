@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Dimensions, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, View } from "react-native";
 import { useAuth } from "../../components/AuthContext";
@@ -41,11 +41,21 @@ function SwipeContainer({ initialPage = PAGE.home }: { initialPage?: number }) {
     return () => clearTimeout(timer);
   }, [initialPage]);
 
-  // Screensaver only while Home is the active swipe page.
+  // Screensaver only on Home — and only while this swipe shell is focused
+  // (navigating into a game keeps Home mounted underneath otherwise).
+  useFocusEffect(
+    useCallback(() => {
+      const onHome = page === PAGE.home;
+      setEnabled(onHome);
+      if (!onHome) dismiss();
+      return () => {
+        setEnabled(false);
+        dismiss();
+      };
+    }, [page, setEnabled, dismiss])
+  );
+
   useEffect(() => {
-    const onHome = page === PAGE.home;
-    setEnabled(onHome);
-    if (!onHome) dismiss();
     if (page === PAGE.menu) {
       setMenuLocked(true);
       if (menuLockTimer.current) clearTimeout(menuLockTimer.current);
@@ -56,9 +66,7 @@ function SwipeContainer({ initialPage = PAGE.home }: { initialPage?: number }) {
     return () => {
       if (menuLockTimer.current) clearTimeout(menuLockTimer.current);
     };
-  }, [page, setEnabled, dismiss]);
-
-  useEffect(() => () => setEnabled(false), [setEnabled]);
+  }, [page]);
 
   const goTo = useCallback((index: number) => {
     scrollRef.current?.scrollTo({ x: index * width, animated: true });
@@ -137,7 +145,7 @@ const styles = StyleSheet.create({
 
 export default function AppEntry() {
   const { onboardingChecked, setOnboardingChecked, loading } = useXP();
-  const { isNewUser } = useAuth();
+  const { clearNewUserFlag } = useAuth();
   const { theme } = useTheme();
   const params = useLocalSearchParams();
   const initialPage = params.initialPage ? parseInt(params.initialPage as string, 10) : PAGE.home;
@@ -150,8 +158,16 @@ export default function AppEntry() {
     );
   }
 
-  if (isNewUser && !onboardingChecked) {
-    return <OnboardingQuizScreen onFinish={() => setOnboardingChecked(true)} />;
+  // Gate: any signed-in user without completed onboarding (new signup or unfinished).
+  if (!onboardingChecked) {
+    return (
+      <OnboardingQuizScreen
+        onFinish={async () => {
+          await setOnboardingChecked(true);
+          await clearNewUserFlag();
+        }}
+      />
+    );
   }
 
   return <SwipeContainer initialPage={Number.isFinite(initialPage) ? initialPage : PAGE.home} />;

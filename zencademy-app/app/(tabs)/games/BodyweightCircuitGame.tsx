@@ -2,6 +2,7 @@ import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { BackHandler, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { PracticeDoneModal } from '../../../components/PracticeDoneModal';
 
 const exercises = [
   {
@@ -73,15 +74,20 @@ export default function BodyweightCircuitGame() {
 
   const handleStartStop = () => {
     if (started) {
-      clearInterval(intervalRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
       setStarted(false);
     } else {
       setTimer(0);
       setShowDone(false);
       setStarted(true);
       intervalRef.current = setInterval(() => {
-        setTimer(prev => {
-          if (prev >= 89) setShowDone(true);
+        setTimer((prev) => {
+          if (prev >= 89) {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            setStarted(false);
+            setShowDone(true);
+            return 90;
+          }
           return prev + 1;
         });
       }, 1000);
@@ -194,17 +200,26 @@ export default function BodyweightCircuitGame() {
           </View>
         )}
 
-        {showDone && !started && (
-          <TouchableOpacity style={styles.doneBtn} onPress={() => {
-            setTimer(0);
-            setShowDone(false);
-          }}>
-            <Text style={styles.doneBtnText}>Mark as Done</Text>
-          </TouchableOpacity>
-        )}
+        {showDone && !started ? (
+          <Text style={{ textAlign: 'center', marginTop: 12, color: '#17181c', fontWeight: '600' }}>Session finished — claim your reward</Text>
+        ) : null}
 
         <View style={{ height: 60 }} />
       </ScrollView>
+
+      <PracticeDoneModal
+        visible={showDone && !started}
+        difficulty="Medium"
+        title="Bodyweight Circuit complete"
+        onAgain={() => {
+          setTimer(0);
+          setShowDone(false);
+        }}
+        onExit={() => {
+          setShowDone(false);
+          router.replace('/PhysicalTraining/StrengthTrainingScreen');
+        }}
+      />
     </SafeAreaView>
   );
 }

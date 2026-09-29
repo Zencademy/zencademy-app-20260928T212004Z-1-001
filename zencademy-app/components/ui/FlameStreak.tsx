@@ -1,8 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useRef } from 'react';
+import LottieView from 'lottie-react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, View } from 'react-native';
 
-/** Subtle flicker flame — Ionicons, matches coin/bolt motion language. */
+/**
+ * Streak flame — Ionicons flicker is always visible (Expo Go-safe).
+ * Lottie Noto fire sits on top when it loads; many Go builds skip its track mattes.
+ */
 export function FlameStreak({
   size = 18,
   color = '#F97316',
@@ -13,9 +17,12 @@ export function FlameStreak({
   active?: boolean;
 }) {
   const flicker = useRef(new Animated.Value(0)).current;
+  const [lottieOk, setLottieOk] = useState(true);
+  const box = Math.round(size * 1.7);
 
   useEffect(() => {
     if (!active) {
+      flicker.stopAnimation();
       flicker.setValue(0);
       return;
     }
@@ -23,25 +30,25 @@ export function FlameStreak({
       Animated.sequence([
         Animated.timing(flicker, {
           toValue: 1,
-          duration: 320,
+          duration: 280,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
         Animated.timing(flicker, {
-          toValue: 0.35,
-          duration: 180,
+          toValue: 0.25,
+          duration: 160,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
         Animated.timing(flicker, {
-          toValue: 0.85,
-          duration: 240,
+          toValue: 0.9,
+          duration: 220,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
         Animated.timing(flicker, {
           toValue: 0,
-          duration: 280,
+          duration: 260,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
@@ -52,21 +59,30 @@ export function FlameStreak({
   }, [active, flicker]);
 
   return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+    <View
+      style={{
+        width: box,
+        height: box,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: -2,
+      }}
+    >
       <Animated.View
         style={{
+          position: 'absolute',
           opacity: active
-            ? flicker.interpolate({ inputRange: [0, 1], outputRange: [0.78, 1] })
-            : 0.45,
+            ? flicker.interpolate({ inputRange: [0, 1], outputRange: [0.75, 1] })
+            : 0.4,
           transform: [
             {
               scale: active
-                ? flicker.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1.08] })
+                ? flicker.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1.12] })
                 : 1,
             },
             {
               translateY: active
-                ? flicker.interpolate({ inputRange: [0, 1], outputRange: [0.6, -0.8] })
+                ? flicker.interpolate({ inputRange: [0, 1], outputRange: [0.8, -1.2] })
                 : 0,
             },
           ],
@@ -74,6 +90,23 @@ export function FlameStreak({
       >
         <Ionicons name="flame" size={size} color={color} />
       </Animated.View>
+
+      {lottieOk ? (
+        <LottieView
+          source={require('../../assets/lottie/fire.json')}
+          autoPlay={active}
+          loop={active}
+          resizeMode="contain"
+          renderMode="SOFTWARE"
+          onAnimationFailure={() => setLottieOk(false)}
+          style={{
+            width: box,
+            height: box,
+            // Softly blend over icon when Lottie actually paints
+            opacity: active ? 0.95 : 0.35,
+          }}
+        />
+      ) : null}
     </View>
   );
 }

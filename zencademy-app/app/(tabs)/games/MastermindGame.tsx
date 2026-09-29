@@ -1,7 +1,9 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../lib/progression';
+import { useGameReward } from '../../../hooks/useGameReward';
+import { WinPulse } from '../../../components/WinPulse';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
 import { Animated, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ConfettiCannon from 'react-native-confetti-cannon';
 import GameHeader from '../../../components/GameHeader';
 import { useTheme } from '../../../components/ThemeContext';
 import { useXP } from '../../../components/XPContext';
@@ -12,14 +14,9 @@ const { width } = Dimensions.get('window');
 const PEGS = 4;
 const MAX_ATTEMPTS = 12;
 function xpForDifficulty(level: string) {
-  switch (level) {
-    case 'hard':
-      return 30;
-    case 'medium':
-      return 20;
-    default:
-      return 15;
-  }
+  if (level === 'hard') return sessionXp('Hard');
+  if (level === 'medium') return sessionXp('Medium');
+  return sessionXp('Easy');
 }
 
 function generateSecret(paletteSize: number): number[] {
@@ -48,7 +45,8 @@ function scoreGuess(secret: number[], guess: number[]): { exact: number; colorOn
 export default function MastermindGame() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { addXp } = useXP();
+  const { plan } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
   const { theme } = useTheme();
   const [secret, setSecret] = useState<number[]>(generateSecret());
   const [attempts, setAttempts] = useState<number[][]>([]);
@@ -78,7 +76,7 @@ export default function MastermindGame() {
     setFeedbacks(nextFeedbacks);
     if (s.exact === PEGS) {
       setWin(true);
-      addXp(xpForDifficulty(difficulty));
+      void award(xpForDifficulty(difficulty));
       setShowWin(true);
       Animated.sequence([
         Animated.timing(pulse, { toValue: 1, duration: 140, useNativeDriver: true }),
@@ -181,7 +179,7 @@ export default function MastermindGame() {
       <Modal visible={showWin} transparent animationType="fade" onRequestClose={() => setShowWin(false)}>
         <View style={[styles.modalBackdrop, { backgroundColor: theme.overlay }]}>
           <View style={[styles.modalCard, { backgroundColor: theme.card, alignItems: 'center' }]}>
-            <ConfettiCannon count={140} origin={{ x: width / 2, y: 0 }} fadeOut autoStart explosionSpeed={420} fallSpeed={2100} />
+            <WinPulse active />
             <Text style={[styles.resultTitle, { color: theme.text }]}>Congratulations!</Text>
             <Text style={[styles.resultText, { color: theme.textSecondary }]}>You cracked the code • +{xpForDifficulty(difficulty)} XP</Text>
             <TouchableOpacity style={[styles.primaryBtn, { backgroundColor: theme.primary }]} onPress={() => { setShowWin(false); reset(); }}>

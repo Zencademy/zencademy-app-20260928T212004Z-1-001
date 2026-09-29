@@ -5,7 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../ThemeContext';
 import { useXP } from '../XPContext';
 import { AccentPulse, CountUp, SpinCoin, ThunderBolt } from './motion';
-import { WalletSkeleton } from './Skeleton';
 import { type } from './type';
 
 /** Compact chip wallet used outside Home — denser, more interesting than twin cards. */
@@ -24,7 +23,82 @@ export function WalletBar({ compact = false }: { compact?: boolean }) {
   }, []);
 
   if (loading) {
-    return <WalletSkeleton />;
+    return (
+      <View
+        style={{
+          paddingHorizontal: compact ? 12 : 20,
+          paddingTop: compact ? 2 : 6,
+          paddingBottom: 10,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+            borderRadius: 14,
+            paddingVertical: compact ? 8 : 10,
+            paddingHorizontal: 10,
+            backgroundColor: theme.card,
+            borderWidth: 1,
+            borderColor: theme.border,
+          }}
+        >
+          <View
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: theme.surface,
+              borderWidth: 1,
+              borderColor: theme.border,
+            }}
+          >
+            <Text style={[type.label, { color: theme.textTertiary, letterSpacing: 0 }]}>…</Text>
+          </View>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+                borderRadius: 999,
+                paddingVertical: 6,
+                paddingHorizontal: 10,
+                backgroundColor: theme.xpSoft,
+                borderWidth: 1,
+                borderColor: theme.xpBorder,
+              }}
+            >
+              <ThunderBolt size={14} color={theme.primary} />
+              <Text style={[type.label, { color: theme.textTertiary, letterSpacing: 0.2, textTransform: 'none', fontSize: 13 }]}>—</Text>
+              <Text style={[type.label, { color: theme.textTertiary, letterSpacing: 0.4 }]}>XP</Text>
+            </View>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+                borderRadius: 999,
+                paddingVertical: 6,
+                paddingHorizontal: 10,
+                backgroundColor: theme.coinSoft,
+                borderWidth: 1,
+                borderColor: theme.coinBorder,
+              }}
+            >
+              <SpinCoin size={14} color={theme.coin} />
+              <Text style={[type.label, { color: theme.textTertiary, letterSpacing: 0.2, textTransform: 'none', fontSize: 13 }]}>—</Text>
+              <Text style={[type.label, { color: theme.coin, letterSpacing: 0.4 }]}>COIN</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
   }
 
   const pad = compact ? 12 : 20;

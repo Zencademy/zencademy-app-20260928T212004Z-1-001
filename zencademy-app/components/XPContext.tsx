@@ -4,6 +4,7 @@ import { useAuth } from './AuthContext';
 import { SHOP_ITEMS, isBoostItem, shopItemById } from '../constants/shop';
 import { activateBoost } from '../lib/inventory';
 import { coinsForXp } from '../lib/progression';
+import { playSfx } from '../lib/sound/SoundPack';
 import { supabase } from '../lib/supabase/client';
 import { trainingService, userDataService } from '../lib/supabase/services';
 import type { TrainingSession, UserData } from '../lib/supabase/types';
@@ -51,6 +52,7 @@ function useProgressValue() {
     // Optimistic UI so wallet updates immediately; server remains source of truth.
     setProfile(prev => prev ? { ...prev, points: prev.points + points, coins: prev.coins + coins } : prev);
     toast?.showReward({ xp: points, coins, streak: profile?.daily_streak_count || undefined, label: 'SESSION REWARD' });
+    playSfx('reward');
     try {
       await trainingService.recordReward(points, coins);
       await refresh();
@@ -65,7 +67,11 @@ function useProgressValue() {
     xpHistory: Array.from(xpByDay, ([date, xp]) => ({ date, xp })), timeHistory: Array.from(timeByDay, ([date, time]) => ({ date, time })),
     unlockedBadges: profile?.badges || [], equippedBadge: profile?.equipped_badge || null, ownedEbooks: profile?.owned_ebooks || [],
     setName: (name: string) => edit({ username: name.trim() }), setBrainType: (brain_type: string) => edit({ brain_type }), setOnboardingChecked: (onboarding_checked: boolean) => edit({ onboarding_checked }),
-    setEquippedBadge: async (badgeId: string | null) => { await userDataService.equipBadge(badgeId); await refresh(); },
+    setEquippedBadge: async (badgeId: string | null) => {
+      await userDataService.equipBadge(badgeId);
+      await refresh();
+      playSfx('tap');
+    },
     purchaseShopItem: async (itemId: string) => {
       if (!user) throw new Error('Sign in first');
       const item = shopItemById(itemId) || SHOP_ITEMS.find(i => i.id === itemId);
@@ -81,6 +87,7 @@ function useProgressValue() {
           }
           await activateBoost(itemId);
           await refresh();
+          playSfx('unlock');
         } catch (error) {
           await refresh();
           throw error;
@@ -89,6 +96,7 @@ function useProgressValue() {
       }
       await userDataService.purchaseShopItem(user.id, itemId);
       await refresh();
+      playSfx('unlock');
     },
     purchaseEbook: async (ebookId: string, _price: number) => {
       if (!user) throw new Error('Sign in first');
@@ -97,6 +105,7 @@ function useProgressValue() {
       try {
         await userDataService.purchaseEbook(ebookId);
         await refresh();
+        playSfx('unlock');
       } catch (error) {
         await refresh();
         throw error;

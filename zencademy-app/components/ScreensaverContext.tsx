@@ -72,6 +72,15 @@ export function ScreensaverProvider({ children }: { children: React.ReactNode })
   }, [scheduleIdle]);
 
   const resetTimer = useCallback(() => {
+    if (!enabledRef.current) {
+      // Never arm idle while screensaver is disabled (e.g. mid-game).
+      clearIdle();
+      if (activeRef.current) {
+        setShowTitle(false);
+        setActive(false);
+      }
+      return;
+    }
     if (activeRef.current) {
       dismiss();
       return;

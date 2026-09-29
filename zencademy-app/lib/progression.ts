@@ -59,6 +59,21 @@ export function planXpBonus(plan?: string | null) {
   return 0;
 }
 
+/** Session XP including plan bonus — single source for all games. */
+export function sessionXp(difficulty: Difficulty, plan?: string | null) {
+  return rewardXpFor(difficulty) + planXpBonus(plan);
+}
+
+/** Partial credit for incomplete runs (0–1 of session XP). */
+export function partialSessionXp(difficulty: Difficulty, ratio: number, plan?: string | null) {
+  const full = sessionXp(difficulty, plan);
+  const clamped = Math.max(0, Math.min(1, ratio));
+  if (clamped <= 0) return 0;
+  if (clamped >= 1) return full;
+  return Math.max(1, Math.round(full * clamped));
+}
+
+
 export function ebookCoinPrice(ebook: { isPremium?: boolean; pages?: number; status?: string }) {
   if (ebook.status === 'under-development') return null;
   const pages = ebook.pages && ebook.pages > 0 ? ebook.pages : 40;

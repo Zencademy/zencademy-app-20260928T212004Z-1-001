@@ -354,8 +354,6 @@ export default function HomeScreen({ goLeaderboard, openMenu }: Props) {
   );
 
   const currentLevelXp = level < MAX_LEVEL ? getXpForLevel(level) : getXpForLevel(MAX_LEVEL);
-  // Use authoritative total points from Supabase/website
-  const totalXp = totalPoints;
 
   // UI principal: NU mai există fallback/redirect, aplicația rulează orice ar fi!
   return (
@@ -423,7 +421,7 @@ export default function HomeScreen({ goLeaderboard, openMenu }: Props) {
                   Level {level}{level >= MAX_LEVEL ? ' · MAX' : ''}
                 </Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, height: 18 }}>
-                  <FlameStreak size={18} color={theme.flame} active={streak > 0} />
+                  <FlameStreak size={20} color={theme.flame} active />
                   <Text style={[styles.streakText, { color: theme.flame, lineHeight: 18, includeFontPadding: false }]}>
                     {streak} day streak
                   </Text>

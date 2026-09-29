@@ -47,13 +47,31 @@ export const userDataService = {
   async getLeaderboard(limit = 50): Promise<{ users: LeaderboardUser[]; totalCount: number }> {
     const { data, error } = await supabase.rpc('get_leaderboard', { p_limit: limit });
     if (error) throw error;
-    const users: LeaderboardUser[] = (data || []).map((row: LeaderboardUser) => ({ ...row, level: deriveLevelAndLevelXP(row.points).level, level_points: deriveLevelAndLevelXP(row.points).levelXP, plan: 'free', badges: [] }));
-    return { users, totalCount: Number(data?.[0]?.total_count || 0) };
+    const rows = (data || []) as Array<LeaderboardUser & { total_count?: number; points: number | string }>;
+    const users: LeaderboardUser[] = rows.map((row) => {
+      const points = Number(row.points) || 0;
+      const derived = deriveLevelAndLevelXP(points);
+      return {
+        id: row.id,
+        username: row.username || 'Member',
+        points,
+        level: derived.level,
+        level_points: derived.levelXP,
+        streak_count: Number(row.streak_count) || 0,
+        daily_streak_count: Number(row.daily_streak_count) || 0,
+        plan: row.plan || 'free',
+        brain_type: row.brain_type || '',
+        badges: row.badges || [],
+        equipped_badge: row.equipped_badge || null,
+        rank: Number(row.rank) || 0,
+      };
+    });
+    return { users, totalCount: Number(rows[0]?.total_count || users.length || 0) };
   },
   async getUserRank(_userId: string): Promise<number | null> {
     const { data, error } = await supabase.rpc('my_rank');
     if (error) throw error;
-    return data;
+    return data == null ? null : Number(data);
   },
 };
 export const trainingService = {
