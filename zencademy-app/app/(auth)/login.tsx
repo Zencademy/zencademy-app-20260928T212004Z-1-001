@@ -30,6 +30,7 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   
   const { signIn } = useAuth();
   const router = useRouter();
@@ -96,16 +97,21 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      const message = 'Please fill in all fields';
+      setFormError(message);
+      Alert.alert('Error', message);
       return;
     }
 
     setLoading(true);
+    setFormError(null);
     try {
       await signIn(email, password);
       router.replace('/(tabs)');
     } catch (error: any) {
-      Alert.alert('Login Failed', error.message);
+      const message = error?.message ?? 'Login failed';
+      setFormError(message);
+      Alert.alert('Login Failed', message);
     } finally {
       setLoading(false);
     }
@@ -361,6 +367,8 @@ export default function LoginScreen() {
                   </TouchableOpacity>
                 </Animated.View>
 
+                {formError ? <Text style={styles.formError}>{formError}</Text> : null}
+
                 {/* Forgot Password */}
                 <TouchableOpacity style={styles.forgotPassword}>
                   <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
@@ -560,6 +568,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '600',
+  },
+  formError: {
+    color: '#c0392b',
+    textAlign: 'center',
+    marginTop: 12,
+    fontSize: 14,
   },
   forgotPassword: {
     alignItems: 'center',
