@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "Zencademy - Train Your Mind",
+    "slug": "zencademy-app",
+    "version": "0.5",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "zencademyapp",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "zencademy.appzen"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "zencademy.appzen",
+      "versionCode": 10
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      "expo-font",
+      [
+        "expo-navigation-bar",
+        {
+          "hidden": true,
+          "style": "dark"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "9b097bcc-035e-4b81-a490-9a7788336c2b"
+      }
+    },
+    "androidStatusBar": {
+      "backgroundColor": "#ffffff",
+      "barStyle": "dark-content",
+      "hidden": true
+    },
+    "owner": "zencademy1"
+  }
+}

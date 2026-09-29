@@ -1,0 +1,399 @@
+app/(tabs)/DailyTasksScreen.tsx(62,41): error TS2339: Property 'done' does not exist on type 'never'.
+app/(tabs)/DailyTasksScreen.tsx(67,9): error TS7034: Variable 'timeout' implicitly has type 'any' in some locations where its type cannot be determined.
+app/(tabs)/DailyTasksScreen.tsx(76,31): error TS7005: Variable 'timeout' implicitly has an 'any' type.
+app/(tabs)/DailyTasksScreen.tsx(97,15): error TS2322: Type '{ id: string; title: string; done: boolean; }' is not assignable to type 'never'.
+app/(tabs)/DailyTasksScreen.tsx(97,25): error TS2322: Type '{ id: string; title: string; done: false; }' is not assignable to type 'never'.
+app/(tabs)/DailyTasksScreen.tsx(101,23): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+app/(tabs)/DailyTasksScreen.tsx(102,40): error TS2339: Property 'done' does not exist on type 'never'.
+app/(tabs)/DailyTasksScreen.tsx(102,58): error TS2339: Property 'done' does not exist on type 'never'.
+app/(tabs)/DailyTasksScreen.tsx(104,23): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+app/(tabs)/DailyTasksScreen.tsx(165,31): error TS2339: Property 'id' does not exist on type 'never'.
+app/(tabs)/DailyTasksScreen.tsx(165,125): error TS2339: Property 'done' does not exist on type 'never'.
+app/(tabs)/DailyTasksScreen.tsx(167,38): error TS2339: Property 'done' does not exist on type 'never'.
+app/(tabs)/DailyTasksScreen.tsx(167,138): error TS2339: Property 'done' does not exist on type 'never'.
+app/(tabs)/DailyTasksScreen.tsx(168,27): error TS2339: Property 'done' does not exist on type 'never'.
+app/(tabs)/DailyTasksScreen.tsx(171,76): error TS2339: Property 'done' does not exist on type 'never'.
+app/(tabs)/DailyTasksScreen.tsx(171,112): error TS2339: Property 'title' does not exist on type 'never'.
+app/(tabs)/DeveloperScreen.tsx(9,21): error TS7006: Parameter 'level' implicitly has an 'any' type.
+app/(tabs)/DeveloperScreen.tsx(19,24): error TS7006: Parameter 'amount' implicitly has an 'any' type.
+app/(tabs)/DeveloperScreen.tsx(24,27): error TS7006: Parameter 'amount' implicitly has an 'any' type.
+app/(tabs)/DeveloperScreen.tsx(37,24): error TS7006: Parameter 'val' implicitly has an 'any' type.
+app/(tabs)/EbooksScreen.tsx(94,25): error TS7006: Parameter 'id' implicitly has an 'any' type.
+app/(tabs)/EbooksScreen.tsx(94,29): error TS7006: Parameter 'xpCost' implicitly has an 'any' type.
+app/(tabs)/EbooksScreen.tsx(185,13): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+app/(tabs)/focus.tsx(29,25): error TS7006: Parameter 'arr' implicitly has an 'any' type.
+app/(tabs)/focus.tsx(74,19): error TS7006: Parameter 'sec' implicitly has an 'any' type.
+app/(tabs)/focus.tsx(99,7): error TS2322: Type '{ date: string; duration: string; task: string; finished: string; feeling: string; }' is not assignable to type 'never'.
+app/(tabs)/focus.tsx(215,33): error TS7006: Parameter 'v' implicitly has an 'any' type.
+app/(tabs)/focus.tsx(221,33): error TS7006: Parameter 'v' implicitly has an 'any' type.
+app/(tabs)/focus.tsx(227,33): error TS7006: Parameter 'v' implicitly has an 'any' type.
+app/(tabs)/focus.tsx(300,76): error TS2339: Property 'task' does not exist on type 'never'.
+app/(tabs)/focus.tsx(302,20): error TS2339: Property 'date' does not exist on type 'never'.
+app/(tabs)/focus.tsx(302,31): error TS2339: Property 'duration' does not exist on type 'never'.
+app/(tabs)/focus.tsx(305,20): error TS2339: Property 'finished' does not exist on type 'never'.
+app/(tabs)/focus.tsx(305,44): error TS2339: Property 'finished' does not exist on type 'never'.
+app/(tabs)/focus.tsx(305,64): error TS2339: Property 'feeling' does not exist on type 'never'.
+app/(tabs)/focus.tsx(305,81): error TS2339: Property 'feeling' does not exist on type 'never'.
+app/(tabs)/focus.tsx(316,22): error TS7031: Binding element 'label' implicitly has an 'any' type.
+app/(tabs)/focus.tsx(316,29): error TS7031: Binding element 'value' implicitly has an 'any' type.
+app/(tabs)/focus.tsx(316,36): error TS7031: Binding element 'onValueChange' implicitly has an 'any' type.
+app/(tabs)/focus.tsx(316,51): error TS7031: Binding element 'theme' implicitly has an 'any' type.
+app/(tabs)/games/AlternateNostrilGame.tsx(89,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/AlternateNostrilGame.tsx(104,22): error TS2345: Argument of type '"/PhysicalTraining/BreathingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/AlternateNostrilGame.tsx(109,22): error TS2345: Argument of type '"/PhysicalTraining/BreathingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/AlternateNostrilGame.tsx(124,41): error TS2345: Argument of type '"/PhysicalTraining/BreathingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/AlternateNostrilGame.tsx(166,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/AlternateNostrilGame.tsx(174,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/AlternateNostrilGame.tsx(198,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/BodyScanGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/BodyScanGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/RelaxationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/BodyScanGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/RelaxationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/BodyScanGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/RelaxationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/BodyScanGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/BodyScanGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/BodyScanGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/BodyweightCircuitGame.tsx(82,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/BodyweightCircuitGame.tsx(97,22): error TS2345: Argument of type '"/PhysicalTraining/StrengthTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/BodyweightCircuitGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/StrengthTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/BodyweightCircuitGame.tsx(117,41): error TS2345: Argument of type '"/PhysicalTraining/StrengthTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/BodyweightCircuitGame.tsx(159,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/BodyweightCircuitGame.tsx(167,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/BodyweightCircuitGame.tsx(191,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/BosuBalanceGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/BosuBalanceGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/BalanceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/BosuBalanceGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/BalanceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/BosuBalanceGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/BalanceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/BosuBalanceGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/BosuBalanceGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/BosuBalanceGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/BoxBreathingGame.tsx(85,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/BoxBreathingGame.tsx(100,22): error TS2345: Argument of type '"/PhysicalTraining/BreathingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/BoxBreathingGame.tsx(105,22): error TS2345: Argument of type '"/PhysicalTraining/BreathingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/BoxBreathingGame.tsx(120,41): error TS2345: Argument of type '"/PhysicalTraining/BreathingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/BoxBreathingGame.tsx(162,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/BoxBreathingGame.tsx(170,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/BoxBreathingGame.tsx(194,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ButterflyStretchGame.tsx(84,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/ButterflyStretchGame.tsx(99,22): error TS2345: Argument of type '"/PhysicalTraining/StretchingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ButterflyStretchGame.tsx(104,22): error TS2345: Argument of type '"/PhysicalTraining/StretchingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ButterflyStretchGame.tsx(119,41): error TS2345: Argument of type '"/PhysicalTraining/StretchingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ButterflyStretchGame.tsx(161,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ButterflyStretchGame.tsx(169,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ButterflyStretchGame.tsx(193,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/CardioRunGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/CardioRunGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/EnduranceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/CardioRunGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/EnduranceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/CardioRunGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/EnduranceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/CardioRunGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/CardioRunGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/CardioRunGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/CrossCrawlGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/CrossCrawlGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/CoordinationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/CrossCrawlGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/CoordinationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/CrossCrawlGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/CoordinationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/CrossCrawlGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/CrossCrawlGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/CrossCrawlGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/CyclingSprintGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/CyclingSprintGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/EnduranceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/CyclingSprintGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/EnduranceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/CyclingSprintGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/EnduranceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/CyclingSprintGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/CyclingSprintGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/CyclingSprintGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/DynamicBalanceGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/DynamicBalanceGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/BalanceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/DynamicBalanceGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/BalanceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/DynamicBalanceGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/BalanceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/DynamicBalanceGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/DynamicBalanceGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/DynamicBalanceGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/easy/CreativityEasyGame.tsx(143,23): error TS7006: Parameter 'array' implicitly has an 'any' type.
+app/(tabs)/games/easy/CreativityEasyGame.tsx(177,22): error TS2345: Argument of type 'any[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type 'any[]' is not assignable to type 'never[]'.
+    Type 'any' is not assignable to type 'never'.
+app/(tabs)/games/easy/CreativityEasyGame.tsx(177,50): error TS2339: Property 'choices' does not exist on type 'never'.
+app/(tabs)/games/easy/CreativityEasyGame.tsx(186,18): error TS2345: Argument of type '{ emoji: string; choices: string[]; answer: string; explanation: string; }[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '{ emoji: string; choices: string[]; answer: string; explanation: string; }[]' is not assignable to type 'never[]'.
+    Type '{ emoji: string; choices: string[]; answer: string; explanation: string; }' is not assignable to type 'never'.
+app/(tabs)/games/easy/CreativityEasyGame.tsx(198,25): error TS7006: Parameter 'choice' implicitly has an 'any' type.
+app/(tabs)/games/easy/CreativityEasyGame.tsx(198,33): error TS7006: Parameter 'i' implicitly has an 'any' type.
+app/(tabs)/games/easy/CreativityEasyGame.tsx(201,35): error TS2339: Property 'answer' does not exist on type 'never'.
+app/(tabs)/games/easy/CreativityEasyGame.tsx(265,25): error TS2339: Property 'answer' does not exist on type 'never'.
+app/(tabs)/games/easy/CreativityEasyGame.tsx(268,94): error TS2339: Property 'explanation' does not exist on type 'never'.
+app/(tabs)/games/easy/CreativityEasyGame.tsx(308,44): error TS2339: Property 'exitBtn' does not exist on type '{ container: { flex: number; width: "100%"; }; gameContent: { flex: number; alignItems: "center"; justifyContent: "center"; }; centralCard: { width: "98%"; alignItems: "center"; justifyContent: "center"; paddingVertical: number; marginTop: number; }; ... 15 more ...; exitBtnText: { ...; }; }'.
+app/(tabs)/games/easy/CreativityEasyGame.tsx(357,54): error TS2339: Property 'emoji' does not exist on type 'never'.
+app/(tabs)/games/easy/NumberRecallGame.tsx(30,19): error TS2345: Argument of type '() => () => void | 0 | null' is not assignable to parameter of type 'EffectCallback'.
+  Type '() => void | 0 | null' is not assignable to type 'void | Destructor'.
+    Type '() => void | 0 | null' is not assignable to type 'Destructor'.
+      Type 'void | 0 | null' is not assignable to type 'void | { [UNDEFINED_VOID_ONLY]: never; }'.
+        Type 'null' is not assignable to type 'void | { [UNDEFINED_VOID_ONLY]: never; }'.
+app/(tabs)/games/easy/ReactionTapGame.tsx(138,26): error TS2345: Argument of type '(rts: never[]) => number[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '(rts: never[]) => number[]' is not assignable to type '(prevState: never[]) => never[]'.
+    Type 'number[]' is not assignable to type 'never[]'.
+      Type 'number' is not assignable to type 'never'.
+app/(tabs)/games/easy/ReactionTapGame.tsx(266,44): error TS2339: Property 'exitBtn' does not exist on type '{ container: { flex: number; width: "100%"; }; gameContent: { flex: number; alignItems: "center"; justifyContent: "center"; }; lightsRow: { flexDirection: "row"; justifyContent: "center"; alignItems: "center"; marginBottom: number; marginTop: number; gap: number; }; ... 23 more ...; successTime: { ...; }; }'.
+app/(tabs)/games/easy/VerbalEasyGame.tsx(43,23): error TS7006: Parameter 'array' implicitly has an 'any' type.
+app/(tabs)/games/easy/VerbalEasyGame.tsx(77,22): error TS2345: Argument of type 'any[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type 'any[]' is not assignable to type 'never[]'.
+    Type 'any' is not assignable to type 'never'.
+app/(tabs)/games/easy/VerbalEasyGame.tsx(77,50): error TS2339: Property 'choices' does not exist on type 'never'.
+app/(tabs)/games/easy/VerbalEasyGame.tsx(86,18): error TS2345: Argument of type '{ word: string; choices: string[]; answer: string; explanation: string; }[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '{ word: string; choices: string[]; answer: string; explanation: string; }[]' is not assignable to type 'never[]'.
+    Type '{ word: string; choices: string[]; answer: string; explanation: string; }' is not assignable to type 'never'.
+app/(tabs)/games/easy/VerbalEasyGame.tsx(98,25): error TS7006: Parameter 'choice' implicitly has an 'any' type.
+app/(tabs)/games/easy/VerbalEasyGame.tsx(98,33): error TS7006: Parameter 'i' implicitly has an 'any' type.
+app/(tabs)/games/easy/VerbalEasyGame.tsx(101,35): error TS2339: Property 'answer' does not exist on type 'never'.
+app/(tabs)/games/easy/VerbalEasyGame.tsx(165,25): error TS2339: Property 'answer' does not exist on type 'never'.
+app/(tabs)/games/easy/VerbalEasyGame.tsx(168,94): error TS2339: Property 'explanation' does not exist on type 'never'.
+app/(tabs)/games/easy/VerbalEasyGame.tsx(208,44): error TS2339: Property 'exitBtn' does not exist on type '{ container: { flex: number; width: "100%"; }; gameContent: { flex: number; alignItems: "center"; justifyContent: "center"; }; centralCard: { width: "98%"; alignItems: "center"; justifyContent: "center"; paddingVertical: number; marginTop: number; }; ... 16 more ...; exitBtnText: { ...; }; }'.
+app/(tabs)/games/easy/VerbalEasyGame.tsx(258,78): error TS2339: Property 'word' does not exist on type 'never'.
+app/(tabs)/games/easy/VisualEasyGame.tsx(51,23): error TS7006: Parameter 'array' implicitly has an 'any' type.
+app/(tabs)/games/easy/VisualEasyGame.tsx(85,22): error TS2345: Argument of type 'any[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type 'any[]' is not assignable to type 'never[]'.
+    Type 'any' is not assignable to type 'never'.
+app/(tabs)/games/easy/VisualEasyGame.tsx(85,50): error TS2339: Property 'items' does not exist on type 'never'.
+app/(tabs)/games/easy/VisualEasyGame.tsx(94,18): error TS2345: Argument of type '{ items: string[]; answer: string; explanation: string; }[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '{ items: string[]; answer: string; explanation: string; }[]' is not assignable to type 'never[]'.
+    Type '{ items: string[]; answer: string; explanation: string; }' is not assignable to type 'never'.
+app/(tabs)/games/easy/VisualEasyGame.tsx(106,25): error TS7006: Parameter 'choice' implicitly has an 'any' type.
+app/(tabs)/games/easy/VisualEasyGame.tsx(106,33): error TS7006: Parameter 'i' implicitly has an 'any' type.
+app/(tabs)/games/easy/VisualEasyGame.tsx(109,35): error TS2339: Property 'answer' does not exist on type 'never'.
+app/(tabs)/games/easy/VisualEasyGame.tsx(171,25): error TS2339: Property 'answer' does not exist on type 'never'.
+app/(tabs)/games/easy/VisualEasyGame.tsx(174,94): error TS2339: Property 'explanation' does not exist on type 'never'.
+app/(tabs)/games/easy/VisualEasyGame.tsx(213,44): error TS2339: Property 'exitBtn' does not exist on type '{ container: { flex: number; width: "100%"; }; gameContent: { flex: number; alignItems: "center"; justifyContent: "center"; }; centralCard: { width: "98%"; alignItems: "center"; justifyContent: "center"; paddingVertical: number; marginTop: number; }; ... 14 more ...; exitBtnText: { ...; }; }'.
+app/(tabs)/games/ExplosivePowerGame.tsx(86,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/ExplosivePowerGame.tsx(101,22): error TS2345: Argument of type '"/PhysicalTraining/StrengthTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ExplosivePowerGame.tsx(106,22): error TS2345: Argument of type '"/PhysicalTraining/StrengthTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ExplosivePowerGame.tsx(121,41): error TS2345: Argument of type '"/PhysicalTraining/StrengthTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ExplosivePowerGame.tsx(163,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ExplosivePowerGame.tsx(171,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ExplosivePowerGame.tsx(195,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ForwardFoldGame.tsx(84,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/ForwardFoldGame.tsx(99,22): error TS2345: Argument of type '"/PhysicalTraining/StretchingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ForwardFoldGame.tsx(104,22): error TS2345: Argument of type '"/PhysicalTraining/StretchingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ForwardFoldGame.tsx(119,41): error TS2345: Argument of type '"/PhysicalTraining/StretchingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ForwardFoldGame.tsx(161,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ForwardFoldGame.tsx(169,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ForwardFoldGame.tsx(193,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/FourSevenEightGame.tsx(85,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/FourSevenEightGame.tsx(100,22): error TS2345: Argument of type '"/PhysicalTraining/BreathingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/FourSevenEightGame.tsx(105,22): error TS2345: Argument of type '"/PhysicalTraining/BreathingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/FourSevenEightGame.tsx(120,41): error TS2345: Argument of type '"/PhysicalTraining/BreathingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/FourSevenEightGame.tsx(162,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/FourSevenEightGame.tsx(170,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/FourSevenEightGame.tsx(194,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/GuidedImageryGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/GuidedImageryGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/RelaxationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/GuidedImageryGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/RelaxationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/GuidedImageryGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/RelaxationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/GuidedImageryGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/GuidedImageryGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/GuidedImageryGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/HandClapGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/HandClapGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/CoordinationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/HandClapGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/CoordinationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/HandClapGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/CoordinationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/HandClapGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/HandClapGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/HandClapGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/hard/MiniSudokuGame.tsx(261,32): error TS2339: Property 'winText' does not exist on type '{ container: { flex: number; }; gameContent: { flex: number; alignItems: "center"; justifyContent: "center"; paddingHorizontal: number; }; card: { width: "98%"; borderRadius: number; padding: number; ... 4 more ...; elevation: number; }; ... 14 more ...; bigText: { ...; }; }'.
+app/(tabs)/games/hard/MiniSudokuGame.tsx(262,32): error TS2339: Property 'xpText' does not exist on type '{ container: { flex: number; }; gameContent: { flex: number; alignItems: "center"; justifyContent: "center"; paddingHorizontal: number; }; card: { width: "98%"; borderRadius: number; padding: number; ... 4 more ...; elevation: number; }; ... 14 more ...; bigText: { ...; }; }'.
+app/(tabs)/games/HeelToeWalkGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/HeelToeWalkGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/BalanceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/HeelToeWalkGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/BalanceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/HeelToeWalkGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/BalanceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/HeelToeWalkGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/HeelToeWalkGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/HeelToeWalkGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/HipFlexorStretchGame.tsx(84,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/HipFlexorStretchGame.tsx(99,22): error TS2345: Argument of type '"/PhysicalTraining/StretchingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/HipFlexorStretchGame.tsx(104,22): error TS2345: Argument of type '"/PhysicalTraining/StretchingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/HipFlexorStretchGame.tsx(119,41): error TS2345: Argument of type '"/PhysicalTraining/StretchingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/HipFlexorStretchGame.tsx(161,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/HipFlexorStretchGame.tsx(169,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/HipFlexorStretchGame.tsx(193,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/IntervalsGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/IntervalsGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/EnduranceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/IntervalsGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/EnduranceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/IntervalsGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/EnduranceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/IntervalsGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/IntervalsGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/IntervalsGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/JugglingGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/JugglingGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/CoordinationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/JugglingGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/CoordinationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/JugglingGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/CoordinationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/JugglingGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/JugglingGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/JugglingGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/LogicTrainingScreen.tsx(72,44): error TS2322: Type 'string' is not assignable to type '"/" | RelativePathString | ExternalPathString | "/logic-game" | "/_sitemap" | "/(auth)/login" | "/login" | "/(auth)/register" | "/register" | ... 187 more ... | "/+not-found"'.
+app/(tabs)/games/LongDistanceWalkGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/LongDistanceWalkGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/EnduranceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/LongDistanceWalkGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/EnduranceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/LongDistanceWalkGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/EnduranceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/LongDistanceWalkGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/LongDistanceWalkGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/LongDistanceWalkGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/MastermindGame.tsx(53,50): error TS2554: Expected 1 arguments, but got 0.
+app/(tabs)/games/OneLegStandGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/OneLegStandGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/BalanceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/OneLegStandGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/BalanceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/OneLegStandGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/BalanceTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/OneLegStandGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/OneLegStandGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/OneLegStandGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/PlankChallengeGame.tsx(81,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/PlankChallengeGame.tsx(96,22): error TS2345: Argument of type '"/PhysicalTraining/StrengthTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/PlankChallengeGame.tsx(101,22): error TS2345: Argument of type '"/PhysicalTraining/StrengthTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/PlankChallengeGame.tsx(116,41): error TS2345: Argument of type '"/PhysicalTraining/StrengthTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/PlankChallengeGame.tsx(158,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/PlankChallengeGame.tsx(166,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/PlankChallengeGame.tsx(190,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ProgressiveRelaxationGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/ProgressiveRelaxationGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/RelaxationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ProgressiveRelaxationGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/RelaxationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ProgressiveRelaxationGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/RelaxationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ProgressiveRelaxationGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ProgressiveRelaxationGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ProgressiveRelaxationGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ReactionCatchGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/ReactionCatchGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/CoordinationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ReactionCatchGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/CoordinationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ReactionCatchGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/CoordinationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ReactionCatchGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ReactionCatchGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ReactionCatchGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/RelaxationBreathingGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/RelaxationBreathingGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/RelaxationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/RelaxationBreathingGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/RelaxationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/RelaxationBreathingGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/RelaxationTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/RelaxationBreathingGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/RelaxationBreathingGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/RelaxationBreathingGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ResistanceBandsGame.tsx(84,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/ResistanceBandsGame.tsx(99,22): error TS2345: Argument of type '"/PhysicalTraining/StrengthTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ResistanceBandsGame.tsx(104,22): error TS2345: Argument of type '"/PhysicalTraining/StrengthTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ResistanceBandsGame.tsx(119,41): error TS2345: Argument of type '"/PhysicalTraining/StrengthTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ResistanceBandsGame.tsx(161,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ResistanceBandsGame.tsx(169,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ResistanceBandsGame.tsx(193,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ShoulderStretchGame.tsx(84,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/ShoulderStretchGame.tsx(99,22): error TS2345: Argument of type '"/PhysicalTraining/StretchingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ShoulderStretchGame.tsx(104,22): error TS2345: Argument of type '"/PhysicalTraining/StretchingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ShoulderStretchGame.tsx(119,41): error TS2345: Argument of type '"/PhysicalTraining/StretchingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/ShoulderStretchGame.tsx(161,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ShoulderStretchGame.tsx(169,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/ShoulderStretchGame.tsx(193,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/WimHofGame.tsx(87,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/WimHofGame.tsx(102,22): error TS2345: Argument of type '"/PhysicalTraining/BreathingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/WimHofGame.tsx(107,22): error TS2345: Argument of type '"/PhysicalTraining/BreathingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/WimHofGame.tsx(122,41): error TS2345: Argument of type '"/PhysicalTraining/BreathingTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/WimHofGame.tsx(164,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/WimHofGame.tsx(172,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/WimHofGame.tsx(196,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/WorldsGreatestGame.tsx(85,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/games/WorldsGreatestGame.tsx(100,22): error TS2345: Argument of type '"/PhysicalTraining/MobilityTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/WorldsGreatestGame.tsx(105,22): error TS2345: Argument of type '"/PhysicalTraining/MobilityTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/WorldsGreatestGame.tsx(120,41): error TS2345: Argument of type '"/PhysicalTraining/MobilityTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/games/WorldsGreatestGame.tsx(162,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/WorldsGreatestGame.tsx(170,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/games/WorldsGreatestGame.tsx(194,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/HomeScreen.tsx(984,3): error TS1117: An object literal cannot have multiple properties with the same name.
+app/(tabs)/LeaderboardScreen.tsx(421,45): error TS2322: Type 'string' is not assignable to type '"push" | "map" | "filter" | "at" | "text" | "restaurant" | "star" | "time" | "link" | "infinite" | "scale" | "body" | "search" | "image" | "alert" | "checkbox" | "menu" | "radio" | ... 1339 more ... | undefined'.
+app/(tabs)/LogicGamesScreen.tsx(130,23): error TS2339: Property 'isDark' does not exist on type 'ThemeColors'.
+app/(tabs)/LogicGamesScreen.tsx(192,19): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: LinearGradientProps): LinearGradient', gave the following error.
+    Type 'string[]' is not assignable to type 'readonly [ColorValue, ColorValue, ...ColorValue[]]'.
+      Source provides no match for required element at position 0 in target.
+  Overload 2 of 2, '(props: LinearGradientProps, context: any): LinearGradient', gave the following error.
+    Type 'string[]' is not assignable to type 'readonly [ColorValue, ColorValue, ...ColorValue[]]'.
+      Source provides no match for required element at position 0 in target.
+app/(tabs)/MeditateScreen.tsx(128,24): error TS7006: Parameter 'ms' implicitly has an 'any' type.
+app/(tabs)/MeditateScreen.tsx(136,25): error TS7031: Binding element 'size' implicitly has an 'any' type.
+app/(tabs)/MeditateScreen.tsx(136,31): error TS7031: Binding element 'left' implicitly has an 'any' type.
+app/(tabs)/MeditateScreen.tsx(136,37): error TS7031: Binding element 'color' implicitly has an 'any' type.
+app/(tabs)/MeditateScreen.tsx(136,44): error TS7031: Binding element 'duration' implicitly has an 'any' type.
+app/(tabs)/MeditateScreen.tsx(136,54): error TS7031: Binding element 'delay' implicitly has an 'any' type.
+app/(tabs)/MeditateScreen.tsx(136,61): error TS7031: Binding element 'parallax' implicitly has an 'any' type.
+app/(tabs)/MeditateScreen.tsx(218,42): error TS7031: Binding element 'goHome' implicitly has an 'any' type.
+app/(tabs)/MeditateScreen.tsx(242,9): error TS7034: Variable 'timeout' implicitly has type 'any' in some locations where its type cannot be determined.
+app/(tabs)/MeditateScreen.tsx(251,31): error TS7005: Variable 'timeout' implicitly has an 'any' type.
+app/(tabs)/MeditateScreen.tsx(292,9): error TS7034: Variable 'timeout' implicitly has type 'any' in some locations where its type cannot be determined.
+app/(tabs)/MeditateScreen.tsx(327,11): error TS7005: Variable 'timeout' implicitly has an 'any' type.
+app/(tabs)/MeditateScreen.tsx(333,23): error TS7006: Parameter 'ms' implicitly has an 'any' type.
+app/(tabs)/MeditateScreen.tsx(341,23): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+app/(tabs)/MentalTrainingScreen.tsx(136,40): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ attention: string; memory: string; logic: string; flexibility: string; speed: string; executive: string; creativity: string; critical: string; meta: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ attention: string; memory: string; logic: string; flexibility: string; speed: string; executive: string; creativity: string; critical: string; meta: string; }'.
+app/(tabs)/MentalTrainingScreen.tsx(140,32): error TS18048: 'selectedDomain' is possibly 'undefined'.
+app/(tabs)/MentalTrainingScreen.tsx(180,20): error TS2554: Expected 1-3 arguments, but got 0.
+app/(tabs)/MentalTrainingScreen.tsx(191,70): error TS18048: 'selectedDomain' is possibly 'undefined'.
+app/(tabs)/MentalTrainingScreen.tsx(192,79): error TS18048: 'selectedDomain' is possibly 'undefined'.
+app/(tabs)/MentalTrainingScreen.tsx(198,80): error TS18048: 'selectedDomain' is possibly 'undefined'.
+app/(tabs)/MentalTrainingScreen.tsx(202,42): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ attention: string; memory: string; logic: string; flexibility: string; speed: string; executive: string; creativity: string; critical: string; meta: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ attention: string; memory: string; logic: string; flexibility: string; speed: string; executive: string; creativity: string; critical: string; meta: string; }'.
+app/(tabs)/OnboardingQuizScreen.tsx(680,29): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: ViewProps): View', gave the following error.
+    Type '{ height: "100%"; width: string; backgroundColor: string; borderRadius: number; }' is not assignable to type 'StyleProp<ViewStyle>'.
+      Types of property 'width' are incompatible.
+        Type 'string' is not assignable to type 'DimensionValue | undefined'.
+  Overload 2 of 2, '(props: ViewProps, context: any): View', gave the following error.
+    Type '{ height: "100%"; width: string; backgroundColor: string; borderRadius: number; }' is not assignable to type 'StyleProp<ViewStyle>'.
+      Types of property 'width' are incompatible.
+        Type 'string' is not assignable to type 'DimensionValue | undefined'.
+app/(tabs)/PhysicalTraining/easy/JointRotationsGame.tsx(92,7): error TS2322: Type 'number' is not assignable to type 'null'.
+app/(tabs)/PhysicalTraining/easy/JointRotationsGame.tsx(109,22): error TS2345: Argument of type '"/PhysicalTraining/MobilityTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/PhysicalTraining/easy/JointRotationsGame.tsx(114,22): error TS2345: Argument of type '"/PhysicalTraining/MobilityTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/PhysicalTraining/easy/JointRotationsGame.tsx(130,41): error TS2345: Argument of type '"/PhysicalTraining/MobilityTrainingScreen"' is not assignable to parameter of type '"/" | RelativePathString | ExternalPathString | `/?${string}` | `/#${string}` | "/logic-game" | `/logic-game?${string}` | `/logic-game#${string}` | "/_sitemap" | `/_sitemap?${string}` | ... 681 more ... | { ...; }'.
+app/(tabs)/PhysicalTraining/easy/JointRotationsGame.tsx(173,45): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/PhysicalTraining/easy/JointRotationsGame.tsx(183,12): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/PhysicalTraining/easy/JointRotationsGame.tsx(210,14): error TS18048: 'current' is possibly 'undefined'.
+app/(tabs)/PhysicalTrainingScreen.tsx(134,40): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ mobility: string; strength: string; stretching: string; breathing: string; endurance: string; balance: string; coordination: string; relaxation: string; posture: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ mobility: string; strength: string; stretching: string; breathing: string; endurance: string; balance: string; coordination: string; relaxation: string; posture: string; }'.
+app/(tabs)/PhysicalTrainingScreen.tsx(138,32): error TS18048: 'selectedDomain' is possibly 'undefined'.
+app/(tabs)/PhysicalTrainingScreen.tsx(176,20): error TS2554: Expected 1-3 arguments, but got 0.
+app/(tabs)/PhysicalTrainingScreen.tsx(187,70): error TS18048: 'selectedDomain' is possibly 'undefined'.
+app/(tabs)/PhysicalTrainingScreen.tsx(188,79): error TS18048: 'selectedDomain' is possibly 'undefined'.
+app/(tabs)/PhysicalTrainingScreen.tsx(194,80): error TS18048: 'selectedDomain' is possibly 'undefined'.
+app/(tabs)/PhysicalTrainingScreen.tsx(198,42): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ mobility: string; strength: string; stretching: string; breathing: string; endurance: string; balance: string; coordination: string; relaxation: string; posture: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ mobility: string; strength: string; stretching: string; breathing: string; endurance: string; balance: string; coordination: string; relaxation: string; posture: string; }'.
+app/(tabs)/ProfileScreen.tsx(100,16): error TS2339: Property 'achievements' does not exist on type '{ name: string; setName: (v: string) => void; brainType: string; setBrainType: (v: string) => void; level: number; setLevel: (v: number) => void; xp: number; setXP: (v: number) => void; totalPoints: number; ... 26 more ...; purchaseShopItem: (itemId: string, cost?: number | undefined) => void; }'.
+app/(tabs)/ShopScreen.tsx(109,14): error TS7006: Parameter 'addXp' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(125,14): error TS7006: Parameter 'addXp' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(185,40): error TS7031: Binding element 'theme' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(219,27): error TS7031: Binding element 'theme' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(250,25): error TS7006: Parameter 'plan' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(250,31): error TS7006: Parameter 'theme' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(278,31): error TS7006: Parameter 'feature' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(278,40): error TS7006: Parameter 'index' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(296,26): error TS7006: Parameter 'title' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(296,33): error TS7006: Parameter 'items' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(296,67): error TS7006: Parameter 'theme' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(300,21): error TS7006: Parameter 'item' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(300,27): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+app/(tabs)/ShopScreen.tsx(301,106): error TS2339: Property 'includes' does not exist on type 'never'.
+app/(tabs)/ShopScreen.tsx(432,47): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'null | undefined'.
+app/(tabs)/StatisticsScreen.tsx(23,21): error TS7006: Parameter 'level' implicitly has an 'any' type.
+app/(tabs)/StatisticsScreen.tsx(23,28): error TS7006: Parameter 'xp' implicitly has an 'any' type.
+app/(tabs)/StatisticsScreen.tsx(151,10): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: AbstractChartProps & BarChartProps): BarChart', gave the following error.
+    Property 'yAxisLabel' is missing in type '{ data: { labels: string[]; datasets: { data: any[]; }[]; }; width: number; height: number; fromZero: true; yAxisSuffix: string; showValuesOnTopOfBars: true; verticalLabelRotation: number; chartConfig: { ...; }; style: { ...; }; }' but required in type 'Readonly<AbstractChartProps & BarChartProps>'.
+  Overload 2 of 2, '(props: AbstractChartProps & BarChartProps, context: any): BarChart', gave the following error.
+    Property 'yAxisLabel' is missing in type '{ data: { labels: string[]; datasets: { data: any[]; }[]; }; width: number; height: number; fromZero: true; yAxisSuffix: string; showValuesOnTopOfBars: true; verticalLabelRotation: number; chartConfig: { ...; }; style: { ...; }; }' but required in type 'Readonly<AbstractChartProps & BarChartProps>'.
+app/(tabs)/StatisticsScreen.tsx(194,25): error TS2322: Type 'string' is not assignable to type '"push" | "map" | "filter" | "at" | "text" | "restaurant" | "star" | "time" | "link" | "infinite" | "scale" | "body" | "search" | "image" | "alert" | "checkbox" | "menu" | "radio" | ... 1339 more ... | undefined'.
+app/(tabs)/StatisticsScreen.tsx(216,29): error TS2322: Type 'string' is not assignable to type '"push" | "map" | "filter" | "at" | "text" | "restaurant" | "star" | "time" | "link" | "infinite" | "scale" | "body" | "search" | "image" | "alert" | "checkbox" | "menu" | "radio" | ... 1339 more ... | undefined'.
+app/(tabs)/StatisticsScreen.tsx(236,21): error TS7031: Binding element 'label' implicitly has an 'any' type.
+app/(tabs)/StatisticsScreen.tsx(236,28): error TS7031: Binding element 'value' implicitly has an 'any' type.
+app/(tabs)/StatisticsScreen.tsx(236,35): error TS7031: Binding element 'icon' implicitly has an 'any' type.
+app/(tabs)/StatisticsScreen.tsx(236,41): error TS7031: Binding element 'color' implicitly has an 'any' type.
+app/(tabs)/user-info.tsx(139,28): error TS2339: Property 'metadata' does not exist on type 'User'.
+app/(tabs)/user-info.tsx(140,31): error TS2339: Property 'metadata' does not exist on type 'User'.
+app/(tabs)/user-info.tsx(149,28): error TS2339: Property 'emailVerified' does not exist on type 'User'.
+app/(tabs)/user-info.tsx(150,28): error TS2339: Property 'emailVerified' does not exist on type 'User'.
+components/LevelUpModal.tsx(121,27): error TS2322: Type '"unlock"' is not assignable to type '"push" | "map" | "filter" | "at" | "text" | "restaurant" | "star" | "time" | "link" | "infinite" | "scale" | "body" | "search" | "image" | "alert" | "checkbox" | "menu" | "radio" | ... 1339 more ... | undefined'.
+components/ParticleZ.tsx(216,9): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+components/ParticleZ.tsx(229,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+components/ParticleZ.tsx(230,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+components/ParticleZ.tsx(293,42): error TS7031: Binding element 'value' implicitly has an 'any' type.
+components/ParticleZ.tsx(294,42): error TS7031: Binding element 'value' implicitly has an 'any' type.
