@@ -1,12 +1,13 @@
-import { useRouter } from 'expo-router';
+﻿import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import GameHeader from '../../../components/GameHeader';
 import { useTheme } from '../../../components/ThemeContext';
-import { useXP } from '../../../components/XPContext';
+import { useGameReward } from '../../../hooks/useGameReward';
+import { coinsForXp } from '../../../lib/progression';
 
-const WIN_XP = 35; // Hard
+const WIN_XP = 28; // Hard
 
 type Snippet = { claim: string; evidence: string; strength: 'weak' | 'moderate' | 'strong' };
 
@@ -37,7 +38,7 @@ function randomSnippet() { return SNIPPETS[Math.floor(Math.random() * SNIPPETS.l
 
 export default function EvidenceHuntGame() {
 	const router = useRouter();
-	const { addXp } = useXP();
+	const { award, reset } = useGameReward();
 	const { theme } = useTheme();
 	const [snip, setSnip] = useState<Snippet>(randomSnippet());
 	const [streak, setStreak] = useState(0);
@@ -45,7 +46,7 @@ export default function EvidenceHuntGame() {
 	const [showWin, setShowWin] = useState(false);
 	const [showHelp, setShowHelp] = useState(false);
 
-	useEffect(() => { if (streak >= target) { addXp(WIN_XP); setShowWin(true); } }, [streak]);
+	useEffect(() => { if (streak >= target) { void award(WIN_XP); setShowWin(true); } }, [streak, award]);
 
 	const pick = (level: 'weak' | 'moderate' | 'strong') => {
 		const ok = level === snip.strength;
@@ -82,8 +83,8 @@ export default function EvidenceHuntGame() {
 					<View style={[styles.modalCard, { backgroundColor: theme.card, alignItems: 'center' }]}> 
 						<ConfettiCannon count={140} origin={{ x: 180, y: 0 }} fadeOut autoStart explosionSpeed={420} fallSpeed={2100} />
 						<Text style={[styles.winTitle, { color: theme.text }]}>Evidence expert!</Text>
-						<Text style={[styles.winText, { color: theme.textSecondary }]}>+{WIN_XP} XP</Text>
-						<TouchableOpacity style={[styles.primaryBtn, { backgroundColor: theme.primary }]} onPress={() => { setShowWin(false); setStreak(0); setSnip(randomSnippet()); }}><Text style={[styles.primaryText, { color: theme.buttonText }]}>Play Again</Text></TouchableOpacity>
+						<Text style={[styles.winText, { color: theme.textSecondary }]}>+{WIN_XP} XP + {coinsForXp(WIN_XP)} coins</Text>
+						<TouchableOpacity style={[styles.primaryBtn, { backgroundColor: theme.primary }]} onPress={() => { setShowWin(false); reset(); setStreak(0);  setSnip(randomSnippet()); }}><Text style={[styles.primaryText, { color: theme.buttonText }]}>Play Again</Text></TouchableOpacity>
 						<TouchableOpacity style={[styles.primaryBtn, { backgroundColor: theme.surface, marginTop: 8 }]} onPress={() => { setShowWin(false); router.replace('/(tabs)/games/CriticalThinkingTrainingScreen'); }}>
 							<Text style={[styles.primaryText, { color: theme.text }]}>Go to Main Menu</Text>
 						</TouchableOpacity>

@@ -29,7 +29,7 @@ create table public.training_sessions (
 );
 create index sessions_user_day on public.training_sessions(user_id,activity_day);
 create table public.shop_catalog(id text primary key, title text not null, price integer not null check(price>0));
-insert into public.shop_catalog values ('badge-legend','Legend',520),('badge-focus','Focus Master',500),('badge-streak','Streak Champion',480),('badge-zen','Zen Spirit',500);
+insert into public.shop_catalog values ('badge-legend','Legend',75),('badge-focus','Focus Master',30),('badge-streak','Streak Champion',45),('badge-zen','Zen Spirit',60);
 create table public.user_badges(user_id uuid references public.profiles(id) on delete cascade, badge_id text not null, purchased_at timestamptz not null default now(), primary key(user_id,badge_id));
 create table public.journal_entries (
  id uuid primary key default gen_random_uuid(), user_id uuid not null references public.profiles(id) on delete cascade,

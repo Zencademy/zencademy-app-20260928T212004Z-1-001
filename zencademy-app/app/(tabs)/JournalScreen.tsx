@@ -13,8 +13,10 @@ import ConfettiCannon from 'react-native-confetti-cannon';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../components/AuthContext";
 import { useScreensaver } from "../../components/ScreensaverContext";
-import ScreensaverOverlay from "../../components/ScreensaverOverlay";
 import { useTheme } from "../../components/ThemeContext";
+import { AppHeader } from "../../components/ui/AppHeader";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { type } from "../../components/ui/type";
 import { journalService } from "../../utils/supabase";
 import useResponsive from '../../hooks/useResponsive';
 
@@ -131,13 +133,12 @@ export default function JournalScreen({ goHome, goMenu, goJournal, openMenu }: P
   const scrollViewRef = useRef<ScrollView | null>(null);
 
   // Screensaver global - premium sync
-  const { resetTimer, setScreensaverActive } = useScreensaver();
+  const { resetTimer } = useScreensaver();
   useFocusEffect(
     useCallback(() => {
       resetTimer();
-      setScreensaverActive(false);
-      return () => setScreensaverActive(false);
-    }, [])
+      return () => {};
+    }, [resetTimer])
   );
 
   useEffect(() => { 
@@ -276,24 +277,23 @@ export default function JournalScreen({ goHome, goMenu, goJournal, openMenu }: P
 
   return (
     <Animated.View style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-        {/* Drawer removed per request */}
-        <ScreensaverOverlay />
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }} edges={['bottom']}>
         {showConfetti && (
-          <ConfettiCannon count={100} origin={{ x: 200, y: -16 }} fadeOut autoStart explosionSpeed={380} fallSpeed={1900} />
+          <ConfettiCannon count={40} origin={{ x: 200, y: -16 }} fadeOut autoStart explosionSpeed={380} fallSpeed={1900} colors={[theme.primary, theme.text, '#888']} />
         )}
 
-        {/* Feedback Message */}
         {showFeedback && (
           <View style={[styles.feedbackContainer, { backgroundColor: theme.card }]}>
             <Text style={[styles.feedbackText, { color: theme.text }]}>{feedbackMessage}</Text>
           </View>
         )}
 
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: theme.text }]}>Daily Journal</Text>
-          <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Quick reflection for today</Text>
+        <AppHeader title="JOURNAL" showWallet compactWallet={false} />
+        <View style={{ paddingHorizontal: 20, paddingTop: 10, paddingBottom: 4 }}>
+          <Text style={[type.title, { color: theme.text, textAlign: 'center' }]}>Daily Log</Text>
+          <Text style={[type.subtitle, { color: theme.textSecondary, textAlign: 'center', marginTop: 4 }]}>
+            Log the day. No fluff. Keep the edge.
+          </Text>
         </View>
 
         <KeyboardAvoidingView
@@ -316,6 +316,15 @@ export default function JournalScreen({ goHome, goMenu, goJournal, openMenu }: P
           >
             {/* Mood Selection */}
             <View style={styles.moodSection}>
+              {!todayEntry && !selectedMood ? (
+                <View style={{ marginBottom: 16 }}>
+                  <EmptyState
+                    icon="book-outline"
+                    title="Today is blank"
+                    body="Pick a mood, answer the three prompts, and save. One honest log beats a perfect skip."
+                  />
+                </View>
+              ) : null}
               <Text style={[styles.sectionTitle, { color: theme.text }]}>How are you feeling?</Text>
               <View style={styles.moodGrid}>
                 {MOOD_OPTIONS.map((mood) => (

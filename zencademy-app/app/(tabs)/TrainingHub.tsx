@@ -1,162 +1,139 @@
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../components/ThemeContext';
+import { useXP } from '../../components/XPContext';
+import { AppHeader } from '../../components/ui/AppHeader';
+import { CountUp, FadeRise, SpinCoin, ThunderBolt } from '../../components/ui/motion';
+import { type } from '../../components/ui/type';
 
 const width = Dimensions.get('window').width;
 
 export default function TrainingHub() {
   const router = useRouter();
   const { theme } = useTheme();
+  const { totalPoints, coins, level } = useXP();
   const isWide = width > 520;
 
+  const Tile = ({
+    title,
+    subtitle,
+    icon,
+    onPress,
+    delay = 0,
+  }: {
+    title: string;
+    subtitle: string;
+    icon: React.ReactNode;
+    onPress: () => void;
+    delay?: number;
+  }) => (
+    <FadeRise delay={delay} style={{ flex: 1, minWidth: isWide ? undefined : '100%' }}>
+      <TouchableOpacity
+        style={{
+          borderRadius: 18,
+          padding: 20,
+          backgroundColor: theme.card,
+          borderWidth: 1,
+          borderColor: theme.border,
+          alignItems: 'center',
+          gap: 8,
+          minHeight: 168,
+        }}
+        onPress={onPress}
+        activeOpacity={0.88}
+      >
+        <View
+          style={{
+            width: 58,
+            height: 58,
+            borderRadius: 18,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: theme.surface,
+            borderWidth: 1,
+            borderColor: theme.primary,
+          }}
+        >
+          {icon}
+        </View>
+        <Text style={[type.card, { color: theme.text }]}>{title}</Text>
+        <Text style={[type.body, { color: theme.textSecondary, textAlign: 'center' }]}>{subtitle}</Text>
+      </TouchableOpacity>
+    </FadeRise>
+  );
+
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Header cu back & logo */}
-      <View style={styles.headerRow}>
-        <TouchableOpacity
-          style={styles.backBtn}
-          onPress={() => router.replace('/')}
-          activeOpacity={0.75}
-        >
-          <Feather name="arrow-left" size={24} color={theme.text} />
-        </TouchableOpacity>
-        <Text style={[styles.logo, { color: theme.text }]}>ZENCADEMY</Text>
-      </View>
-
-      <Text style={[styles.title, { color: theme.text }]}>Training Hub</Text>
-      <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-        Elevate your mind and body. Choose your path.
-      </Text>
-
-      <View style={[
-        styles.cardsRow,
-        { flexDirection: isWide ? 'row' : 'column', gap: isWide ? 28 : 18 }
-      ]}>
-        {/* Mental Card */}
-        <TouchableOpacity
-          style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}
-          onPress={() => router.push('/MentalTrainingScreen')}
-          activeOpacity={0.89}
-        >
-          <View style={[styles.iconWrap, { backgroundColor: theme.surface }]}>
-            <MaterialCommunityIcons name="brain" size={40} color={theme.text} />
-          </View>
-          <Text style={[styles.cardTitle, { color: theme.text }]}>Mental</Text>
-          <Text style={[styles.cardDesc, { color: theme.textSecondary }]}>
-            Logic, memory, focus challenges.
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }} edges={['bottom']}>
+      <AppHeader onBack={() => router.replace('/')} title="HUB" showWallet={false} />
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 14, paddingBottom: 44, gap: 14 }}>
+        <FadeRise>
+          <Text style={[type.title, { color: theme.text, textAlign: 'center' }]}>Training Hub</Text>
+          <Text style={[type.subtitle, { color: theme.textSecondary, textAlign: 'center' }]}>
+            Pick a lane. Execute.
           </Text>
-        </TouchableOpacity>
+        </FadeRise>
 
-        {/* Physical Card */}
-        <TouchableOpacity
-          style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}
-          onPress={() => router.push('/PhysicalTrainingScreen')}
-          activeOpacity={0.89}
-        >
-          <View style={[styles.iconWrap, { backgroundColor: theme.surface }]}>
-            <Feather name="activity" size={38} color={theme.text} />
+        <FadeRise delay={50}>
+          <View
+            style={{
+              borderRadius: 16,
+              padding: 14,
+              backgroundColor: theme.card,
+              borderWidth: 1,
+              borderColor: theme.border,
+              gap: 10,
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Text style={[type.label, { color: theme.textSecondary }]}>Progress</Text>
+              <Text style={[type.label, { color: theme.primary }]}>LVL {level}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              <View style={{ flex: 1.2, borderRadius: 12, padding: 12, backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.border }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                  <ThunderBolt size={13} color={theme.primary} />
+                  <Text style={[type.label, { color: theme.textTertiary }]}>XP</Text>
+                </View>
+                <CountUp value={totalPoints} duration={550} fromZero style={[type.title, { color: theme.text, fontSize: 22 }]} />
+              </View>
+              <View style={{ flex: 1, borderRadius: 12, padding: 12, backgroundColor: theme.coinSoft, borderWidth: 1, borderColor: theme.coinBorder }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                  <SpinCoin size={13} color={theme.coin} />
+                  <Text style={[type.label, { color: theme.coin }]}>COINS</Text>
+                </View>
+                <CountUp value={coins} duration={550} fromZero style={[type.title, { color: theme.text, fontSize: 22 }]} />
+              </View>
+            </View>
           </View>
-          <Text style={[styles.cardTitle, { color: theme.text }]}>Physical</Text>
-          <Text style={[styles.cardDesc, { color: theme.textSecondary }]}>
-            Movement, stretching, breathing.
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+        </FadeRise>
+
+        <View style={{ flexDirection: isWide ? 'row' : 'column', flexWrap: 'wrap', gap: 12 }}>
+          <Tile
+            title="Mental"
+            subtitle="Logic, memory, focus."
+            delay={90}
+            onPress={() => router.push('/MentalTrainingScreen')}
+            icon={<MaterialCommunityIcons name="brain" size={30} color={theme.primary} />}
+          />
+          <Tile
+            title="Physical"
+            subtitle="Move, stretch, breathe."
+            delay={130}
+            onPress={() => router.push('/PhysicalTrainingScreen')}
+            icon={<Feather name="activity" size={28} color={theme.primary} />}
+          />
+          <Tile
+            title="Ebooks"
+            subtitle="Library access & titles."
+            delay={170}
+            onPress={() => router.push('/EbookScreen')}
+            icon={<Ionicons name="library-outline" size={28} color={theme.primary} />}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 38,
-    paddingHorizontal: 26,
-    alignItems: 'center',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    marginBottom: 18,
-    marginTop: 2,
-  },
-  backBtn: {
-    padding: 7,
-    paddingLeft: 1,
-    paddingRight: 9,
-    borderRadius: 13,
-    backgroundColor: 'transparent',
-  },
-  logo: {
-    fontSize: 24,
-    fontWeight: '900',
-    letterSpacing: 3,
-    textTransform: 'uppercase',
-    marginLeft: 6,
-    flex: 1,
-  },
-  title: {
-    fontSize: 34,
-    fontWeight: '800',
-    textAlign: 'center',
-    marginBottom: 6,
-    marginTop: 6,
-    letterSpacing: 2,
-    alignSelf: 'stretch',
-  },
-  subtitle: {
-    fontSize: 16.5,
-    fontWeight: '500',
-    textAlign: 'center',
-    marginBottom: 30,
-    alignSelf: 'stretch',
-  },
-  cardsRow: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  card: {
-    borderRadius: 25,
-    paddingVertical: 34,
-    paddingHorizontal: 28,
-    alignItems: 'center',
-    shadowColor: '#181828',
-    shadowOpacity: 0.07,
-    shadowRadius: 20,
-    elevation: 5,
-    borderWidth: 1.2,
-    marginVertical: 6,
-    width: 200,
-    maxWidth: 260,
-    minWidth: 140,
-  },
-  iconWrap: {
-    borderRadius: 40,
-    padding: 16,
-    marginBottom: 13,
-    shadowColor: '#222',
-    shadowOpacity: 0.08,
-    shadowRadius: 9,
-    elevation: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cardTitle: {
-    fontSize: 21,
-    fontWeight: '800',
-    marginBottom: 6,
-    letterSpacing: 1.1,
-    textAlign: 'center',
-  },
-  cardDesc: {
-    fontSize: 15,
-    textAlign: 'center',
-    opacity: 0.85,
-    fontWeight: '500',
-    lineHeight: 21,
-    marginTop: 3,
-  },
-});

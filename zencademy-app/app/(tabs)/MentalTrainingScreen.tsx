@@ -1,24 +1,17 @@
 import { Entypo, Feather, FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Dimensions, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../components/ThemeContext';
+import { AppHeader } from '../../components/ui/AppHeader';
+import { type } from '../../components/ui/type';
 
 const width = Dimensions.get('window').width;
 const mapSize = Math.min(width, 340);
 
-// Actualizează rutele aici dacă modifici fișierele
-const domainRoutes = {
-  attention: '/games/AttentionTrainingScreen',
-  memory: '/games/MemoryTrainingScreen',
-  logic: '/games/LogicTrainingScreen',
-  flexibility: '/games/FlexibilityTrainingScreen', // adapt după structura ta!
-  speed: '/games/SpeedTrainingScreen',
-  executive: '/games/ExecutiveTrainingScreen',
-  creativity: '/games/CreativityTrainingScreen',
-  critical: '/games/CriticalThinkingTrainingScreen',
-  meta: '/games/MetacognitionTrainingScreen',
-};
+// Catalog route — XP gates live in ExerciseScreen / games layout
+const openCategory = (key: string) => `/games/ExerciseCatalog?category=${key}` as const;
 
 const domains = [
   { key: 'attention', icon: Feather, iconName: 'target', title: 'Attention', desc: 'Sharpen concentration and filter distractions.', more: 'Attention training improves focus for studying, work, and creative flow. Includes tasks that boost sustained and selective attention.' },
@@ -56,25 +49,15 @@ export default function MentalTrainingScreen() {
   const selectedDomain = domains.find(d => d.key === selected);
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
-      {/* HEADER */}
-      <View style={styles.headerBar}>
-        <TouchableOpacity
-          style={[styles.backBtn, { backgroundColor: theme.surface }]}
-          onPress={() => router.push('/TrainingHub')}
-          activeOpacity={0.7}
-        >
-          <Feather name="arrow-left" size={24} color={theme.text} />
-        </TouchableOpacity>
-        <Text style={[styles.logo, { color: theme.text }]}>ZENCADEMY</Text>
-      </View>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]} edges={['bottom']}>
+      <AppHeader onBack={() => router.push('/TrainingHub')} showWallet />
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator
       >
-        <Text style={[styles.title, { color: theme.text }]}>Mental Training</Text>
-        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+        <Text style={[type.title, { color: theme.text, textAlign: 'center', marginTop: 12 }]}>Mental Training</Text>
+        <Text style={[type.subtitle, { color: theme.textSecondary, textAlign: 'center', marginBottom: 10 }]}>
           Tap any area or button to see more and start training.
         </Text>
         {/* CERC/Brain Map */}
@@ -133,7 +116,7 @@ export default function MentalTrainingScreen() {
         <View style={{ marginTop: 10, marginBottom: 14 }}>
           <TouchableOpacity
             style={[styles.trainBtnMain, { backgroundColor: theme.primary }]}
-            onPress={() => router.push(domainRoutes[selected])}
+            onPress={() => router.push(openCategory(selected))}
             activeOpacity={0.90}
           >
             <Text style={[styles.trainBtnTextMain, { color: theme.buttonText }]}>
@@ -199,7 +182,7 @@ export default function MentalTrainingScreen() {
             </ScrollView>
             <TouchableOpacity
               style={[styles.trainBtn, { backgroundColor: theme.primary }]}
-              onPress={() => router.push(domainRoutes[selected])}
+              onPress={() => router.push(openCategory(selected))}
               activeOpacity={0.88}
             >
               <Text style={[styles.trainBtnText, { color: theme.buttonText }]}>Start Training</Text>

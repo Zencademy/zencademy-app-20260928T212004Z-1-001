@@ -7,7 +7,9 @@ import { ActivityIndicator, View } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { AuthProvider, useAuth } from '../components/AuthContext';
+import { RewardToastProvider } from '../components/RewardToast';
 import { ScreensaverProvider } from "../components/ScreensaverContext";
+import ScreensaverOverlay from '../components/ScreensaverOverlay';
 import { ThemeProvider, useTheme } from '../components/ThemeContext';
 import { XPProvider } from '../components/XPContext';
 // Ads removed
@@ -33,22 +35,27 @@ function AppContent() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ScreensaverProvider>
-        <XPProvider>
-          <NavigationThemeProvider value={themeMode === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              {user ? (
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              ) : (
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              )}
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style={themeMode === 'dark' ? "light" : "dark"} hidden={true} />
-          </NavigationThemeProvider>
-        </XPProvider>
-      </ScreensaverProvider>
+      <RewardToastProvider>
+        <ScreensaverProvider>
+          <XPProvider>
+            <NavigationThemeProvider value={themeMode === 'dark' ? DarkTheme : DefaultTheme}>
+              <View style={{ flex: 1 }}>
+                <Stack>
+                  <Stack.Screen name="index" options={{ headerShown: false }} />
+                  {user ? (
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  ) : (
+                    <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                  )}
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+                <ScreensaverOverlay />
+                <StatusBar style={themeMode === 'dark' ? "light" : "dark"} hidden={true} />
+              </View>
+            </NavigationThemeProvider>
+          </XPProvider>
+        </ScreensaverProvider>
+      </RewardToastProvider>
     </GestureHandlerRootView>
   );
 }

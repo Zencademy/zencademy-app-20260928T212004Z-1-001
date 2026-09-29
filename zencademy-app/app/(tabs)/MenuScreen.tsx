@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+﻿import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
@@ -14,26 +14,32 @@ import {
     View
 } from "react-native";
 import { useScreensaver } from "../../components/ScreensaverContext";
-import ScreensaverOverlay from "../../components/ScreensaverOverlay";
 import { useTheme } from "../../components/ThemeContext";
 import { useXP } from "../../components/XPContext";
+import { Breath, FadeRise } from "../../components/ui/motion";
+import { avatarGlyph, avatarTone, getEquippedAvatar } from "../../lib/inventory";
 
 const quotes = [
-  "Train your mind. Elevate your life.",
-  "Consistency beats intensity.",
-  "The best investment is in yourself.",
-  "Mindset is everything.",
-  "Small habits, big results.",
-  "Growth starts with a single thought.",
+  "Standards over moods.",
+  "Execute quietly. Win loudly.",
+  "No soft days.",
+  "Your future self is watching.",
+  "Pressure builds the edge.",
+  "Focus is a weapon.",
 ];
 
-export default function MenuScreen() {
+export default function MenuScreen({ interactionLocked = false }: { interactionLocked?: boolean }) {
   const [quoteIndex, setQuoteIndex] = useState(0);
+  const [avatarId, setAvatarId] = useState<string | null>(null);
   const quoteAnim = useRef(new Animated.Value(1)).current;
   const router = useRouter();
-  const { resetTimer, setScreensaverActive } = useScreensaver();
+  const { resetTimer } = useScreensaver();
   const { name } = useXP();
   const { theme, themeMode } = useTheme();
+
+  useEffect(() => {
+    void getEquippedAvatar().then(setAvatarId);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -49,67 +55,100 @@ export default function MenuScreen() {
     return () => { isMounted = false; clearInterval(interval); };
   }, []);
 
+  const guard = (fn: () => void) => () => {
+    if (interactionLocked) return;
+    fn();
+  };
+
   // Navigare la pagini extra cu router.push()
-  const goProfile = () => router.push("/ProfileScreen");
-  const goJournalLocal = () => {
-    // Navigate to the main app entry point with Journal as initial page
-    router.push({
-      pathname: "/(tabs)",
-      params: { initialPage: 2 }
-    });
-  };
-  const goTrainingHub = () => router.push("/TrainingHub");
-  const goDailyTasks = () => router.push("/DailyTasksScreen");
-  const goMentalTraining = () => router.push("/MentalTrainingScreen");
-  const goPhysicalTraining = () => router.push("/PhysicalTrainingScreen");
-  const goMeditate = () => router.push("/MeditateScreen");
-  const goFocus = () => router.push("/focus");
-  const goIntelligenceTest = () => router.push("/IntelligenceTestScreen");
-  const goShop = () => router.push("/ShopScreen");
-  const goCustomReminders = () => router.push("/CustomRemindersScreen");
-  const goSettings = () => router.push("/(tabs)/settings");
-  const goEbook = () => router.push("/EbookScreen");
-  const goClubs = () => router.push("/ClubsScreen");
-  const goCourses = () => {
+  const goProfile = guard(() => router.push("/ProfileScreen"));
+  const goJournalLocal = guard(() => {
+    router.push({ pathname: "/(tabs)", params: { initialPage: 3 } });
+  });
+  const goDailyTasks = guard(() => {
+    router.push({ pathname: "/(tabs)", params: { initialPage: 2 } });
+  });
+  const goTrainingHub = guard(() => router.push("/TrainingHub"));
+  const goMentalTraining = guard(() => router.push("/MentalTrainingScreen"));
+  const goPhysicalTraining = guard(() => router.push("/PhysicalTrainingScreen"));
+  const goMeditate = guard(() => router.push("/MeditateScreen"));
+  const goFocus = guard(() => router.push("/focus"));
+  const goIntelligenceTest = guard(() => router.push("/IntelligenceTestScreen"));
+  const goShop = guard(() => router.push("/ShopScreen"));
+  const goCustomReminders = guard(() => router.push("/CustomRemindersScreen"));
+  const goSettings = guard(() => router.push("/(tabs)/settings"));
+  const goEbook = guard(() => router.push("/EbookScreen"));
+  const goClubs = guard(() => router.push("/ClubsScreen"));
+  const goLeaderboard = guard(() => {
+    router.push({ pathname: "/(tabs)", params: { initialPage: 4 } });
+  });
+  const goCourses = guard(() => {
     Alert.alert("Coming Soon", "Courses feature will be available soon!");
-  };
+  });
 
   useFocusEffect(
     React.useCallback(() => {
       resetTimer();
-      setScreensaverActive(false);
-      return () => {
-        setScreensaverActive(false);
-      };
-    }, [])
+      void getEquippedAvatar().then(setAvatarId);
+      return () => {};
+    }, [resetTimer])
   );
 
+  const letter = name && name.length > 0 ? name.charAt(0).toUpperCase() : "Z";
+  const face = avatarGlyph(avatarId, letter);
+  const tone = avatarTone(avatarId);
+
   return (
-    <Pressable
-      style={{ flex: 1 }}
-      onPress={resetTimer}
-      onLongPress={resetTimer}
-      onPressIn={resetTimer}
-      onTouchStart={resetTimer}
-      onStartShouldSetResponder={() => { resetTimer(); return false; }}
-    >
+    <View style={{ flex: 1 }}>
+      <Pressable
+        style={{ flex: 1 }}
+        onPress={resetTimer}
+        onLongPress={resetTimer}
+        onPressIn={resetTimer}
+        onTouchStart={resetTimer}
+        onStartShouldSetResponder={() => { resetTimer(); return false; }}
+      >
       <LinearGradient
-        colors={themeMode === 'dark' ? [theme.surface, theme.background] : ["#f7f7f7", "#fff"]}
+        colors={themeMode === 'dark' ? [theme.background, '#0A0A0A', theme.surface] : [theme.surface, theme.background]}
         style={styles.page}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
       >
-        <ScreensaverOverlay />
         <StatusBar barStyle={themeMode === 'dark' ? "light-content" : "dark-content"} backgroundColor={theme.background} />
-        {/* Avatar + Quote */}
         <View style={styles.header}>
-          <View style={styles.avatarGlow}>
-            <View style={[styles.avatarCircle, { backgroundColor: theme.primary }]}>
-              <Text style={[styles.avatarLetter, { color: theme.buttonText }]}>
-                {name && name.length > 0 ? name.charAt(0).toUpperCase() : "Z"}
-              </Text>
+          <Breath amount={1.04}>
+            <View style={styles.avatarGlow}>
+              <View style={[styles.avatarCircle, {
+                backgroundColor: tone?.tone || theme.primary,
+                borderColor: avatarId ? theme.primary : theme.border,
+                borderWidth: avatarId ? 2 : 1,
+              }]}>
+                <Text style={[styles.avatarLetter, {
+                  color: tone?.ink || theme.buttonText,
+                  fontSize: avatarId ? 26 : 30,
+                }]}>
+                  {face}
+                </Text>
+              </View>
+              {avatarId ? (
+                <View style={{
+                  position: 'absolute',
+                  right: -2,
+                  bottom: -2,
+                  width: 22,
+                  height: 22,
+                  borderRadius: 11,
+                  backgroundColor: theme.card,
+                  borderWidth: 1,
+                  borderColor: theme.primary,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <Ionicons name="checkmark" size={12} color={theme.primary} />
+                </View>
+              ) : null}
             </View>
-          </View>
+          </Breath>
           <Animated.Text
             style={[
               styles.quoteText,
@@ -131,37 +170,49 @@ export default function MenuScreen() {
           </Animated.Text>
         </View>
 
-        <ScrollView style={styles.menuScroll} contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 0 }}>
-          <MenuButton icon="person-outline" label="Profile" onPress={goProfile} />
-          <MenuButton icon="cart-outline" label="Shop" onPress={goShop} />
-          <MenuButton icon="document-text-outline" label="Journal" onPress={goJournalLocal} />
-          <MenuButton icon="barbell-outline" label="Training Hub" onPress={goTrainingHub} />
-          <MenuButton icon="speedometer-outline" label="Mental Training" onPress={goMentalTraining} />
-          <MenuButton icon="walk-outline" label="Physical Training" onPress={goPhysicalTraining} />
-          <MenuButton icon="analytics-outline" label="Intelligence Test" onPress={goIntelligenceTest} />
-          <MenuButton icon="checkmark-done-outline" label="Daily Tasks" onPress={goDailyTasks} />
-          <MenuButton icon="flash-outline" label="Focus" onPress={goFocus} />
-          <MenuButton icon="cloud-outline" label="Meditate" onPress={goMeditate} />
-          <MenuButton icon="library-outline" label="Ebook" onPress={goEbook} />
-          <MenuButton icon="alarm-outline" label="Custom Reminders" onPress={goCustomReminders} />
-          <MenuButton icon="people-outline" label="Clubs" onPress={goClubs} />
-          <MenuButton icon="school-outline" label="Courses" onPress={goCourses} />
-          <MenuButton icon="settings-outline" label="Settings" onPress={goSettings} />
-          
-          {/* Upgrade Plan Section */}
-          <View style={styles.upgradeSection}>
-            <MenuButton 
-              icon="diamond-outline" 
-              label="Upgrade Plan" 
-              onPress={() => router.push('/PlansScreen')}
-              isUpgrade={true}
-            />
-          </View>
+        <ScrollView style={styles.menuScroll} contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 0 }} scrollEnabled={!interactionLocked}>
+          {[
+            { icon: "person-outline", label: "Profile", onPress: goProfile },
+            { icon: "checkmark-done-outline", label: "Daily Execution", onPress: goDailyTasks },
+            { icon: "document-text-outline", label: "Journal", onPress: goJournalLocal },
+            { icon: "trophy-outline", label: "Leaderboard", onPress: goLeaderboard },
+            { icon: "cart-outline", label: "Shop", onPress: goShop },
+            { icon: "barbell-outline", label: "Training Hub", onPress: goTrainingHub },
+            { icon: "speedometer-outline", label: "Mental Training", onPress: goMentalTraining },
+            { icon: "walk-outline", label: "Physical Training", onPress: goPhysicalTraining },
+            { icon: "analytics-outline", label: "Cognitive Assessment", onPress: goIntelligenceTest },
+            { icon: "flash-outline", label: "Focus", onPress: goFocus },
+            { icon: "cloud-outline", label: "Meditate", onPress: goMeditate },
+            { icon: "library-outline", label: "Ebook", onPress: goEbook },
+            { icon: "alarm-outline", label: "Custom Reminders", onPress: goCustomReminders },
+            { icon: "people-outline", label: "Clubs", onPress: goClubs },
+            { icon: "school-outline", label: "Courses", onPress: goCourses },
+            { icon: "settings-outline", label: "Settings", onPress: goSettings },
+          ].map((item, i) => (
+            <FadeRise key={item.label} delay={Math.min(i * 35, 280)}>
+              <MenuButton icon={item.icon} label={item.label} onPress={item.onPress} />
+            </FadeRise>
+          ))}
+
+          <FadeRise delay={300}>
+            <View style={styles.upgradeSection}>
+              <MenuButton
+                icon="cash-outline"
+                label="Upgrade Plan"
+                onPress={guard(() => router.push('/PlansScreen'))}
+                isUpgrade={true}
+              />
+            </View>
+          </FadeRise>
         </ScrollView>
 
         <Text style={[styles.menuFooter, { color: theme.textTertiary }]}>© 2025 Zencademy</Text>
       </LinearGradient>
     </Pressable>
+      {interactionLocked ? (
+        <View style={{ ...StyleSheet.absoluteFillObject, zIndex: 50 }} pointerEvents="auto" />
+      ) : null}
+    </View>
   );
 }
 
@@ -206,6 +257,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   avatarGlow: {
+    position: "relative",
     shadowColor: "#333",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.22,

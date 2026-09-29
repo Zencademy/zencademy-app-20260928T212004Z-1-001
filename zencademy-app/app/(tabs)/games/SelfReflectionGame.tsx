@@ -4,9 +4,10 @@ import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import GameHeader from '../../../components/GameHeader';
 import { useTheme } from '../../../components/ThemeContext';
-import { useXP } from '../../../components/XPContext';
+import { useGameReward } from '../../../hooks/useGameReward';
+import { coinsForXp } from '../../../lib/progression';
 
-const WIN_XP = 15; // Easy
+const WIN_XP = 12; // Easy
 
 type Q = { prompt: string; correct: string; options: string[] };
 
@@ -57,7 +58,7 @@ function randomQ(): Q { return BANK[Math.floor(Math.random() * BANK.length)]; }
 
 export default function SelfReflectionGame() {
 	const router = useRouter();
-	const { addXp } = useXP();
+	const { award, reset } = useGameReward();
 	const { theme } = useTheme();
 	const [q, setQ] = useState<Q>(randomQ());
 	const [streak, setStreak] = useState(0);
@@ -65,7 +66,12 @@ export default function SelfReflectionGame() {
 	const [showWin, setShowWin] = useState(false);
 	const [showHelp, setShowHelp] = useState(false);
 
-	useEffect(() => { if (streak >= target) { addXp(WIN_XP); setShowWin(true); } }, [streak]);
+	useEffect(() => {
+		if (streak >= target) {
+			void award(WIN_XP);
+			setShowWin(true);
+		}
+	}, [streak, award]);
 
 	const pick = (opt: string) => {
 		const ok = opt === q.correct;
@@ -103,8 +109,8 @@ export default function SelfReflectionGame() {
 					<View style={[styles.modalCard, { backgroundColor: theme.card, alignItems: 'center' }]}> 
 						<ConfettiCannon count={120} origin={{ x: 180, y: 0 }} fadeOut autoStart explosionSpeed={420} fallSpeed={2100} />
 						<Text style={[styles.winTitle, { color: theme.text }]}>Great reflection!</Text>
-						<Text style={[styles.winText, { color: theme.textSecondary }]}>+{WIN_XP} XP</Text>
-						<TouchableOpacity style={[styles.primaryBtn, { backgroundColor: theme.primary }]} onPress={() => { setShowWin(false); setStreak(0); setQ(randomQ()); }}><Text style={[styles.primaryText, { color: theme.buttonText }]}>Play Again</Text></TouchableOpacity>
+						<Text style={[styles.winText, { color: theme.textSecondary }]}>+{WIN_XP} XP + {coinsForXp(WIN_XP)} coins</Text>
+						<TouchableOpacity style={[styles.primaryBtn, { backgroundColor: theme.primary }]} onPress={() => { setShowWin(false); reset(); setStreak(0); setQ(randomQ()); }}><Text style={[styles.primaryText, { color: theme.buttonText }]}>Play Again</Text></TouchableOpacity>
 						<TouchableOpacity style={[styles.primaryBtn, { backgroundColor: theme.surface, marginTop: 8 }]} onPress={() => { setShowWin(false); router.replace('/(tabs)/games/MetacognitionTrainingScreen'); }}>
 							<Text style={[styles.primaryText, { color: theme.text }]}>Go to Main Menu</Text>
 						</TouchableOpacity>

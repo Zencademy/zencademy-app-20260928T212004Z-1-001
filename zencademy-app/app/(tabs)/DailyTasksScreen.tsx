@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -11,28 +10,20 @@ import {
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../components/ThemeContext";
+import { AppHeader } from "../../components/ui/AppHeader";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { CountUp, FadeRise, FlameStreak } from "../../components/ui/motion";
+import { type } from "../../components/ui/type";
 
 const QUOTES = [
-  "Win the day with small steps.",
-  "Little by little, progress adds up.",
-  "Success is built on daily habits.",
-  "Your habits create your results.",
-  "Big goals? Break them into daily tasks.",
-  "Consistency is the secret to success.",
-  "Done is better than perfect.",
-  "What you do today shapes tomorrow.",
-  "Start now. Adjust later.",
-  "Stay focused, stay kind.",
-  "You’re closer than you think.",
-  "Action beats intention.",
-  "Check off your dreams, one task at a time.",
-  "Every task done is a win.",
-  "Finish what you start.",
-  "Make every day count.",
-  "Greatness is built one day at a time.",
-  "You can do hard things.",
-  "Progress, not perfection.",
-  "One task at a time.",
+  "Execute. Don't negotiate with yourself.",
+  "Standards over moods.",
+  "Pressure is a privilege.",
+  "Finish what average people quit.",
+  "Discipline is identity.",
+  "No witnesses needed. Just results.",
+  "Soft days build soft people.",
+  "Move first. Feel later.",
 ];
 
 function todayString() {
@@ -41,7 +32,7 @@ function todayString() {
 }
 const TASKS_KEY = '@daily_tasks_' + new Date().toISOString().slice(0,10);
 
-export default function DailyTasksScreen() {
+export default function DailyTasksScreen({ embedded = false }: { embedded?: boolean }) {
   const [tasks, setTasks] = useState([]);
   const [input, setInput] = useState('');
   const [quoteIdx, setQuoteIdx] = useState(Math.floor(Math.random()*QUOTES.length));
@@ -109,58 +100,61 @@ export default function DailyTasksScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
-      {/* Confetti Cannon */}
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]} edges={embedded ? ['bottom'] : ['top', 'bottom']}>
       {showConfetti && (
         <ConfettiCannon
-          count={90}
+          count={36}
           origin={{ x: 180, y: 0 }}
           fadeOut
           fallSpeed={2800}
           explosionSpeed={500}
-          colors={["#111", "#e4e4e4", "#bbb", "#fff"]}
+          colors={[theme.primary, theme.text, "#888"]}
         />
       )}
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
+        {!embedded ? (
+          <AppHeader onBack={() => router.push('/')} title="EXECUTE" showWallet={false} />
+        ) : (
+          <AppHeader title="EXECUTE" showWallet compactWallet={false} />
+        )}
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-          
-          {/* Safe top bar: back + logo + quote */}
-          <View style={styles.safeBar}>
-            <TouchableOpacity style={[styles.backBtn, { backgroundColor: theme.surface }]} onPress={() => router.push('/')} hitSlop={18}>
-              <Ionicons name="arrow-back-outline" size={28} color={theme.text} />
-            </TouchableOpacity>
-            <Text style={[styles.headerTitle, { color: theme.text }]}>Daily Tasks</Text>
-            <View style={styles.placeholder} />
-          </View>
+          <FadeRise>
+            <Text style={[type.title, { color: theme.text, textAlign: 'center', marginTop: 10 }]}>Daily Execution</Text>
+            <Text style={[type.subtitle, { color: theme.textSecondary, textAlign: 'center', marginBottom: 8 }]}>
+              Write the work. Finish the work. No theater.
+            </Text>
+          </FadeRise>
 
-          {/* Titlu mare */}
-          <View style={{ marginTop: 28, marginBottom: 6, alignItems: "center" }}>
-            <Text style={[styles.pageTitle, { color: theme.text }]}>Daily Tasks</Text>
-          </View>
-
-          {/* Badge data */}
           <Text style={[styles.badge, { backgroundColor: theme.surface, color: theme.textSecondary, borderColor: theme.border }]}>{todayString()}</Text>
 
-          {/* Stats Card */}
-          <View style={[styles.statsCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <Text style={[styles.statsBig, { color: theme.text }]}>
-              {completed}/{tasks.length}
-              <Text style={{ fontSize: 18, color: theme.textSecondary, fontWeight: "400" }}> tasks</Text>
-            </Text>
-            <Text style={[styles.statsMsg, { color: theme.textSecondary }]}>
-              {allDone && tasks.length > 0
-                ? "Amazing! All done!"
-                : completed === 0
-                  ? "Let's get started!"
-                  : "Almost there, keep it up!"}
-            </Text>
-          </View>
+          <FadeRise delay={90}>
+            <View style={[styles.statsCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 4 }}>
+                {allDone && tasks.length > 0 ? <FlameStreak size={22} color={theme.flame} /> : null}
+                <Text style={[styles.statsBig, { color: theme.text }]}>
+                  <CountUp value={completed} duration={650} style={[styles.statsBig, { color: theme.text }]} />
+                  /{tasks.length}
+                  <Text style={{ fontSize: 18, color: theme.textSecondary, fontWeight: "400" }}> locked in</Text>
+                </Text>
+              </View>
+              <Text style={[styles.statsMsg, { color: theme.textSecondary }]}>
+                {allDone && tasks.length > 0
+                  ? "Day secured. Stay sharp."
+                  : completed === 0
+                    ? "Empty list. Add targets."
+                    : "Keep moving. No soft exits."}
+              </Text>
+            </View>
+          </FadeRise>
 
-          {/* Task List */}
           <View style={{ width: "100%", marginTop: 15, marginBottom: 10 }}>
-            {tasks.length === 0 && (
-              <Text style={[styles.noTasks, { color: theme.textSecondary }]}>No tasks yet. Start by adding one below 👇</Text>
-            )}
+            {tasks.length === 0 ? (
+              <EmptyState
+                icon="checkbox-outline"
+                title="No targets yet"
+                body="Write one concrete outcome for today. Keep it short — finish it before anything else."
+              />
+            ) : null}
             {tasks.map((task, idx) => (
               <View key={task.id} style={[styles.taskCard, { backgroundColor: theme.card, borderColor: theme.border }, task.done && styles.taskDone]}>
                 <TouchableOpacity onPress={() => toggleTask(idx)} style={styles.checkboxWrap}>
@@ -176,11 +170,10 @@ export default function DailyTasksScreen() {
             ))}
           </View>
 
-          {/* INPUT + ADD BTN */}
           <View style={[styles.addCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <TextInput
               style={[styles.input, { color: theme.text }]}
-              placeholder={tasks.length >= 10 ? "Max 10 tasks" : "Add a new task..."}
+              placeholder={tasks.length >= 10 ? "Max 10 targets" : "Add a target..."}
               placeholderTextColor={theme.textTertiary}
               value={input}
               editable={tasks.length < 10}

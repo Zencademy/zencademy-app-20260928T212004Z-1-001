@@ -17,7 +17,9 @@ import {
 import { useAuth } from "../../components/AuthContext";
 import { useTheme } from "../../components/ThemeContext";
 import { useXP } from "../../components/XPContext";
-import { SHOP_BADGES } from "./ShopScreen";
+import { SHOP_BADGES } from "../../constants/shop";
+import { avatarGlyph, avatarTone, getEquippedAvatar } from "../../lib/inventory";
+import { mindTypeTitle } from "../../lib/mindTypes";
 import { getXpForLevel } from "../../utils/levels";
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -40,19 +42,20 @@ function getNewBadges(unlockedBadges: string[], prevBadges: string[]): string[] 
 }
 
 function getBrainBadgeStyle(type: string) {
+  const label = mindTypeTitle(type) || type;
   switch (type) {
-    case "Logic Guru": return { label: "Logic Guru", bg: "#e0f7fa", color: "#0aa", icon: "bulb-outline" as const, shadow: "#0aa" };
-    case "Memory Master": return { label: "Memory Master", bg: "#fff9e6", color: "#efb600", icon: "layers-outline" as const, shadow: "#efb600" };
+    case "Logic Guru": return { label, bg: "#e0f7fa", color: "#0aa", icon: "bulb-outline" as const, shadow: "#0aa" };
+    case "Memory Master": return { label, bg: "#fff9e6", color: "#efb600", icon: "layers-outline" as const, shadow: "#efb600" };
     case "Focus Champion":
-    case "Focus Titan": return { label: "Focus Champion", bg: "#eaf8e8", color: "#3dbd63", icon: "flash-outline" as const, shadow: "#3dbd63" };
-    case "Strategic Thinker": return { label: "Strategic Thinker", bg: "#eef2ff", color: "#4154f1", icon: "podium-outline" as const, shadow: "#4154f1" };
-    case "Creative Visionary": return { label: "Creative Visionary", bg: "#fff1f2", color: "#e11d48", icon: "color-palette-outline" as const, shadow: "#e11d48" };
-    case "Quick Reactor": return { label: "Quick Reactor", bg: "#fef3c7", color: "#d97706", icon: "flash-outline" as const, shadow: "#d97706" };
-    case "Pattern Pro": return { label: "Pattern Pro", bg: "#f3e8ff", color: "#7c3aed", icon: "aperture-outline" as const, shadow: "#7c3aed" };
-    case "Resilient Optimizer": return { label: "Resilient Optimizer", bg: "#e6fffb", color: "#0891b2", icon: "reload-outline" as const, shadow: "#0891b2" };
-    case "Social Connector": return { label: "Social Connector", bg: "#ecfdf5", color: "#10b981", icon: "people-outline" as const, shadow: "#10b981" };
-    case "Visualizer": return { label: "Visualizer", bg: "#f1f5f9", color: "#0f172a", icon: "image-outline" as const, shadow: "#0f172a" };
-    default: return { label: type, bg: "#eee", color: "#888", icon: "star-outline" as const, shadow: "#888" };
+    case "Focus Titan": return { label, bg: "#eaf8e8", color: "#3dbd63", icon: "flash-outline" as const, shadow: "#3dbd63" };
+    case "Strategic Thinker": return { label, bg: "#eef2ff", color: "#4154f1", icon: "podium-outline" as const, shadow: "#4154f1" };
+    case "Creative Visionary": return { label, bg: "#fff1f2", color: "#e11d48", icon: "color-palette-outline" as const, shadow: "#e11d48" };
+    case "Quick Reactor": return { label, bg: "#fef3c7", color: "#d97706", icon: "flash-outline" as const, shadow: "#d97706" };
+    case "Pattern Pro": return { label, bg: "#f3e8ff", color: "#7c3aed", icon: "aperture-outline" as const, shadow: "#7c3aed" };
+    case "Resilient Optimizer": return { label, bg: "#e6fffb", color: "#0891b2", icon: "reload-outline" as const, shadow: "#0891b2" };
+    case "Social Connector": return { label, bg: "#ecfdf5", color: "#10b981", icon: "people-outline" as const, shadow: "#10b981" };
+    case "Visualizer": return { label, bg: "#f1f5f9", color: "#0f172a", icon: "image-outline" as const, shadow: "#0f172a" };
+    default: return { label, bg: "#eee", color: "#888", icon: "star-outline" as const, shadow: "#888" };
   }
 }
 
@@ -105,8 +108,13 @@ export default function ProfileScreen() {
 
   const [prevBadges, setPrevBadges] = useState<string[]>(unlockedBadges);
   const [newlyUnlocked, setNewlyUnlocked] = useState<string[]>([]);
+  const [avatarId, setAvatarId] = useState<string | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    void getEquippedAvatar().then(setAvatarId);
+  }, [unlockedBadges]);
 
   useEffect(() => {
     const newOnes = getNewBadges(unlockedBadges, prevBadges);
@@ -250,16 +258,27 @@ export default function ProfileScreen() {
         <View style={styles.header}>
           {/* Premium Avatar with Gradient Border */}
           <View style={styles.avatarContainer}>
-            <View style={[styles.avatarGradientBorder, {
-              backgroundColor: themeMode === 'light' ? theme.primary : 'transparent',
-              shadowColor: themeMode === 'light' ? theme.primary : theme.warning,
-            }]}>
-              <View style={[styles.avatarCircle, { backgroundColor: theme.primary, borderColor: theme.border }]}>
-                <Text style={[styles.avatarLetter, { color: theme.buttonText }]}>
-                  {name && name.length > 0 ? name.charAt(0).toUpperCase() : "?"}
-                </Text>
-              </View>
-            </View>
+            {(() => {
+              const tone = avatarTone(avatarId);
+              return (
+                <View style={[styles.avatarGradientBorder, {
+                  backgroundColor: tone?.tone || (themeMode === 'light' ? theme.primary : 'transparent'),
+                  shadowColor: tone?.tone || (themeMode === 'light' ? theme.primary : theme.warning),
+                }]}>
+                  <View style={[styles.avatarCircle, {
+                    backgroundColor: tone?.tone || theme.primary,
+                    borderColor: theme.border,
+                  }]}>
+                    <Text style={[styles.avatarLetter, {
+                      color: tone?.ink || theme.buttonText,
+                      fontSize: avatarId ? 30 : 36,
+                    }]}>
+                      {avatarGlyph(avatarId, name && name.length > 0 ? name.charAt(0).toUpperCase() : "?")}
+                    </Text>
+                  </View>
+                </View>
+              );
+            })()}
           </View>
           
           <View style={styles.nameContainer}>

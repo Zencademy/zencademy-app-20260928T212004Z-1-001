@@ -12,9 +12,10 @@ import {
     View
 } from 'react-native';
 import { useScreensaver } from "../../components/ScreensaverContext";
-import ScreensaverOverlay from "../../components/ScreensaverOverlay";
 import { useTheme } from '../../components/ThemeContext';
 import { useXP } from '../../components/XPContext';
+import { type } from '../../components/ui/type';
+import { AnimatedXpBar, FadeRise, FlameStreak, SpinCoin, ThunderBolt } from '../../components/ui/motion';
 import useResponsive from '../../hooks/useResponsive';
 import { getXpForLevel } from '../../utils/levels';
 // duplicate import removed
@@ -52,19 +53,20 @@ type Props = {
 // Available menu options for customization (mirrors MenuScreen)
 const MENU_OPTIONS = [
   { id: 1, title: 'Profile', subtitle: 'Your profile & settings', route: '/ProfileScreen', icon: 'person-outline' },
-  { id: 2, title: 'Shop', subtitle: 'Buy items & upgrades', route: '/ShopScreen', icon: 'cart-outline' },
-  { id: 3, title: 'Journal', subtitle: 'Daily reflections', route: '/(tabs)', icon: 'document-text-outline' },
+  { id: 2, title: 'Shop', subtitle: 'Badges for coins', route: '/ShopScreen', icon: 'cart-outline' },
+  { id: 3, title: 'Journal', subtitle: 'Private log of the day', route: '/(tabs)?initialPage=3', icon: 'document-text-outline' },
   { id: 4, title: 'Training Hub', subtitle: 'Mental & physical training', route: '/TrainingHub', icon: 'barbell-outline' },
   { id: 5, title: 'Mental Training', subtitle: 'Cognitive workouts', route: '/MentalTrainingScreen', icon: 'speedometer-outline' },
   { id: 6, title: 'Physical Training', subtitle: 'Body performance', route: '/PhysicalTrainingScreen', icon: 'walk-outline' },
   { id: 7, title: 'Intelligence Test', subtitle: 'Measure and improve', route: '/IntelligenceTestScreen', icon: 'analytics-outline' },
-  { id: 8, title: 'Daily Tasks', subtitle: 'Complete your daily goals', route: '/DailyTasksScreen', icon: 'checkmark-done-outline' },
+  { id: 8, title: 'Daily Execution', subtitle: 'Lock in today’s targets', route: '/(tabs)?initialPage=2', icon: 'checkmark-done-outline' },
   { id: 9, title: 'Focus', subtitle: 'Focus training', route: '/focus', icon: 'flash-outline' },
-  { id: 10, title: 'Meditate', subtitle: 'Mindfulness & meditation', route: '/MeditateScreen', icon: 'cloud-outline' },
-  { id: 11, title: 'Ebook', subtitle: 'Curated reads', route: '/EbookScreen', icon: 'library-outline' },
+  { id: 10, title: 'Meditate', subtitle: 'Reset under pressure', route: '/MeditateScreen', icon: 'cloud-outline' },
+  { id: 11, title: 'Ebook', subtitle: 'Buy with coins', route: '/EbookScreen', icon: 'library-outline' },
   { id: 12, title: 'Custom Reminders', subtitle: 'Build your routine', route: '/CustomRemindersScreen', icon: 'alarm-outline' },
-  { id: 13, title: 'Clubs', subtitle: 'Join clubs & compete', route: '/ClubsScreen', icon: 'people-outline' },
-  { id: 14, title: 'Settings', subtitle: 'App preferences', route: '/(tabs)/settings', icon: 'settings-outline' },
+  { id: 13, title: 'Leaderboard', subtitle: 'Where you stand', route: '/(tabs)?initialPage=4', icon: 'trophy-outline' },
+  { id: 14, title: 'Clubs', subtitle: 'Join clubs & compete', route: '/ClubsScreen', icon: 'people-outline' },
+  { id: 15, title: 'Settings', subtitle: 'App preferences', route: '/(tabs)/settings', icon: 'settings-outline' },
 ];
 
 interface CustomizationModalProps {
@@ -187,13 +189,13 @@ const CustomizationModal: React.FC<CustomizationModalProps> = ({
 };
 
 export default function HomeScreen({ goLeaderboard, openMenu }: Props) {
-  const { xp = 0, level = 1, streak = 0, brainType = "", name = "", updateDailyLoginStreak, totalPoints = 0 } = useXP();
+  const { xp = 0, level = 1, streak = 0, brainType = "", name = "", updateDailyLoginStreak, totalPoints = 0, coins = 0 } = useXP();
   const router = useRouter();
   const { insets, breakpoint, isTablet } = (useResponsive as any)();
-  const { active: screensaverActive } = useScreensaver();
   const { theme } = useTheme();
   const [factIdx, setFactIdx] = useState(0);
   const factFade = useRef(new Animated.Value(1)).current;
+  const totalXp = totalPoints;
 
   // Update daily login streak when component mounts
   useEffect(() => {
@@ -201,8 +203,7 @@ export default function HomeScreen({ goLeaderboard, openMenu }: Props) {
       updateDailyLoginStreak();
     }
   }, [updateDailyLoginStreak]);
-  const barAnim = useRef(new Animated.Value(0.01)).current;
-  const { resetTimer, setScreensaverActive } = useScreensaver();
+  const { resetTimer } = useScreensaver();
 
   // Onboarding status (NEBLOCANT!)
   const [onboardingChecked, setOnboardingChecked] = useState(false);
@@ -215,10 +216,10 @@ export default function HomeScreen({ goLeaderboard, openMenu }: Props) {
   const [longPressTimer, setLongPressTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [screenLongPressTimer, setScreenLongPressTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [customButtons, setCustomButtons] = useState([
-    { id: 1, title: 'Daily Tasks', subtitle: 'Complete your daily goals', route: '/DailyTasksScreen', icon: 'checkmark-done-outline' },
+    { id: 1, title: 'Daily Execution', subtitle: 'Lock in today’s targets', route: '/(tabs)?initialPage=2', icon: 'checkmark-done-outline' },
     { id: 2, title: 'Training Hub', subtitle: 'Mental & physical training', route: '/TrainingHub', icon: 'barbell-outline' },
-    { id: 3, title: 'Shop', subtitle: 'Buy items & upgrades', route: '/ShopScreen', icon: 'cart-outline' },
-    { id: 4, title: 'Clubs', subtitle: 'Join clubs & compete', route: '/ClubsScreen', icon: 'people-outline' }
+    { id: 3, title: 'Shop', subtitle: 'Badges for coins', route: '/ShopScreen', icon: 'cart-outline' },
+    { id: 4, title: 'Leaderboard', subtitle: 'Where you stand', route: '/(tabs)?initialPage=4', icon: 'trophy-outline' }
   ]);
   const [showMonthlyChallenge, setShowMonthlyChallenge] = useState(false);
 
@@ -318,20 +319,9 @@ export default function HomeScreen({ goLeaderboard, openMenu }: Props) {
   useFocusEffect(
     React.useCallback(() => {
       resetTimer();
-      setScreensaverActive(false);
-      return () => setScreensaverActive(false);
-    }, [])
+      return () => {};
+    }, [resetTimer])
   );
-
-  useEffect(() => {
-    const needed = getXpForLevel(level);
-    const percent = Math.min(1, level >= MAX_LEVEL ? 1 : (needed > 0 ? xp / needed : 0));
-    Animated.timing(barAnim, {
-      toValue: percent,
-      duration: 700,
-      useNativeDriver: false,
-    }).start();
-  }, [xp, level]);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -387,8 +377,6 @@ export default function HomeScreen({ goLeaderboard, openMenu }: Props) {
       delayLongPress={1000}
     >
       <SafeAreaView style={[styles.safe, { backgroundColor: theme.background }]}>
-        {/* Drawer removed per request */}
-        <ScreensaverOverlay />
         <Animated.View style={[styles.container, { opacity: fadeAnim, width, backgroundColor: theme.background }]}>
           {/* Settings Button */}
           {showSettingsButton && (
@@ -401,84 +389,112 @@ export default function HomeScreen({ goLeaderboard, openMenu }: Props) {
             </TouchableOpacity>
           )}
           {/* Header Section */}
-          <View style={styles.header}>
-            <View style={styles.headerTop}>
-              <View style={styles.headerTopLeft} />
-              <View style={styles.titleContainer}>
-                <Text style={[styles.title, { color: theme.text }]}>ZENCADEMY</Text>
-              </View>
-              {showHelpButton ? (
-                <Pressable
-                  onPress={() => setShowHelpModal(true)}
-                  onLongPress={handleHelpLongPress}
-                  onPressOut={handleHelpPressOut}
-                  style={[styles.helpButton, { backgroundColor: theme.surface }]}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                >
-                  <Ionicons name="help-circle-outline" size={20} color={theme.textSecondary} />
-                </Pressable>
-              ) : (
+          <FadeRise>
+            <View style={styles.header}>
+              <View style={styles.headerTop}>
                 <View style={styles.headerTopLeft} />
-              )}
+                <View style={styles.titleContainer}>
+                  <Text style={[type.brand, { color: theme.text, textAlign: 'center' }]}>ZENCADEMY</Text>
+                  <View style={{ height: 2, width: 36, marginTop: 6, alignSelf: 'center', backgroundColor: theme.primary }} />
+                </View>
+                {showHelpButton ? (
+                  <Pressable
+                    onPress={() => setShowHelpModal(true)}
+                    onLongPress={handleHelpLongPress}
+                    onPressOut={handleHelpPressOut}
+                    style={[styles.helpButton, { backgroundColor: theme.surface }]}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <Ionicons name="help-circle-outline" size={20} color={theme.textSecondary} />
+                  </Pressable>
+                ) : (
+                  <View style={styles.headerTopLeft} />
+                )}
+              </View>
+              <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Focus. Execute. Ascend.</Text>
             </View>
-            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Mind • Body • Spirit</Text>
-          </View>
+          </FadeRise>
 
           {/* Progress Card */}
-          <View style={[styles.progressCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <View style={styles.progressHeader}>
-              <Text style={[styles.levelText, { color: theme.text }]}>
-                Level {level}
-                {level >= MAX_LEVEL && <Text style={styles.crownIcon}> 👑</Text>}
-              </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Ionicons name="flame-outline" size={18} color={theme.textSecondary} />
-                <Text style={[styles.streakText, { color: theme.textSecondary }]}>{streak} day streak</Text>
-              </View>
-            </View>
-            
-            <View style={[styles.progressBar, { backgroundColor: theme.surface }]}>
-              <Animated.View style={[
-                styles.progressFill,
-                { 
-                  width: barAnim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }),
-                  backgroundColor: theme.primary
-                }
-              ]} />
-            </View>
-            
-            <View style={styles.progressStats}>
-              <View style={styles.statItem}>
-                <Text style={[styles.statLabel, { color: theme.textSecondary }]}>XP in Level</Text>
-                <Text style={[styles.statValue, { color: theme.text }]}> 
-                  {level < MAX_LEVEL ? `${xp}/${currentLevelXp}` : 'MAX'}
+          <FadeRise delay={60}>
+            <View style={[styles.progressCard, { backgroundColor: theme.card, borderColor: theme.border, borderWidth: 1 }]}>
+              <View style={styles.progressHeader}>
+                <Text style={[styles.levelText, { color: theme.text }]}>
+                  Level {level}{level >= MAX_LEVEL ? ' · MAX' : ''}
                 </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, height: 18 }}>
+                  <FlameStreak size={18} color={theme.flame} active={streak > 0} />
+                  <Text style={[styles.streakText, { color: theme.flame, lineHeight: 18, includeFontPadding: false }]}>
+                    {streak} day streak
+                  </Text>
+                </View>
               </View>
-              <View style={styles.statItem}>
-                <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Total XP</Text>
-                <Text style={[styles.statValue, { color: theme.text }]}>{totalXp.toLocaleString()}</Text>
+
+              <AnimatedXpBar
+                progress={level >= MAX_LEVEL ? 1 : (currentLevelXp > 0 ? xp / currentLevelXp : 0)}
+                trackColor={theme.surface}
+                fillColor={theme.primary}
+                height={10}
+                style={{ marginVertical: 12 }}
+              />
+
+              <View style={styles.progressStats}>
+                <View style={styles.statItem}>
+                  <Text style={[styles.statLabel, { color: theme.textTertiary }]}>XP in Level</Text>
+                  {level < MAX_LEVEL ? (
+                    <Text style={[styles.statValue, { color: theme.text }]}>
+                      {xp}/{currentLevelXp}
+                    </Text>
+                  ) : (
+                    <Text style={[styles.statValue, { color: theme.text }]}>MAX</Text>
+                  )}
+                </View>
+                <View style={styles.statItem}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, height: 16, marginBottom: 5 }}>
+                    <ThunderBolt size={13} color={theme.primary} />
+                    <Text style={[styles.statLabel, { color: theme.textTertiary, marginBottom: 0, lineHeight: 16, includeFontPadding: false }]}>Total XP</Text>
+                  </View>
+                  <Text style={[styles.statValue, { color: theme.text }]}>{totalXp.toLocaleString()}</Text>
+                </View>
+                <View style={styles.statItem}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, height: 16, marginBottom: 5 }}>
+                    <SpinCoin size={13} color={theme.coin} />
+                    <Text style={[styles.statLabel, { color: theme.coin, marginBottom: 0, lineHeight: 16, includeFontPadding: false }]}>Coins</Text>
+                  </View>
+                  <Text style={[styles.statValue, { color: theme.text }]}>{coins.toLocaleString()}</Text>
+                </View>
               </View>
+
+              <Text style={[type.label, { color: theme.textTertiary, textAlign: 'center', marginTop: 12, fontWeight: '600' }]}>
+                {level < 2
+                  ? `Medium unlocks at level 2 · ${2 - level} level to go`
+                  : level < 5
+                    ? `Hard unlocks at level 5 · ${5 - level} level${5 - level === 1 ? '' : 's'} to go`
+                    : 'All difficulty tiers unlocked'}
+              </Text>
             </View>
-          </View>
+          </FadeRise>
 
           {/* Wisdom Card or Monthly Challenge */}
-          <View style={[styles.wisdomCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <View style={styles.wisdomHeader}>
-              <Ionicons 
-                name={showMonthlyChallenge ? 'trophy-outline' : 'sparkles-outline'} 
-                size={24} 
-                color={theme.primary} 
-                style={{ marginRight: 8 }}
-              />
-              <Text style={[styles.wisdomTitle, { color: theme.text }]}>{showMonthlyChallenge ? 'Monthly Challenge' : 'Daily Wisdom'}</Text>
+          <FadeRise delay={100}>
+            <View style={[styles.wisdomCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <View style={styles.wisdomHeader}>
+                <Ionicons
+                  name={showMonthlyChallenge ? 'trophy-outline' : 'flash-outline'}
+                  size={22}
+                  color={theme.primary}
+                  style={{ marginRight: 8 }}
+                />
+                <Text style={[styles.wisdomTitle, { color: theme.text }]}>{showMonthlyChallenge ? 'Monthly Challenge' : 'Daily Edge'}</Text>
+              </View>
+              <Animated.Text style={[styles.wisdomText, { opacity: factFade, color: theme.textSecondary }]}>
+                {showMonthlyChallenge
+                  ? "Complete 30 days of consistent training to unlock exclusive rewards and achievements!"
+                  : RANDOM_FACTS[factIdx]
+                }
+              </Animated.Text>
             </View>
-            <Animated.Text style={[styles.wisdomText, { opacity: factFade, color: theme.textSecondary }]}>
-              {showMonthlyChallenge 
-                ? "Complete 30 days of consistent training to unlock exclusive rewards and achievements!"
-                : RANDOM_FACTS[factIdx]
-              }
-            </Animated.Text>
-          </View>
+          </FadeRise>
 
           {/* Quick Actions Grid */}
           <View style={[styles.actionsGrid, isTablet && { justifyContent: 'space-between' }]}>
@@ -490,16 +506,30 @@ export default function HomeScreen({ goLeaderboard, openMenu }: Props) {
                 styles.action4
               ];
               return (
-                <TouchableOpacity
-                  key={button.id}
-                  style={[styles.actionCard, actionStyles[index], { backgroundColor: theme.card, borderColor: theme.border }]}
-                  activeOpacity={0.8}
-                  onPress={() => router.push(button.route as any)}
-                >
-                  <Ionicons name={button.icon as any} size={32} color={theme.primary} style={styles.actionIcon} />
-                  <Text style={[styles.actionTitle, { color: theme.text }]}>{button.title}</Text>
-                  <Text style={[styles.actionSubtitle, { color: theme.textSecondary }]}>{button.subtitle}</Text>
-                </TouchableOpacity>
+                <FadeRise key={button.id} delay={40 + index * 30} style={{ width: '48%', marginBottom: 12 }}>
+                  <TouchableOpacity
+                    style={[styles.actionCard, actionStyles[index], { backgroundColor: theme.card, borderColor: theme.border, width: '100%', marginBottom: 0 }]}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      const route = String(button.route || '');
+                      const match = route.match(/initialPage=(\d+)/);
+                      if (match) {
+                        const page = Number(match[1]);
+                        if (page === 4 && goLeaderboard) {
+                          goLeaderboard();
+                          return;
+                        }
+                        router.push({ pathname: '/(tabs)', params: { initialPage: String(page) } });
+                        return;
+                      }
+                      router.push(route as any);
+                    }}
+                  >
+                    <Ionicons name={button.icon as any} size={28} color={theme.primary} style={styles.actionIcon} />
+                    <Text style={[styles.actionTitle, { color: theme.text }]}>{button.title}</Text>
+                    <Text style={[styles.actionSubtitle, { color: theme.textSecondary }]}>{button.subtitle}</Text>
+                  </TouchableOpacity>
+                </FadeRise>
               );
             })}
           </View>
@@ -543,9 +573,19 @@ export default function HomeScreen({ goLeaderboard, openMenu }: Props) {
                 <View style={[styles.helpIconContainer, { backgroundColor: theme.surface }]}>
                   <Ionicons name="star-outline" size={24} color={theme.primary} />
                 </View>
-                <Text style={[styles.helpSectionTitle, { color: theme.text }]}>XP & Levels</Text>
+                <Text style={[styles.helpSectionTitle, { color: theme.text }]}>XP unlocks training</Text>
                 <Text style={[styles.helpSectionText, { color: theme.textSecondary }]}>
-                  Earn XP by completing games, challenges, and daily tasks. Level up to unlock new features and rewards.
+                  Finish sets to earn XP and coins. Medium opens at level 2, hard at level 5. XP is never spent.
+                </Text>
+              </View>
+
+              <View style={styles.helpSection}>
+                <View style={[styles.helpIconContainer, { backgroundColor: theme.surface }]}>
+                  <Ionicons name="cash-outline" size={24} color={theme.primary} />
+                </View>
+                <Text style={[styles.helpSectionTitle, { color: theme.text }]}>Coins</Text>
+                <Text style={[styles.helpSectionText, { color: theme.textSecondary }]}>
+                  Coins buy store badges and ebooks. They do not unlock training.
                 </Text>
               </View>
 
@@ -575,7 +615,7 @@ export default function HomeScreen({ goLeaderboard, openMenu }: Props) {
                 </View>
                 <Text style={[styles.helpSectionTitle, { color: theme.text }]}>Leaderboard</Text>
                 <Text style={[styles.helpSectionText, { color: theme.textSecondary }]}>
-                  Compete with other users and see how you rank. Climb the leaderboard by earning more XP!
+                  Swipe past Journal to see ranks. XP decides position — coins never do.
                 </Text>
               </View>
 
@@ -583,9 +623,9 @@ export default function HomeScreen({ goLeaderboard, openMenu }: Props) {
                 <View style={[styles.helpIconContainer, { backgroundColor: theme.surface }]}>
                   <Ionicons name="checkmark-done-outline" size={24} color={theme.success} />
                 </View>
-                <Text style={[styles.helpSectionTitle, { color: theme.text }]}>Daily Tasks</Text>
+                <Text style={[styles.helpSectionTitle, { color: theme.text }]}>Daily Execution</Text>
                 <Text style={[styles.helpSectionText, { color: theme.textSecondary }]}>
-                  Complete daily tasks to earn bonus XP and maintain your streak. New tasks appear every day.
+                  Swipe left from Home for today’s targets. Journal is the next swipe. No soft exits.
                 </Text>
               </View>
 

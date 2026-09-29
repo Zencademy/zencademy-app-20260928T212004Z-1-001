@@ -41,91 +41,76 @@ const DEFAULT_NOTIFICATIONS: NotificationSetting[] = [
   {
     id: 'morning',
     title: 'Morning Motivation',
-    description: 'Start your day with inspiration',
+    description: 'Start your day with a short push',
     icon: 'sunny-outline',
     enabled: true,
     time: '08:00',
     messages: [
-      'You don\'t need motivation — you need standards.',
-      'Discomfort creates the version of you comfort promised.',
-      'No one is coming to save you — and that\'s the power.',
-      'You can\'t build greatness with morning excuses.',
-      'Control your mind before it controls your day.',
-      'Stay cold. Stay focused. Stay untouchable.',
-      'Your emotions don\'t deserve leadership.',
-      'The goal isn\'t to feel ready — it\'s to act ready.',
-      'Weak mornings create average lives.',
-      'You either train your mind or it trains your limits.',
-      'Comfort is the most expensive addiction.',
-      'The world belongs to the ones who do it tired.',
-      'You can\'t be legendary and well-rested.',
-      'Your discipline is louder than any alarm.',
-      'Every sunrise tests who you really are.',
-      'Motivation fades. Identity doesn\'t.',
-      'Routine beats talent when talent sleeps in.',
-      'Your future self is watching what you do this morning.',
-      'Stop searching for balance. Build endurance.',
-      'The quiet ones working at 6AM will own everything at 6PM.',
+      'Open Zencademy and finish one easy set.',
+      'Your streak starts with one calm practice.',
+      'Five focused minutes beat a whole day of waiting.',
+      'XP unlocks harder games. Coins buy rewards.',
+      'Show up once today. Consistency compounds.',
+    ],
+  },
+  {
+    id: 'training',
+    title: 'Training Reminder',
+    description: 'A gentle nudge to train',
+    icon: 'barbell-outline',
+    enabled: true,
+    time: '17:30',
+    messages: [
+      'Mental or physical — pick one path and start.',
+      'Medium sets open at level 2. Keep building.',
+      'A short breathing set still counts.',
+      'Your wallet of coins grows when you finish games.',
+      'Train once now so tonight feels lighter.',
     ],
   },
   {
     id: 'midday',
     title: 'Midday Boost',
-    description: 'Stay focused and energized',
+    description: 'Reset focus in the middle of the day',
     icon: 'flash-outline',
-    enabled: true,
+    enabled: false,
     time: '13:00',
     messages: [
-      'The day isn\'t over — but your excuses should be.',
-      'Refocus. Recenter. Restart. You still have time to win.',
-      'Half the day is gone. The other half decides who you become.',
-      'Discipline doesn\'t get tired — emotion does.',
-      'Midday is when average people slow down. You accelerate.',
-      'Focus isn\'t motivation — it\'s precision.',
-      'You didn\'t come this far to scroll your potential away.',
-      'Every choice after noon defines your night.',
-      'Momentum is built in the hours no one celebrates.',
-      'Success doesn\'t reward early starters — it rewards consistent ones.',
-      'Your energy is currency. Spend it where it compounds.',
-      'One calm, intentional hour can fix an entire chaotic day.',
-      'Don\'t chase productivity — chase alignment.',
-      'You can\'t afford emotional noise at midday.',
-      'Reset your posture. Reset your mind. Keep going.',
-      'Average minds get tired. Focused ones adapt.',
-      'You don\'t need caffeine — you need clarity.',
-      'Midday silence is the strongest form of power.',
-      'You\'re either distracted or dangerous. Choose.',
-      'The day isn\'t testing your time — it\'s testing your control.',
+      'One mindful pause can reset the afternoon.',
+      'Put the phone down after this reminder and train.',
+      'Clarity beats caffeine when you practice.',
+      'Hard sets wait at level 5 — you are building toward them.',
+      'Choose depth over doomscrolling for ten minutes.',
+    ],
+  },
+  {
+    id: 'streak',
+    title: 'Streak Saver',
+    description: 'One reminder per day to protect your streak',
+    icon: 'flame-outline',
+    enabled: true,
+    time: '20:30',
+    messages: [
+      'Your streak needs one more session before sleep.',
+      'Open the journal or finish a quick easy set.',
+      'Streaks reward showing up, not perfection.',
+      'Two minutes of breathing keeps the chain alive.',
+      'Tomorrow is easier when today is closed cleanly.',
     ],
   },
   {
     id: 'evening',
     title: 'Evening Reflection',
-    description: 'Reflect on your progress',
+    description: 'Close the day with awareness',
     icon: 'moon-outline',
     enabled: true,
-    time: '20:00',
+    time: '21:15',
     messages: [
-      'The day ends — your standard doesn\'t.',
-      'You weren\'t tired. You were undisciplined.',
-      'Review your day like a scientist, not a victim.',
-      'The way you close the day writes tomorrow\'s tone.',
-      'Reflection is the gym of awareness.',
-      'You don\'t need peace — you need purpose.',
-      'Night doesn\'t mean rest. It means recalibration.',
-      'Success is built in silence after everyone\'s done talking.',
-      'You can\'t sleep peacefully with unfinished promises.',
-      'Your mind knows if you gave everything — that\'s your real score.',
-      'You didn\'t have a hard day. You had a day that tested your focus.',
-      'Rest isn\'t escape. It\'s recovery for another round.',
-      'Most people recharge by disconnecting — strong minds recharge by reflecting.',
-      'End the day with clarity, not regret.',
-      'Your routine at night exposes your discipline, not your fatigue.',
-      'Nothing haunts like wasted potential — even in sleep.',
-      'Be grateful, not comfortable.',
-      'The calm after chaos is earned, not gifted.',
-      'You don\'t need to be perfect — just consistent when it\'s hardest.',
-      'Let the world sleep. You\'re still becoming.',
+      'Write one line in your journal before rest.',
+      'What did you train today — mind, body, or both?',
+      'Rest is part of the plan, not a failure.',
+      'Tomorrow’s XP starts with tonight’s recovery.',
+      'Review one choice you made well today.',
     ],
   },
 ];
@@ -146,16 +131,15 @@ export default function NotificationsScreen() {
       try {
         const saved = await AsyncStorage.getItem('@notification_settings');
         if (saved) {
-          const parsed = JSON.parse(saved);
-          console.log('Loaded notification settings:', parsed.map((n: NotificationSetting) => ({
-            id: n.id,
-            enabled: n.enabled,
-            time: n.time,
-          })));
-          setNotifications(parsed);
-          previousNotificationsRef.current = parsed;
+          const parsed = JSON.parse(saved) as NotificationSetting[];
+          const byId = new Map(parsed.map(n => [n.id, n]));
+          const merged = DEFAULT_NOTIFICATIONS.map(def => {
+            const prev = byId.get(def.id);
+            return prev ? { ...def, enabled: prev.enabled, time: prev.time } : def;
+          });
+          setNotifications(merged);
+          previousNotificationsRef.current = merged;
         } else {
-          console.log('No saved settings, using defaults');
           previousNotificationsRef.current = DEFAULT_NOTIFICATIONS;
         }
         setIsInitialLoad(false);
@@ -194,7 +178,7 @@ export default function NotificationsScreen() {
   }, []);
 
 
-  // Helper function to schedule a single notification
+  // Helper function to schedule a single notification (once per day at the chosen time)
   const scheduleSingleNotification = async (notif: NotificationSetting): Promise<string | null> => {
     try {
       const [hours, minutes] = notif.time.split(':').map(Number);
@@ -209,26 +193,13 @@ export default function NotificationsScreen() {
 
       console.log(`Scheduling ${notif.id} at ${hours}:${minutes.toString().padStart(2, '0')}`);
 
-      // Cancel existing notification if any
+      // Cancel existing notification if any — one identifier = one daily fire
       try {
         await Notifications.cancelScheduledNotificationAsync(`notification_${notif.id}`);
       } catch (error) {
         // Ignore if notification doesn't exist
       }
 
-      // Calculate if time has passed today - if so, schedule for tomorrow first
-      const now = new Date();
-      const todayAtTime = new Date(now);
-      todayAtTime.setHours(hours, minutes, 0, 0);
-      
-      // Use date trigger to ensure it doesn't fire immediately
-      // If time has passed today, schedule for tomorrow, otherwise schedule for today
-      const targetDate = todayAtTime <= now 
-        ? new Date(todayAtTime.getTime() + 24 * 60 * 60 * 1000) // Tomorrow
-        : todayAtTime; // Today
-
-      // Schedule with date trigger first, then it will repeat daily
-      // This ensures it only fires at the correct time
       const notificationId = await Notifications.scheduleNotificationAsync({
         identifier: `notification_${notif.id}`,
         content: {
@@ -238,10 +209,10 @@ export default function NotificationsScreen() {
           data: { notificationId: notif.id },
         },
         trigger: {
-          type: 'date',
-          date: targetDate,
-          repeats: true,
-        } as any,
+          type: Notifications.SchedulableTriggerInputTypes.DAILY,
+          hour: hours,
+          minute: minutes,
+        },
       });
 
       console.log(`Notification ${notif.id} scheduled with ID: ${notificationId} at ${hours}:${minutes.toString().padStart(2, '0')}`);

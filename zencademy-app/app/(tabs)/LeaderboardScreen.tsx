@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+﻿import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -11,29 +11,34 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../components/AuthContext";
 import { useScreensaver } from "../../components/ScreensaverContext";
-import ScreensaverOverlay from "../../components/ScreensaverOverlay";
 import { useTheme } from "../../components/ThemeContext";
 import { useXP } from "../../components/XPContext";
+import { AppHeader } from "../../components/ui/AppHeader";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { Skeleton } from "../../components/ui/Skeleton";
+import { Breath, CountUp, FadeRise } from "../../components/ui/motion";
 import useResponsive from '../../hooks/useResponsive';
 import { userDataService } from "../../utils/supabase";
 import { deriveLevelAndLevelXP } from "../../utils/levels";
+import { mindTypeLabel } from "../../lib/mindTypes";
 
 // Helper function to get brain type style
 function getBrainBadgeStyle(type: string | null | undefined) {
   if (!type) return null;
+  const label = mindTypeLabel(type);
   switch (type) {
-    case "Logic Guru": return { label: "Logic Guru", color: "#0aa", icon: "bulb-outline" as const };
-    case "Memory Master": return { label: "Memory Master", color: "#efb600", icon: "layers-outline" as const };
+    case "Logic Guru": return { label, color: "#0aa", icon: "bulb-outline" as const };
+    case "Memory Master": return { label, color: "#efb600", icon: "layers-outline" as const };
     case "Focus Champion":
-    case "Focus Titan": return { label: "Focus", color: "#3dbd63", icon: "flash-outline" as const };
-    case "Strategic Thinker": return { label: "Strategic", color: "#4154f1", icon: "podium-outline" as const };
-    case "Creative Visionary": return { label: "Creative", color: "#e11d48", icon: "color-palette-outline" as const };
-    case "Quick Reactor": return { label: "Quick", color: "#d97706", icon: "flash-outline" as const };
-    case "Pattern Pro": return { label: "Pattern", color: "#7c3aed", icon: "aperture-outline" as const };
-    case "Resilient Optimizer": return { label: "Resilient", color: "#0891b2", icon: "reload-outline" as const };
-    case "Social Connector": return { label: "Social", color: "#10b981", icon: "people-outline" as const };
-    case "Visualizer": return { label: "Visual", color: "#0f172a", icon: "image-outline" as const };
-    default: return { label: type, color: "#888", icon: "star-outline" as const };
+    case "Focus Titan": return { label, color: "#3dbd63", icon: "flash-outline" as const };
+    case "Strategic Thinker": return { label, color: "#4154f1", icon: "podium-outline" as const };
+    case "Creative Visionary": return { label, color: "#e11d48", icon: "color-palette-outline" as const };
+    case "Quick Reactor": return { label, color: "#d97706", icon: "flash-outline" as const };
+    case "Pattern Pro": return { label, color: "#7c3aed", icon: "aperture-outline" as const };
+    case "Resilient Optimizer": return { label, color: "#0891b2", icon: "reload-outline" as const };
+    case "Social Connector": return { label, color: "#10b981", icon: "people-outline" as const };
+    case "Visualizer": return { label, color: "#0f172a", icon: "image-outline" as const };
+    default: return { label: label || type, color: "#888", icon: "star-outline" as const };
   }
 }
 
@@ -133,13 +138,12 @@ export default function LeaderboardScreen({ goHome, goMenu, goJournal, openMenu 
   const pulseAnim = useRef(new Animated.Value(0)).current;
 
   // Screensaver global - premium sync
-  const { resetTimer, setScreensaverActive } = useScreensaver();
+  const { resetTimer } = useScreensaver();
   useFocusEffect(
     useCallback(() => {
       resetTimer();
-      setScreensaverActive(false);
-      return () => setScreensaverActive(false);
-    }, [])
+      return () => {};
+    }, [resetTimer])
   );
 
   useEffect(() => {
@@ -260,36 +264,44 @@ export default function LeaderboardScreen({ goHome, goMenu, goJournal, openMenu 
 
   return (
     <Animated.View style={{ flex: 1 }}>
-          <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-            {/* Drawer removed per request */}
-            <ScreensaverOverlay />
+          <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }} edges={['bottom']}>
+            <AppHeader title="RANKINGS" showWallet compactWallet />
+            <FadeRise>
+              <View style={[styles.header, { backgroundColor: theme.card, marginTop: 0 }]}>
+                <View style={styles.headerBackground}>
+                  <View style={styles.titleContainer}>
+                    <View style={styles.titleRow}>
+                      <Ionicons name="trophy" size={28} color={theme.primary} />
+                      <Text style={[styles.title, { color: theme.text }]}>RANKINGS</Text>
+                    </View>
+                    <Text style={[styles.subtitle, { color: theme.textSecondary }]}>XP decides. Prove your place.</Text>
+                  </View>
 
-            {/* Professional Header */}
-            <View style={[styles.header, { backgroundColor: theme.card }]}>
-              <View style={styles.headerBackground}>
-                <View style={styles.titleContainer}>
-                  <View style={styles.titleRow}>
-                    <Ionicons name="trophy" size={28} color={theme.primary} />
-                    <Text style={[styles.title, { color: theme.text }]}>LEADERBOARD</Text>
-                  </View>
-                  <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Elite Champions</Text>
-                </View>
-                
-                {/* Stats Grid */}
-                <View style={styles.statsGrid}>
-                  <View style={[styles.statCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-                    <Ionicons name="people" size={20} color={theme.primary} />
-                    <Text style={[styles.statNumber, { color: theme.text }]}>{totalPlayers.toLocaleString()}</Text>
-                    <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Total Players</Text>
-                  </View>
-                  <View style={[styles.statCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-                    <Ionicons name="medal" size={20} color="#F59E0B" />
-                    <Text style={[styles.statNumber, { color: theme.text }]}>#{userRank || 'N/A'}</Text>
-                    <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Your Rank</Text>
+                  <View style={styles.statsGrid}>
+                    <Breath amount={1.02} style={{ flex: 1 }}>
+                      <View style={[styles.statCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+                        <Ionicons name="people" size={20} color={theme.primary} />
+                        <CountUp value={totalPlayers} style={[styles.statNumber, { color: theme.text }]} />
+                        <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Athletes</Text>
+                      </View>
+                    </Breath>
+                    <Breath amount={1.02} style={{ flex: 1 }}>
+                      <View style={[styles.statCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+                        <Ionicons name="medal" size={20} color={theme.flame} />
+                        {userRank == null ? (
+                          <Text style={[styles.statNumber, { color: theme.text }]}>—</Text>
+                        ) : (
+                          <Text style={[styles.statNumber, { color: theme.text }]}>
+                            #<CountUp value={userRank} style={[styles.statNumber, { color: theme.text }]} />
+                          </Text>
+                        )}
+                        <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Your Rank</Text>
+                      </View>
+                    </Breath>
                   </View>
                 </View>
               </View>
-            </View>
+            </FadeRise>
 
             {/* Current User Stats removed for compact view */}
 
@@ -318,17 +330,36 @@ export default function LeaderboardScreen({ goHome, goMenu, goJournal, openMenu 
               }
             >
               {isLoading ? (
-                <View style={styles.loadingContainer}>
-                  <View style={[styles.loadingSpinner, { backgroundColor: theme.card }]}>
-                    <Text style={styles.loadingSpinnerText}>⚡</Text>
-                  </View>
-                  <Text style={[styles.loadingText, { color: theme.text }]}>Loading champions...</Text>
+                <View style={{ gap: 12, paddingHorizontal: 4, paddingTop: 8 }}>
+                  {[0, 1, 2, 3, 4, 5].map((i) => (
+                    <View
+                      key={i}
+                      style={{
+                        borderRadius: 14,
+                        borderWidth: 1,
+                        borderColor: theme.border,
+                        backgroundColor: theme.card,
+                        padding: 14,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 12,
+                      }}
+                    >
+                      <Skeleton height={36} width={36} radius={10} />
+                      <View style={{ flex: 1, gap: 8 }}>
+                        <Skeleton height={14} width="55%" />
+                        <Skeleton height={10} width="35%" />
+                      </View>
+                      <Skeleton height={28} width={56} radius={999} />
+                    </View>
+                  ))}
                 </View>
               ) : leaderboard.length === 0 ? (
-                <View style={styles.emptyContainer}>
-                  <Text style={[styles.emptyText, { color: theme.text }]}>No champions yet</Text>
-                  <Text style={[styles.emptySubtext, { color: theme.textSecondary }]}>Be the first to join the league!</Text>
-                </View>
+                <EmptyState
+                  icon="trophy-outline"
+                  title="No rankings yet"
+                  body="Train once and your XP will place you on the board. Be the first name on the list."
+                />
               ) : (
                 <View style={styles.leaderboardContainer}>
                   {/* Top 50 Leaderboard */}
@@ -336,10 +367,10 @@ export default function LeaderboardScreen({ goHome, goMenu, goJournal, openMenu 
                     <View style={styles.sectionHeader}>
                       <View style={styles.sectionTitleRow}>
                         <Ionicons name="star" size={20} color={theme.primary} />
-                        <Text style={[styles.sectionTitle, { color: theme.text }]}>Top 50 Champions</Text>
+                        <Text style={[styles.sectionTitle, { color: theme.text }]}>Top 50</Text>
                       </View>
                       <View style={styles.sectionSubtitle}>
-                        <Text style={[styles.sectionSubtitleText, { color: theme.textSecondary }]}>Elite performers from {totalPlayers.toLocaleString()} total players</Text>
+                        <Text style={[styles.sectionSubtitleText, { color: theme.textSecondary }]}>Ranked by XP Â· {totalPlayers.toLocaleString()} athletes</Text>
                       </View>
                     </View>
                     

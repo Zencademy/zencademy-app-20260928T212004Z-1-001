@@ -11,7 +11,7 @@ import {
     View,
 } from 'react-native';
 import { useAuth } from '../../components/AuthContext';
-import { useTheme } from '../../components/ThemeContext';
+import { ACCENT_PRESETS, AccentId, useTheme } from '../../components/ThemeContext';
 
 interface SettingsItemProps {
   icon: string;
@@ -100,7 +100,7 @@ function SettingsItem({
 export default function SettingsScreen() {
   const router = useRouter();
   const { logout } = useAuth();
-  const { theme, themeMode, toggleTheme } = useTheme();
+  const { theme, themeMode, toggleTheme, accentId, setAccentId } = useTheme();
 
   const handleLogout = () => {
     Alert.alert(
@@ -154,21 +154,15 @@ export default function SettingsScreen() {
             <SettingsItem
               icon="notifications-outline"
               title="Notifications"
-              subtitle="Manage your daily motivational notifications"
+              subtitle="One streak reminder per day, plus optional nudges"
               onPress={() => router.push("/NotificationsScreen")}
-            />
-            <SettingsItem
-              icon="shield-outline"
-              title="Privacy"
-              subtitle="Privacy and security settings"
-              onPress={() => Alert.alert('Coming Soon', 'This feature will be available soon!')}
             />
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>App</Text>
-          <View style={[styles.sectionContent, { backgroundColor: theme.card, borderColor: theme.borderLight }]}>
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>Appearance</Text>
+          <View style={[styles.sectionContent, { backgroundColor: theme.card, borderColor: theme.borderLight, paddingBottom: 8 }]}>
             <SettingsItem
               icon="moon-outline"
               title="Night Mode"
@@ -177,23 +171,51 @@ export default function SettingsScreen() {
               switchValue={themeMode === 'dark'}
               onSwitchChange={toggleTheme}
             />
-            <SettingsItem
-              icon="language-outline"
-              title="Language"
-              subtitle="Change app language"
-              onPress={() => Alert.alert('Coming Soon', 'This feature will be available soon!')}
-            />
-            <SettingsItem
-              icon="help-circle-outline"
-              title="Help & Support"
-              subtitle="Get help and contact support"
-              onPress={() => Alert.alert('Coming Soon', 'This feature will be available soon!')}
-            />
+            <View style={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16 }}>
+              <Text style={[styles.settingsTitle, { color: theme.text, marginBottom: 4 }]}>Accent color</Text>
+              <Text style={[styles.settingsSubtitle, { color: theme.textSecondary, marginBottom: 14 }]}>
+                Primary highlight for buttons, bars, and signals
+              </Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+                {ACCENT_PRESETS.map(preset => {
+                  const selected = accentId === preset.id;
+                  const swatch = themeMode === 'dark' ? preset.dark : preset.light;
+                  return (
+                    <TouchableOpacity
+                      key={preset.id}
+                      onPress={() => setAccentId(preset.id as AccentId)}
+                      activeOpacity={0.85}
+                      style={{ alignItems: 'center', width: 56 }}
+                    >
+                      <View
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 18,
+                          backgroundColor: swatch,
+                          borderWidth: selected ? 3 : 1,
+                          borderColor: selected ? theme.text : theme.border,
+                        }}
+                      />
+                      <Text style={{ marginTop: 6, fontSize: 11, fontWeight: selected ? '700' : '500', color: theme.textSecondary }}>
+                        {preset.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>App</Text>
+          <View style={[styles.sectionContent, { backgroundColor: theme.card, borderColor: theme.borderLight }]}>
             <SettingsItem
               icon="information-circle-outline"
               title="About"
-              subtitle="App version and information"
-              onPress={() => Alert.alert('About', 'Zencademy App v1.0.0\n\nA comprehensive mental and physical training app.')}
+              subtitle="Zencademy · XP unlocks training · coins buy shop"
+              onPress={() => Alert.alert('About', 'Zencademy\n\nXP unlocks harder training.\nCoins buy avatars, badges, and ebooks.\nStreaks reward showing up.')}
             />
           </View>
         </View>

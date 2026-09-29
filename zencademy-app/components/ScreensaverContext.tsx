@@ -1,77 +1,124 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 type ScreensaverContextType = {
   active: boolean;
   showTitle: boolean;
   gradPhase: number;
   key: number;
+  /** When false, idle timer will not fire (e.g. user is not on Home). */
+  enabled: boolean;
+  setEnabled: (enabled: boolean) => void;
   setScreensaverActive: (active: boolean) => void;
+  dismiss: () => void;
   resetTimer: () => void;
 };
+
 const ScreensaverContext = createContext<ScreensaverContextType | undefined>(undefined);
+
+const IDLE_MS = 45000;
 
 export function ScreensaverProvider({ children }: { children: React.ReactNode }) {
   const [active, setActive] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
   const [key, setKey] = useState(0);
   const [gradPhase, setGradPhase] = useState(0);
-  const timerRef = useRef<number | undefined>(undefined);
-  const isAnyScreenActive = useRef<boolean>(true);
+  const [enabled, setEnabledState] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const enabledRef = useRef(false);
+  const activeRef = useRef(false);
 
-  // Gradient pulse - throttled interval for lower CPU usage on low-end devices
+  useEffect(() => {
+    enabledRef.current = enabled;
+  }, [enabled]);
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
+
   useEffect(() => {
     if (!active) return;
-    let t = 0, dir = 1, interval;
-    // Keep roughly the same perceived speed but with fewer updates
-    const step = 0.005; // was 0.013 at 25ms; now ~60ms
-    interval = setInterval(() => {
-      t += step * dir;
+    let t = 0;
+    let dir = 1;
+    const interval = setInterval(() => {
+      t += 0.008 * dir;
       if (t >= 1) { t = 1; dir = -1; }
       if (t <= 0) { t = 0; dir = 1; }
       setGradPhase(t);
-    }, 60); // reduced update rate to cut CPU wakeups
+    }, 80);
     return () => clearInterval(interval);
   }, [active]);
 
-  // Timer global
-  const resetTimer = () => {
+  const clearIdle = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
-    if (active) {
-      setShowTitle(false);
-      setActive(false);
-      // Force a small delay to ensure state updates properly
-      setTimeout(() => {
-        setKey(Math.random());
-      }, 100);
-    }
-    timerRef.current = setTimeout(() => {
-      if (isAnyScreenActive.current) {
-        setActive(true);
-        setKey(Math.random());
-        setShowTitle(true);
-      }
-    }, 20000); // 20 secunde de inactivitate
+    timerRef.current = undefined;
   };
 
-  useEffect(() => {
-    resetTimer();
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  const scheduleIdle = useCallback(() => {
+    clearIdle();
+    if (!enabledRef.current) return;
+    timerRef.current = setTimeout(() => {
+      if (!enabledRef.current || activeRef.current) return;
+      setActive(true);
+      setShowTitle(true);
+      setKey(Math.random());
+    }, IDLE_MS);
   }, []);
 
-  const setScreensaverActive = (active: boolean) => {
-    setActive(active);
-    setShowTitle(active);
-  };
+  const dismiss = useCallback(() => {
+    clearIdle();
+    setShowTitle(false);
+    setActive(false);
+    setKey(Math.random());
+    if (enabledRef.current) scheduleIdle();
+  }, [scheduleIdle]);
+
+  const resetTimer = useCallback(() => {
+    if (activeRef.current) {
+      dismiss();
+      return;
+    }
+    scheduleIdle();
+  }, [dismiss, scheduleIdle]);
+
+  const setEnabled = useCallback((next: boolean) => {
+    setEnabledState(next);
+    enabledRef.current = next;
+    if (!next) {
+      clearIdle();
+      setActive(false);
+      setShowTitle(false);
+    } else {
+      scheduleIdle();
+    }
+  }, [scheduleIdle]);
+
+  const setScreensaverActive = useCallback((next: boolean) => {
+    if (next) {
+      if (!enabledRef.current) return;
+      setActive(true);
+      setShowTitle(true);
+    } else {
+      setActive(false);
+      setShowTitle(false);
+      if (enabledRef.current) scheduleIdle();
+    }
+  }, [scheduleIdle]);
+
+  useEffect(() => () => clearIdle(), []);
 
   return (
-    <ScreensaverContext.Provider value={{
-      active,
-      showTitle,
-      gradPhase,
-      key,
-      setScreensaverActive,
-      resetTimer,
-    }}>
+    <ScreensaverContext.Provider
+      value={{
+        active,
+        showTitle,
+        gradPhase,
+        key,
+        enabled,
+        setEnabled,
+        setScreensaverActive,
+        dismiss,
+        resetTimer,
+      }}
+    >
       {children}
     </ScreensaverContext.Provider>
   );
