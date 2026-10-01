@@ -32,7 +32,7 @@ export const userDataService = {
   },
   async purchaseShopItem(_userId: string, itemId: string) {
     const { error } = await supabase.rpc('purchase_badge', { p_item_id: itemId });
-    if (error) throw error;
+    if (error) throw new Error(error.message || 'Purchase failed');
     return true;
   },
   async spendCoins(amount: number, reason = 'spend') {
@@ -47,7 +47,7 @@ export const userDataService = {
   async getLeaderboard(limit = 50): Promise<{ users: LeaderboardUser[]; totalCount: number }> {
     const { data, error } = await supabase.rpc('get_leaderboard', { p_limit: limit });
     if (error) throw error;
-    const rows = (data || []) as Array<LeaderboardUser & { total_count?: number; points: number | string }>;
+    const rows = (data || []) as (LeaderboardUser & { total_count?: number; points: number | string })[];
     const users: LeaderboardUser[] = rows.map((row) => {
       const points = Number(row.points) || 0;
       const derived = deriveLevelAndLevelXP(points);
@@ -74,6 +74,15 @@ export const userDataService = {
     return data == null ? null : Number(data);
   },
 };
+export type TrainingTotals = {
+  session_count: number;
+  total_xp: number;
+  total_coins: number;
+  total_duration_seconds: number;
+};
+
+export type UserBoost = { boost_id: string; expires_at: string };
+
 export const trainingService = {
   async start(id: string, activity: string) {
     const { error } = await supabase.rpc('start_activity', { p_session_id: id, p_activity_id: activity });
@@ -84,14 +93,82 @@ export const trainingService = {
     if (error) throw error;
     return data as TrainingSession;
   },
-  async recordReward(xp: number, coins: number) {
-    const { error } = await supabase.rpc('record_reward', { p_xp: xp, p_coins: coins });
+  /** Idempotent server-owned payout. Client never chooses XP/coins. */
+  async claimReward(attemptId: string, activityId: string, score: number | null = null): Promise<TrainingSession> {
+    const { data, error } = await supabase.rpc('claim_activity_reward', {
+      p_attempt_id: attemptId,
+      p_activity_id: activityId,
+      p_score: score,
+    });
     if (error) throw error;
+    return data as TrainingSession;
+  },
+  /** @deprecated Disabled server-side after 202609300002 — throws on purpose. */
+  async recordReward(_xp: number, _coins: number): Promise<never> {
+    throw new Error('record_reward is disabled; use claim_activity_reward');
   },
   async list(userId: string): Promise<TrainingSession[]> {
-    const { data, error } = await supabase.from('training_sessions').select('*').eq('user_id', userId).not('completed_at', 'is', null).order('completed_at', { ascending: false }).limit(200);
+    const { data, error } = await supabase
+      .from('training_sessions')
+      .select('*')
+      .eq('user_id', userId)
+      .not('completed_at', 'is', null)
+      .order('completed_at', { ascending: false })
+      .limit(200);
     if (error) throw error;
     return data || [];
+  },
+  async days(): Promise<{ day: string; sessions: number; xp: number; duration_seconds: number }[]> {
+    const { data, error } = await supabase.rpc('get_training_days', { p_days: 7 });
+    if (error) {
+      // Fallback when RPC is not deployed yet — derive from recent sessions.
+      const { data: rows, error: listError } = await supabase
+        .from('training_sessions')
+        .select('activity_day, xp, duration_seconds')
+        .not('completed_at', 'is', null)
+        .order('completed_at', { ascending: false })
+        .limit(100);
+      if (listError) throw error;
+      const byDay = new Map<string, { sessions: number; xp: number; duration_seconds: number }>();
+      for (const row of rows || []) {
+        if (!row.activity_day) continue;
+        const cur = byDay.get(row.activity_day) || { sessions: 0, xp: 0, duration_seconds: 0 };
+        cur.sessions += 1;
+        cur.xp += Number(row.xp) || 0;
+        cur.duration_seconds += Number(row.duration_seconds) || 0;
+        byDay.set(row.activity_day, cur);
+      }
+      return Array.from(byDay, ([day, v]) => ({ day, ...v })).sort((a, b) => a.day.localeCompare(b.day));
+    }
+    return (data || []).map((row: { day?: string; activity_day?: string; sessions?: number; xp?: number; duration_seconds?: number }) => ({
+      day: String(row.day ?? row.activity_day ?? ''),
+      sessions: Number(row.sessions) || 0,
+      xp: Number(row.xp) || 0,
+      duration_seconds: Number(row.duration_seconds) || 0,
+    }));
+  },
+  async totals(): Promise<TrainingTotals> {
+    const { data, error } = await supabase.rpc('get_training_totals');
+    if (error) throw error;
+    const row = (data || {}) as Partial<TrainingTotals>;
+    return {
+      session_count: Number(row.session_count) || 0,
+      total_xp: Number(row.total_xp) || 0,
+      total_coins: Number(row.total_coins) || 0,
+      total_duration_seconds: Number(row.total_duration_seconds) || 0,
+    };
+  },
+  async listBoosts(): Promise<UserBoost[]> {
+    const { data, error } = await supabase
+      .from('user_boosts')
+      .select('boost_id, expires_at')
+      .gt('expires_at', new Date().toISOString());
+    if (error) throw error;
+    return (data || []) as UserBoost[];
+  },
+  async purchaseBoost(requestId: string, boostId: string) {
+    const { error } = await supabase.rpc('purchase_boost', { p_request_id: requestId, p_boost_id: boostId });
+    if (error) throw new Error(error.message || 'Boost purchase failed');
   },
 };
 export const journalService = {

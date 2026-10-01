@@ -1,42 +1,73 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTheme } from './ThemeContext';
+import { CoachNote } from './CoachNote';
 import { WinPulse } from './WinPulse';
 import { useGameReward } from '../hooks/useGameReward';
-import { coinsForXp, type Difficulty, sessionXp } from '../lib/progression';
+import { EXERCISES, type Difficulty } from '../lib/progression';
 import { type } from './ui/type';
+
+const HARD_PHYSICAL = new Set(['strength', 'endurance', 'coordination', 'mobility']);
 
 /**
  * Shared completion sheet for timed practice (breathing / stretch / cardio).
- * Awards canonical Easy/Medium/Hard XP once when `visible` becomes true.
+ * Awards server-confirmed XP once when `visible` becomes true.
  */
 export function PracticeDoneModal({
   visible,
   difficulty,
+  activityId,
+  started = false,
   title = 'Session complete',
   onAgain,
   onExit,
 }: {
   visible: boolean;
   difficulty: Difficulty;
+  /** Catalog id; resolved from route when omitted. */
+  activityId?: string;
+  started?: boolean;
   title?: string;
   onAgain: () => void;
   onExit: () => void;
 }) {
+  const router = useRouter();
   const { theme } = useTheme();
-  const { awardFor, reset, last } = useGameReward();
-  const [busy, setBusy] = useState(false);
-  const xp = last?.xp ?? sessionXp(difficulty);
-  const coins = last?.coins ?? coinsForXp(xp);
+  const { awardFor, reset, start, last, error, busy: saving, activityId: resolved, estimateXp, estimateCoins } =
+    useGameReward(activityId, false);
+  const resolvedId = activityId || resolved;
+  const exercise = resolvedId ? EXERCISES.find(e => e.id === resolvedId) : null;
 
   useEffect(() => {
-    if (!visible) {
+    if (started) {
       reset();
-      return;
+      void start();
     }
+  }, [started, reset, start]);
+  const [busy, setBusy] = useState(false);
+  const xp = last?.xp ?? estimateXp(difficulty);
+  const coins = last?.coins ?? estimateCoins(difficulty);
+
+  const showCalm =
+    difficulty === 'Hard' || (exercise?.category ? HARD_PHYSICAL.has(exercise.category) : false);
+
+  useEffect(() => {
+    if (!visible) return;
+    let cancelled = false;
+    // Intentionally kick off claim when the sheet opens.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- busy flag for network claim
     setBusy(true);
-    void awardFor(difficulty).finally(() => setBusy(false));
-  }, [visible, difficulty, awardFor, reset]);
+    void awardFor(difficulty)
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setBusy(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, difficulty]);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onExit}>
@@ -47,20 +78,59 @@ export function PracticeDoneModal({
           </View>
           <Text style={[type.title, { color: theme.text, fontSize: 22, textAlign: 'center' }]}>{title}</Text>
           <Text style={[type.body, { color: theme.textSecondary, textAlign: 'center', marginTop: 8 }]}>
-            {busy ? 'Saving reward…' : `+${xp} XP · +${coins} coins`}
+            {busy
+              ? 'Saving reward…'
+              : error
+                ? error
+                : last
+                  ? `+${xp} XP · +${coins} coins`
+                  : 'Waiting for confirmation…'}
           </Text>
+          <CoachNote activityId={resolvedId} />
+          {error ? (
+            <TouchableOpacity
+              style={[styles.btn, { backgroundColor: theme.primary, marginTop: 12 }]}
+              onPress={() => {
+                setBusy(true);
+                void awardFor(difficulty)
+                  .catch(() => {})
+                  .finally(() => setBusy(false));
+              }}
+              accessibilityLabel="Retry saving reward"
+            >
+              <Text style={[type.button, { color: theme.buttonText }]}>Retry save</Text>
+            </TouchableOpacity>
+          ) : null}
+          {showCalm ? (
+            <TouchableOpacity
+              style={[styles.btn, { backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.border, marginTop: 12 }]}
+              onPress={() => {
+                onExit();
+                router.replace('/games/BoxBreathingGame' as never);
+              }}
+              accessibilityLabel="Two minute calm"
+            >
+              <Text style={[type.button, { color: theme.text }]}>2-min calm breathing</Text>
+            </TouchableOpacity>
+          ) : null}
           <TouchableOpacity
-            style={[styles.btn, { backgroundColor: theme.primary, marginTop: 20 }]}
+            style={[styles.btn, { backgroundColor: theme.primary, marginTop: 12 }]}
             onPress={() => {
               reset();
               onAgain();
             }}
+            disabled={saving}
+            accessibilityLabel="Practice again"
           >
             <Text style={[type.button, { color: theme.buttonText }]}>Again</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.btn, { backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.border, marginTop: 8 }]}
+            style={[
+              styles.btn,
+              { backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.border, marginTop: 8 },
+            ]}
             onPress={onExit}
+            accessibilityLabel="Done with practice"
           >
             <Text style={[type.button, { color: theme.text }]}>Done</Text>
           </TouchableOpacity>

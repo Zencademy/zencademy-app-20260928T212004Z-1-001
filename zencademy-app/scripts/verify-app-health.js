@@ -86,5 +86,27 @@ const xp = fs.readFileSync('components/XPContext.tsx', 'utf8');
 if (xp.includes("playSfx('reward')") && xp.includes("playSfx('unlock')")) report.ok.push('XP reward/unlock sfx');
 else report.fail.push('XPContext missing sfx');
 
+// Retention pack release checks
+const retentionFiles = [
+  'lib/retention/index.ts',
+  'hooks/useRetention.ts',
+  'components/DailyCircuitCard.tsx',
+  'components/CoachNote.tsx',
+  'components/AccentOwnershipGuard.tsx',
+  'supabase/migrations/202609300005_retention_circuit_recovery.sql',
+];
+for (const f of retentionFiles) {
+  if (fs.existsSync(f)) report.ok.push(`retention ${f}`);
+  else report.fail.push(`missing ${f}`);
+}
+const appJson = JSON.parse(fs.readFileSync('app.json', 'utf8'));
+if (appJson.expo?.version === '1.0.0') report.ok.push('app version 1.0.0');
+else report.fail.push(`app version is ${appJson.expo?.version}, expected 1.0.0`);
+const shop = fs.readFileSync('constants/shop.ts', 'utf8');
+if (shop.includes("UNAVAILABLE_BOOSTS = new Set(['boost-focus-1h'])")
+  || (shop.includes('UNAVAILABLE_BOOSTS') && shop.includes('boost-focus-1h') && !shop.includes("UNAVAILABLE_BOOSTS = new Set(['boost-focus-1h', 'boost-xp-2h', 'boost-coin-rain'])"))) {
+  report.ok.push('focus boost stays locked; xp/coin boosts enabled');
+} else report.fail.push('boost availability mismatch');
+
 console.log(JSON.stringify(report, null, 2));
 process.exit(report.fail.length ? 1 : 0);
