@@ -9,7 +9,10 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "zencademy.appzen"
+      "bundleIdentifier": "zencademy.appzen",
+      "infoPlist": {
+        "NSUserNotificationsUsageDescription": "Zencademy alerts you when a focus or meditation session ends."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +20,12 @@
         "backgroundColor": "#ffffff"
       },
       "package": "zencademy.appzen",
-      "versionCode": 10
+      "versionCode": 10,
+      "permissions": [
+        "POST_NOTIFICATIONS",
+        "VIBRATE",
+        "WAKE_LOCK"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -41,6 +49,22 @@
         {
           "hidden": true,
           "style": "dark"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#B91C1C",
+          "defaultChannel": "sessions"
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "enableBackgroundPlayback": false,
+          "recordAudioAndroid": false
         }
       ]
     ],

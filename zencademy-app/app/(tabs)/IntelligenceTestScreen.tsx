@@ -773,7 +773,7 @@ export default function IntelligenceTestScreen() {
           <View style={[styles.scoreCard, { backgroundColor: theme.card }]}>
             <View style={styles.scoreHeader}>
               <Ionicons name="trophy" size={48} color="#fbbf24" />
-              <Text style={[styles.scoreTitle, { color: theme.text }]}>Intelligence Test Complete</Text>
+              <Text style={[styles.scoreTitle, { color: theme.text }]}>Assessment complete</Text>
             </View>
             
             <View style={styles.scoreDisplay}>
@@ -897,7 +897,7 @@ export default function IntelligenceTestScreen() {
         >
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.text }]}>Intelligence Test</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>Cognitive Assessment</Text>
         <View style={styles.headerSpacer} />
       </View>
 

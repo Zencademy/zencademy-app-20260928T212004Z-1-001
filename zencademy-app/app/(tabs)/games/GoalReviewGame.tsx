@@ -1,12 +1,13 @@
+import { WinPulse } from '../../../components/WinPulse';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ConfettiCannon from 'react-native-confetti-cannon';
 import GameHeader from '../../../components/GameHeader';
 import { useTheme } from '../../../components/ThemeContext';
+import { useGameReward } from '../../../hooks/useGameReward';
+import { coinsForXp, sessionXp } from '../../../lib/progression';
 import { useXP } from '../../../components/XPContext';
-
-const WIN_XP = 25; // Medium
+import { playSfx } from '../../../lib/sound/SoundPack';
 
 type Q = { prompt: string; correct: string; options: string[] };
 
@@ -59,7 +60,9 @@ function randomQ(): Q { return BANK[Math.floor(Math.random() * BANK.length)]; }
 
 export default function GoalReviewGame() {
 	const router = useRouter();
-	const { addXp } = useXP();
+	const { awardFor, reset, last } = useGameReward();
+	const { plan } = useXP();
+	const winXp = last?.xp ?? sessionXp('Medium', plan);
 	const { theme } = useTheme();
 	const [q, setQ] = useState<Q>(randomQ());
 	const [streak, setStreak] = useState(0);
@@ -67,10 +70,11 @@ export default function GoalReviewGame() {
 	const [showWin, setShowWin] = useState(false);
 	const [showHelp, setShowHelp] = useState(false);
 
-	useEffect(() => { if (streak >= target) { addXp(WIN_XP); setShowWin(true); } }, [streak]);
+	useEffect(() => { if (streak >= target) { void awardFor('Medium'); setShowWin(true); } }, [streak, awardFor]);
 
 	const pick = (opt: string) => {
 		const ok = opt === q.correct;
+		playSfx(ok ? 'correct' : 'wrong');
 		setStreak(s => (ok ? s + 1 : 0));
 		setQ(randomQ());
 	};
@@ -103,10 +107,10 @@ export default function GoalReviewGame() {
 			<Modal visible={showWin} transparent animationType="fade" onRequestClose={() => setShowWin(false)}>
 				<View style={[styles.modalBackdrop, { backgroundColor: theme.overlay }]}>
 					<View style={[styles.modalCard, { backgroundColor: theme.card, alignItems: 'center' }]}> 
-						<ConfettiCannon count={120} origin={{ x: 180, y: 0 }} fadeOut autoStart explosionSpeed={420} fallSpeed={2100} />
+						<WinPulse active />
 						<Text style={[styles.winTitle, { color: theme.text }]}>Excellent goal setting!</Text>
-						<Text style={[styles.winText, { color: theme.textSecondary }]}>+{WIN_XP} XP</Text>
-						<TouchableOpacity style={[styles.primaryBtn, { backgroundColor: theme.primary }]} onPress={() => { setShowWin(false); setStreak(0); setQ(randomQ()); }}><Text style={[styles.primaryText, { color: theme.buttonText }]}>Play Again</Text></TouchableOpacity>
+						<Text style={[styles.winText, { color: theme.textSecondary }]}>+{winXp} XP + {coinsForXp(winXp)} coins</Text>
+						<TouchableOpacity style={[styles.primaryBtn, { backgroundColor: theme.primary }]} onPress={() => { setShowWin(false); reset(); setStreak(0); setQ(randomQ()); }}><Text style={[styles.primaryText, { color: theme.buttonText }]}>Play Again</Text></TouchableOpacity>
 						<TouchableOpacity style={[styles.primaryBtn, { backgroundColor: theme.surface, marginTop: 8 }]} onPress={() => { setShowWin(false); router.replace('/(tabs)/games/MetacognitionTrainingScreen'); }}>
 							<Text style={[styles.primaryText, { color: theme.text }]}>Go to Main Menu</Text>
 						</TouchableOpacity>

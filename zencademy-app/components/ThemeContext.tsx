@@ -1,176 +1,179 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 export type ThemeMode = 'light' | 'dark';
+export type AccentId = 'crimson' | 'ocean' | 'forest' | 'amber' | 'violet' | 'ink';
 
 export interface ThemeColors {
-  // Background colors
   background: string;
   surface: string;
   card: string;
-  
-  // Text colors
   text: string;
   textSecondary: string;
   textTertiary: string;
-  
-  // Border colors
   border: string;
   borderLight: string;
-  
-  // Accent colors
   primary: string;
   secondary: string;
   accent: string;
-  
-  // Status colors
+  flame: string;
+  xp: string;
+  xpSoft: string;
+  xpBorder: string;
+  coin: string;
+  coinSoft: string;
+  coinBorder: string;
   success: string;
   warning: string;
   error: string;
   info: string;
-  
-  // Interactive colors
   button: string;
   buttonText: string;
   buttonSecondary: string;
   buttonSecondaryText: string;
-  
-  // Shadow colors
   shadow: string;
-  
-  // Overlay colors
   overlay: string;
 }
 
-const lightTheme: ThemeColors = {
-  // Background colors
-  background: '#ffffff',
-  surface: '#f8f9fa',
-  card: '#ffffff',
-  
-  // Text colors
-  text: '#1a1a1a',
-  textSecondary: '#666666',
-  textTertiary: '#999999',
-  
-  // Border colors
-  border: '#e8e8e8',
-  borderLight: '#f0f0f0',
-  
-  // Accent colors
-  primary: '#6366F1',
-  secondary: '#8B5CF6',
-  accent: '#F59E0B',
-  
-  // Status colors
-  success: '#10B981',
-  warning: '#F59E0B',
-  error: '#EF4444',
-  info: '#3B82F6',
-  
-  // Interactive colors
-  button: '#1a1a1a',
-  buttonText: '#ffffff',
-  buttonSecondary: '#f3f4f6',
-  buttonSecondaryText: '#6b7280',
-  
-  // Shadow colors
+export const ACCENT_PRESETS: { id: AccentId; label: string; light: string; dark: string }[] = [
+  { id: 'crimson', label: 'Crimson', light: '#C8102E', dark: '#E11D48' },
+  { id: 'ocean', label: 'Ocean', light: '#0369A1', dark: '#38BDF8' },
+  { id: 'forest', label: 'Forest', light: '#15803D', dark: '#4ADE80' },
+  { id: 'amber', label: 'Amber', light: '#B45309', dark: '#FBBF24' },
+  { id: 'violet', label: 'Violet', light: '#6D28D9', dark: '#A78BFA' },
+  { id: 'ink', label: 'Ink', light: '#111111', dark: '#F5F5F5' },
+];
+
+const lightBase: Omit<ThemeColors, 'primary' | 'accent' | 'button' | 'error'> = {
+  background: '#F7F7F5',
+  surface: '#EEEEEC',
+  card: '#FFFFFF',
+  text: '#0A0A0A',
+  textSecondary: '#3F3F3F',
+  textTertiary: '#737373',
+  border: '#E2E2E0',
+  borderLight: '#EFEFEE',
+  secondary: '#0A0A0A',
+  flame: '#F97316',
+  xp: '#0A0A0A',
+  xpSoft: '#F0F0EE',
+  xpBorder: '#D6D6D4',
+  coin: '#A16207',
+  coinSoft: '#FBF3D5',
+  coinBorder: '#E8D48A',
+  success: '#15803D',
+  warning: '#C2410C',
+  info: '#262626',
+  buttonText: '#FFFFFF',
+  buttonSecondary: '#0A0A0A',
+  buttonSecondaryText: '#FFFFFF',
   shadow: '#000000',
-  
-  // Overlay colors
-  overlay: 'rgba(0, 0, 0, 0.8)',
+  overlay: 'rgba(0, 0, 0, 0.55)',
 };
 
-const darkTheme: ThemeColors = {
-  // Background colors
-  background: '#0f0f0f',
-  surface: '#1a1a1a',
-  card: '#2a2a2a',
-  
-  // Text colors
-  text: '#ffffff',
-  textSecondary: '#b3b3b3',
-  textTertiary: '#808080',
-  
-  // Border colors
-  border: '#404040',
-  borderLight: '#333333',
-  
-  // Accent colors
-  primary: '#8B5CF6',
-  secondary: '#A78BFA',
-  accent: '#FBBF24',
-  
-  // Status colors
-  success: '#34D399',
-  warning: '#FBBF24',
-  error: '#F87171',
-  info: '#60A5FA',
-  
-  // Interactive colors
-  button: '#ffffff',
-  buttonText: '#0f0f0f',
-  buttonSecondary: '#404040',
-  buttonSecondaryText: '#b3b3b3',
-  
-  // Shadow colors
+const darkBase: Omit<ThemeColors, 'primary' | 'accent' | 'button' | 'error'> = {
+  background: '#080808',
+  surface: '#121212',
+  card: '#161616',
+  text: '#F4F4F4',
+  textSecondary: '#A8A8A8',
+  textTertiary: '#6F6F6F',
+  border: '#2A2A2A',
+  borderLight: '#1C1C1C',
+  secondary: '#F4F4F4',
+  flame: '#FB923C',
+  xp: '#F4F4F4',
+  xpSoft: '#1A1A1A',
+  xpBorder: '#2E2E2E',
+  coin: '#EAB308',
+  coinSoft: '#1C1608',
+  coinBorder: '#5C4A12',
+  success: '#22C55E',
+  warning: '#F97316',
+  info: '#D4D4D4',
+  buttonText: '#FFFFFF',
+  buttonSecondary: '#262626',
+  buttonSecondaryText: '#F4F4F4',
   shadow: '#000000',
-  
-  // Overlay colors
-  overlay: 'rgba(0, 0, 0, 0.9)',
+  overlay: 'rgba(0, 0, 0, 0.82)',
 };
+
+function buildTheme(mode: ThemeMode, accentId: AccentId): ThemeColors {
+  const preset = ACCENT_PRESETS.find(p => p.id === accentId) || ACCENT_PRESETS[0];
+  const color = mode === 'dark' ? preset.dark : preset.light;
+  const base = mode === 'dark' ? darkBase : lightBase;
+  const buttonText = accentId === 'ink' && mode === 'dark' ? '#0A0A0A' : '#FFFFFF';
+  return {
+    ...base,
+    primary: color,
+    accent: color,
+    button: color,
+    error: accentId === 'crimson' ? color : (mode === 'dark' ? '#E11D48' : '#C8102E'),
+    buttonText,
+  };
+}
 
 interface ThemeContextType {
   theme: ThemeColors;
   themeMode: ThemeMode;
+  accentId: AccentId;
   toggleTheme: () => void;
   setThemeMode: (mode: ThemeMode) => void;
+  setAccentId: (id: AccentId) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [themeMode, setThemeModeState] = useState<ThemeMode>('light');
+  const [accentId, setAccentIdState] = useState<AccentId>('crimson');
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load theme from AsyncStorage on mount
   useEffect(() => {
     const loadTheme = async () => {
       try {
-        const savedTheme = await AsyncStorage.getItem('@theme_mode');
-        if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
-          setThemeModeState(savedTheme);
+        const ink = await AsyncStorage.getItem('@theme_ink_v1');
+        if (!ink) {
+          setThemeModeState('light');
+          await AsyncStorage.setItem('@theme_ink_v1', '1');
+          await AsyncStorage.setItem('@theme_mode', 'light');
+        } else {
+          const savedTheme = await AsyncStorage.getItem('@theme_mode');
+          if (savedTheme === 'light' || savedTheme === 'dark') {
+            setThemeModeState(savedTheme);
+          }
         }
-      } catch (error) {
-        // Error loading theme, use default
+        const savedAccent = await AsyncStorage.getItem('@accent_id');
+        if (savedAccent && ACCENT_PRESETS.some(p => p.id === savedAccent)) {
+          setAccentIdState(savedAccent as AccentId);
+        }
+      } catch {
+        // defaults
       }
       setIsInitialized(true);
     };
-
-    loadTheme();
+    void loadTheme();
   }, []);
 
-  // Save theme to AsyncStorage when it changes
   useEffect(() => {
     if (isInitialized) {
-      AsyncStorage.setItem('@theme_mode', themeMode).catch(() => {
-        // Error saving theme
-      });
+      AsyncStorage.setItem('@theme_mode', themeMode).catch(() => {});
     }
   }, [themeMode, isInitialized]);
 
-  const toggleTheme = () => {
-    setThemeModeState(prev => prev === 'light' ? 'dark' : 'light');
-  };
+  useEffect(() => {
+    if (isInitialized) {
+      AsyncStorage.setItem('@accent_id', accentId).catch(() => {});
+    }
+  }, [accentId, isInitialized]);
 
-  const setThemeMode = (mode: ThemeMode) => {
-    setThemeModeState(mode);
-  };
-
-  const theme = themeMode === 'dark' ? darkTheme : lightTheme;
+  const toggleTheme = () => setThemeModeState(prev => (prev === 'light' ? 'dark' : 'light'));
+  const setThemeMode = (mode: ThemeMode) => setThemeModeState(mode);
+  const setAccentId = (id: AccentId) => setAccentIdState(id);
+  const theme = useMemo(() => buildTheme(themeMode, accentId), [themeMode, accentId]);
 
   return (
-    <ThemeContext.Provider value={{ theme, themeMode, toggleTheme, setThemeMode }}>
+    <ThemeContext.Provider value={{ theme, themeMode, accentId, toggleTheme, setThemeMode, setAccentId }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -178,13 +181,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export function useTheme() {
   const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
+  if (context === undefined) throw new Error('useTheme must be used within a ThemeProvider');
   return context;
 }
-
-
-
-
-

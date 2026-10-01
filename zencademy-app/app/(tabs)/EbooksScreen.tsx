@@ -1,8 +1,8 @@
+import { WinPulse } from '../../components/WinPulse';
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { Dimensions, Linking, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import ConfettiCannon from "react-native-confetti-cannon";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useXP } from "../../components/XPContext";
 
@@ -110,14 +110,7 @@ export default function EbooksScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       {showConfetti && (
-        <ConfettiCannon
-          count={60}
-          origin={{ x: width / 2, y: 0 }}
-          fadeOut
-          explosionSpeed={430}
-          fallSpeed={1600}
-          colors={["#fbbf24", "#111", "#fff"]}
-        />
+        <WinPulse active />
       )}
 
       {/* Header: sageata back + titlu + search, aliniate */}

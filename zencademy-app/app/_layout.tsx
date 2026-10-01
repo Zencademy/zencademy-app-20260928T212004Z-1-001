@@ -2,18 +2,20 @@ import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } fro
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { useEffect } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { AuthProvider, useAuth } from '../components/AuthContext';
-import { ScreensaverProvider } from "../components/ScreensaverContext";
+import { RewardToastProvider } from '../components/RewardToast';
+import { ScreensaverProvider } from '../components/ScreensaverContext';
+import ScreensaverOverlay from '../components/ScreensaverOverlay';
 import { ThemeProvider, useTheme } from '../components/ThemeContext';
 import { XPProvider } from '../components/XPContext';
-// Ads removed
+import { SoundProvider } from '../lib/sound/SoundPack';
 
 function AppContent() {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   const { theme, themeMode } = useTheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -33,22 +35,27 @@ function AppContent() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ScreensaverProvider>
-        <XPProvider>
-          <NavigationThemeProvider value={themeMode === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              {user ? (
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              ) : (
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              )}
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style={themeMode === 'dark' ? "light" : "dark"} hidden={true} />
-          </NavigationThemeProvider>
-        </XPProvider>
-      </ScreensaverProvider>
+      <SoundProvider>
+        <RewardToastProvider>
+          <ScreensaverProvider>
+            <XPProvider>
+              <NavigationThemeProvider value={themeMode === 'dark' ? DarkTheme : DefaultTheme}>
+                <View style={{ flex: 1 }}>
+                  <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="index" />
+                    <Stack.Screen name="(auth)" />
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen name="auth/callback" />
+                    <Stack.Screen name="+not-found" />
+                  </Stack>
+                  <ScreensaverOverlay />
+                  <StatusBar style={themeMode === 'dark' ? 'light' : 'dark'} hidden={true} />
+                </View>
+              </NavigationThemeProvider>
+            </XPProvider>
+          </ScreensaverProvider>
+        </RewardToastProvider>
+      </SoundProvider>
     </GestureHandlerRootView>
   );
 }

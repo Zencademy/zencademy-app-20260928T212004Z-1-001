@@ -4,6 +4,7 @@ export interface UserData {
   daily_streak_count: number; streak_count: number; completed_games: number;
   session_time: number; timezone: string; last_training_day: string | null;
   created_at: string; updated_at: string; badges: string[];
+  owned_ebooks: string[];
 }
 export interface TrainingSession {
   id: string; user_id: string; activity_id: string; started_at: string;

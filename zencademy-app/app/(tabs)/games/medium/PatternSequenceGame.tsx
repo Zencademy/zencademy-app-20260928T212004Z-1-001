@@ -1,15 +1,17 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../../lib/progression';
+import { useGameReward } from '../../../../hooks/useGameReward';
+import { WinPulse } from '../../../../components/WinPulse';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ConfettiCannon from 'react-native-confetti-cannon';
 import GameHeader from '../../../../components/GameHeader';
 import { useTheme } from '../../../../components/ThemeContext';
 import { useXP } from '../../../../components/XPContext';
 
 const STREAK_TO_WIN = 5;
 const XP_PER_CORRECT = 10; // medium games: +10 points per correct answer
-const XP_REWARD = 40; // Bonus for completing the game
-const MAX_XP = 25;
+const XP_REWARD = 18;
+const MAX_XP = 18;
 const FULL_WIDTH = Dimensions.get('window').width;
 
 const SEQUENCES = [
@@ -37,7 +39,8 @@ function getRandomSequence(usedIds: number[] = []) {
 
 export default function PatternSequenceGame() {
   const router = useRouter();
-  const { addXp } = useXP();
+  const { plan } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
   const { theme } = useTheme();
   const [currentQ, setCurrentQ] = useState<any>(null);
   const [usedIds, setUsedIds] = useState<number[]>([]);
@@ -109,7 +112,7 @@ export default function PatternSequenceGame() {
 
   useEffect(() => {
     if (win && !xpAwarded) {
-      addXp(MAX_XP);
+      void awardFor('Medium');
       setShowConfetti(true);
       setXpAwarded(true);
     }
@@ -139,7 +142,7 @@ export default function PatternSequenceGame() {
   if (win) {
     return (
       <View style={[styles.container, { backgroundColor: theme.background }]}>
-        {showConfetti && <ConfettiCannon count={200} origin={{ x: FULL_WIDTH / 2, y: 0 }} />}
+        {showConfetti && <WinPulse active />}
         <GameHeader
           onBack={() => router.back()}
           gameTitle="Pattern Sequence"

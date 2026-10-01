@@ -1,1002 +1,687 @@
-import MaskedView from "@react-native-masked-view/masked-view";
-import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Notifications from 'expo-notifications';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-    Animated,
-    Dimensions,
-    Pressable,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import ConfettiCannon from "react-native-confetti-cannon";
-import { useTheme } from "../../components/ThemeContext";
-import { useXP } from "../../components/XPContext";
+  Animated,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../../components/AuthContext';
+import { useTheme } from '../../components/ThemeContext';
+import { useXP } from '../../components/XPContext';
+import { FadeRise } from '../../components/ui/motion';
+import { type } from '../../components/ui/type';
+import { MIND_PROFILES, type MindTypeId } from '../../lib/mindTypes';
 
-// --- QUIZ DATA ---
-const FUN_FACTS = [
-  [
-    "Solving puzzles can boost your IQ by up to 10 points.",
-    "People who enjoy games tend to adapt faster in life.",
-    "Your brain loves patterns—it's why you notice shapes in clouds!"
-  ],
-  [
-    "Learning in steps improves retention.",
-    "Recall and repetition are secrets to long-term memory.",
-    "Trying new things keeps your mind young and flexible."
-  ],
-  [
-    "Strategic thinkers excel in both business and sports.",
-    "Creativity is linked to happiness—draw, write, invent!",
-    "Quick decisions are powered by your 'fight or flight' brain zone."
-  ],
-  [
-    "Coming up with new ideas wires new neural paths!",
-    "Speed challenges increase dopamine, the motivation chemical.",
-    "Memory champions use visual techniques for recall."
-  ],
-  [
-    "Collaboration increases innovation by 50%.",
-    "A clear plan can boost team performance by 30%.",
-    "Brainstorming triggers more creative ideas."
-  ],
-  [
-    "Puzzle lovers have denser connections in the brain.",
-    "Strategy games build patience and planning.",
-    "Creative hobbies lower stress and improve mood."
-  ],
-  [
-    "Staying calm under pressure is a hallmark of high achievers.",
-    "The brain can adapt to stress—practice makes perfect.",
-    "Big picture thinking is a sign of high intelligence."
-  ],
-  [
-    "Math trains your problem-solving circuits.",
-    "Art and music improve emotional intelligence.",
-    "Language learning builds a more flexible brain."
-  ]
-];
-
-const QUESTIONS = [
-  {
-    q: "What energizes your mind the most?",
-    options: [
-      { text: "Solving tough puzzles", type: "Logic Guru" },
-      { text: "Memorizing details easily", type: "Memory Master" },
-      { text: "Reacting instantly in games", type: "Quick Reactor" },
-      { text: "Spotting hidden connections", type: "Pattern Pro" },
-    ],
-  },
-  {
-    q: "How do you approach learning something new?",
-    options: [
-      { text: "Break it down step by step", type: "Logic Guru" },
-      { text: "Recall similar situations", type: "Memory Master" },
-      { text: "Jump right in and adapt", type: "Quick Reactor" },
-      { text: "Find patterns or visuals", type: "Pattern Pro" },
-    ],
-  },
-  {
-    q: "Your friends describe you as...",
-    options: [
-      { text: "The strategist", type: "Strategic Thinker" },
-      { text: "The creative", type: "Creative Visionary" },
-      { text: "The resilient one", type: "Resilient Optimizer" },
-      { text: "The one with amazing memory", type: "Memory Master" },
-    ],
-  },
-  {
-    q: "You feel proudest when you...",
-    options: [
-      { text: "Solve something nobody else could", type: "Logic Guru" },
-      { text: "Recall facts no one else remembers", type: "Memory Master" },
-      { text: "Win a fast challenge", type: "Quick Reactor" },
-      { text: "Come up with new ideas", type: "Creative Visionary" },
-    ],
-  },
-  {
-    q: "In a team project, you usually...",
-    options: [
-      { text: "Create a clear plan", type: "Strategic Thinker" },
-      { text: "Connect people & motivate", type: "Social Connector" },
-      { text: "Keep everyone on task", type: "Focus Champion" },
-      { text: "Remember all the details", type: "Memory Master" },
-    ],
-  },
-  {
-    q: "Your favorite activity is...",
-    options: [
-      { text: "Strategy games", type: "Strategic Thinker" },
-      { text: "Puzzles or brain teasers", type: "Logic Guru" },
-      { text: "Drawing, music or writing", type: "Visualizer" },
-      { text: "Speed challenges", type: "Quick Reactor" },
-    ],
-  },
-  {
-    q: "What do you do when faced with a tough challenge?",
-    options: [
-      { text: "Stay calm & analyze", type: "Logic Guru" },
-      { text: "Remember how I solved similar things", type: "Memory Master" },
-      { text: "Act quickly, trust my instincts", type: "Quick Reactor" },
-      { text: "Try to see the big picture", type: "Pattern Pro" },
-    ],
-  },
-  {
-    q: "Which school subject did you love most?",
-    options: [
-      { text: "Math or Physics", type: "Logic Guru" },
-      { text: "Art or Music", type: "Creative Visionary" },
-      { text: "History or Languages", type: "Memory Master" },
-      { text: "Sports", type: "Quick Reactor" },
-    ],
-  },
-];
-
-const STATS_PER_QUESTION = [
-  [35, 22, 23, 20],
-  [28, 29, 21, 22],
-  [24, 27, 22, 27],
-  [26, 28, 21, 25],
-  [23, 28, 29, 20],
-  [27, 31, 22, 20],
-  [30, 27, 22, 21],
-  [25, 30, 23, 22],
-];
-
-const BRAIN_TYPE_DESC = {
-  "Logic Guru": "You see life as a giant puzzle — and you love solving it.",
-  "Memory Master": "Your mind is a vault. Names, facts, stories—nothing escapes you.",
-  "Quick Reactor": "You're always ready for action. Speed and agility are your mental superpowers.",
-  "Pattern Pro": "You spot patterns and connections others miss. Nothing is random to you.",
-  "Focus Champion": "Nothing breaks your concentration. You can work for hours on end.",
-  "Strategic Thinker": "You think three steps ahead and always have a plan.",
-  "Creative Visionary": "You see what others can't. Your creativity makes you stand out.",
-  "Resilient Optimizer": "You bounce back fast, learn from setbacks, and keep improving.",
-  "Social Connector": "You energize teams, build trust, and help people work better together.",
-  "Visualizer": "You think in images and stories—turning ideas into clear mental pictures.",
+type Question = {
+  id: string;
+  prompt: string;
+  hint?: string;
+  options: { label: string; type: MindTypeId }[];
 };
 
-const GRADIENTS = {
-  "Logic Guru": ["#80ffea", "#00b4d8"],
-  "Memory Master": ["#f9d423", "#ff4e50"],
-  "Quick Reactor": ["#f7971e", "#ffd200"],
-  "Pattern Pro": ["#a18cd1", "#fbc2eb"],
-  "Focus Champion": ["#43cea2", "#185a9d"],
-  "Strategic Thinker": ["#f7971e", "#ffd200"],
-  "Creative Visionary": ["#fc5c7d", "#6a82fb"],
-  "Resilient Optimizer": ["#2bc0e4", "#eaecc6"],
-  "Social Connector": ["#56ab2f", "#a8e063"],
-  "Visualizer": ["#bdc3c7", "#2c3e50"],
-};
+const QUESTIONS: Question[] = [
+  {
+    id: 'q1',
+    prompt: 'When a complex problem lands on your desk, what do you do first?',
+    hint: 'Pick the instinct that feels most natural — not the “correct” answer.',
+    options: [
+      { label: 'Map the variables and eliminate noise', type: 'Logic Guru' },
+      { label: 'Scan for similar cases I already solved', type: 'Memory Master' },
+      { label: 'Clear the field and protect focus time', type: 'Focus Champion' },
+      { label: 'Define the outcome, then reverse-plan steps', type: 'Strategic Thinker' },
+    ],
+  },
+  {
+    id: 'q2',
+    prompt: 'In a long training block, what keeps you engaged?',
+    options: [
+      { label: 'A clear rule system I can optimize', type: 'Logic Guru' },
+      { label: 'Remembering sequences and improving recall', type: 'Memory Master' },
+      { label: 'Uninterrupted concentration on one target', type: 'Focus Champion' },
+      { label: 'Seeing how today’s set feeds a bigger plan', type: 'Strategic Thinker' },
+    ],
+  },
+  {
+    id: 'q3',
+    prompt: 'You walk into a room mid-conversation. What do you notice first?',
+    options: [
+      { label: 'Whether the argument is actually sound', type: 'Logic Guru' },
+      { label: 'Names, facts, and who said what earlier', type: 'Memory Master' },
+      { label: 'Visual patterns — posture, layout, signals', type: 'Pattern Pro' },
+      { label: 'The fastest useful move I can make', type: 'Quick Reactor' },
+    ],
+  },
+  {
+    id: 'q4',
+    prompt: 'Under time pressure, your default is to…',
+    options: [
+      { label: 'Slow down enough to think cleanly', type: 'Logic Guru' },
+      { label: 'Pull a known template from memory', type: 'Memory Master' },
+      { label: 'Ignore noise and finish the critical path', type: 'Focus Champion' },
+      { label: 'Act first, then adjust mid-flight', type: 'Quick Reactor' },
+    ],
+  },
+  {
+    id: 'q5',
+    prompt: 'Which feedback feels most useful after a session?',
+    options: [
+      { label: 'Where my reasoning broke down', type: 'Logic Guru' },
+      { label: 'What I retained vs. what slipped', type: 'Memory Master' },
+      { label: 'How long I stayed locked on target', type: 'Focus Champion' },
+      { label: 'Whether the plan still holds for next week', type: 'Strategic Thinker' },
+    ],
+  },
+  {
+    id: 'q6',
+    prompt: 'You are learning a new skill. Your preferred path is…',
+    options: [
+      { label: 'Principles first, then practice', type: 'Logic Guru' },
+      { label: 'Spaced repetition until it sticks', type: 'Memory Master' },
+      { label: 'Deep blocks without multitasking', type: 'Focus Champion' },
+      { label: 'Spotting the recurring shape across examples', type: 'Pattern Pro' },
+    ],
+  },
+  {
+    id: 'q7',
+    prompt: 'In a team setting, you naturally contribute by…',
+    options: [
+      { label: 'Stress-testing the logic of the plan', type: 'Logic Guru' },
+      { label: 'Holding context others forget', type: 'Memory Master' },
+      { label: 'Setting a multi-step roadmap', type: 'Strategic Thinker' },
+      { label: 'Reading the room and connecting signals', type: 'Pattern Pro' },
+    ],
+  },
+  {
+    id: 'q8',
+    prompt: 'A game timer hits zero. What happens in your head?',
+    options: [
+      { label: 'I recheck the last decision for flaws', type: 'Logic Guru' },
+      { label: 'I replay the sequence I just ran', type: 'Memory Master' },
+      { label: 'I reset attention and start clean', type: 'Focus Champion' },
+      { label: 'I already switched to the next move', type: 'Quick Reactor' },
+    ],
+  },
+  {
+    id: 'q9',
+    prompt: 'Which statement sounds most like you?',
+    options: [
+      { label: 'If the model is wrong, the result is wrong', type: 'Logic Guru' },
+      { label: 'What I can recall, I can use', type: 'Memory Master' },
+      { label: 'Depth beats scattering effort', type: 'Focus Champion' },
+      { label: 'Today’s choice must still look good tomorrow', type: 'Strategic Thinker' },
+    ],
+  },
+  {
+    id: 'q10',
+    prompt: 'When studying a chart or diagram, you…',
+    options: [
+      { label: 'Hunt for the underlying rule', type: 'Logic Guru' },
+      { label: 'Commit the key points to memory', type: 'Memory Master' },
+      { label: 'See the structure before the labels', type: 'Pattern Pro' },
+      { label: 'Extract the action item immediately', type: 'Quick Reactor' },
+    ],
+  },
+  {
+    id: 'q11',
+    prompt: 'Your ideal training week has…',
+    options: [
+      { label: 'Hard logic sets with clear scoring', type: 'Logic Guru' },
+      { label: 'Daily recall drills that build capacity', type: 'Memory Master' },
+      { label: 'Protected focus blocks and few switches', type: 'Focus Champion' },
+      { label: 'A plan that unlocks harder tiers over time', type: 'Strategic Thinker' },
+    ],
+  },
+  {
+    id: 'q12',
+    prompt: 'When something unexpected breaks your rhythm, you…',
+    options: [
+      { label: 'Diagnose the failure mode calmly', type: 'Logic Guru' },
+      { label: 'Compare it to a prior save', type: 'Memory Master' },
+      { label: 'Return to the original target fast', type: 'Focus Champion' },
+      { label: 'Adapt in the moment and keep moving', type: 'Quick Reactor' },
+    ],
+  },
+];
 
-const black = "#131313", white = "#fafbfc", accent = "#111";
-const SCREEN_WIDTH = Dimensions.get("window").width;
+type Stage = 'welcome' | 'name' | 'brief' | 'quiz' | 'result' | 'permissions';
 
-// Simple wrapper without animations
-type FadeInProps = {
-  children: React.ReactNode;
-  delay?: number;
-  duration?: number;
-  style?: any;
-};
-function FadeIn({ children, delay = 0, duration = 300, style }: FadeInProps) {
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  const scaleAnim = React.useRef(new Animated.Value(0.95)).current;
-  
-  React.useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration,
-        delay,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration,
-        delay,
-        useNativeDriver: true,
-      })
-    ]).start();
-  }, []);
-  
-  return (
-    <Animated.View 
-      style={[
-        style, 
-        { 
-          opacity: fadeAnim, 
-          transform: [{ scale: scaleAnim }] 
-        }
-      ]}
-    >
-      {children}
-    </Animated.View>
-  );
+type Props = { onFinish?: () => void | Promise<void> };
+
+function scoreMindType(answers: MindTypeId[]): MindTypeId {
+  const tally: Partial<Record<MindTypeId, number>> = {};
+  for (const a of answers) tally[a] = (tally[a] || 0) + 1;
+  const ranked = (Object.entries(tally) as [MindTypeId, number][]).sort((a, b) => b[1] - a[1]);
+  const top = ranked.filter(([, n]) => n === ranked[0][1]).map(([id]) => id);
+  const preference: MindTypeId[] = [
+    'Focus Champion',
+    'Strategic Thinker',
+    'Logic Guru',
+    'Memory Master',
+    'Pattern Pro',
+    'Quick Reactor',
+  ];
+  return preference.find((p) => top.includes(p)) || top[0] || 'Focus Champion';
 }
 
-// ------------ MODIFICARE: acceptă onFinish ca prop ------------
-type OnboardingQuizScreenProps = {
-  onFinish: () => void;
-};
-export default function OnboardingQuizScreen({ onFinish }: OnboardingQuizScreenProps) {
-  const { name: existingName, setName, setBrainType, setOnboardingChecked } = useXP();
-
-  // Start with story screen
-  const [screen, setScreen] = useState("story");
-  // Use existing name or default
-  const userName = existingName || "Champion";
-
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
-  type ResultType = {
-    type: keyof typeof BRAIN_TYPE_DESC;
-    desc: string;
-    name: string;
-  } | null;
-  const [result, setResult] = useState<ResultType>(null);
-  const [statIdx, setStatIdx] = useState<number>(0);
-  const [answerIdx, setAnswerIdx] = useState<number | null>(null);
-  const [funFact, setFunFact] = useState("");
-  const [confetti1, setConfetti1] = useState(false);
-  const [confetti2, setConfetti2] = useState(false);
-  const [confetti3, setConfetti3] = useState(false);
-
-  // Progress bar - simple calculation without animation
-  const progress = step > 0 ? step / QUESTIONS.length : 0;
-
-  // Set fun fact when stats screen appears
-  React.useEffect(() => {
-    if (screen === "stats") {
-      const factList = FUN_FACTS[step];
-      setFunFact(factList[Math.floor(Math.random() * factList.length)]);
-      setStatsCardKey(prev => prev + 1);
-    }
-  }, [screen, statIdx, step]);
-
-  // Confetti în 3 valuri!
-  React.useEffect(() => {
-    if (screen === "result" && result) {
-      setConfetti1(false); setConfetti2(false); setConfetti3(false);
-      const t1 = setTimeout(() => setConfetti1(true), 300);
-      const t2 = setTimeout(() => setConfetti2(true), 1200);
-      const t3 = setTimeout(() => setConfetti3(true), 2100);
-      return () => {
-        clearTimeout(t1);
-        clearTimeout(t2);
-        clearTimeout(t3);
-      };
-    }
-  }, [screen, result]);
-
-  // Reset component state when it mounts (for reopening onboarding)
-  React.useEffect(() => {
-    // Reset all state when component mounts
-    setScreen("story");
-    setStep(0);
-    setAnswers([]);
-    setResult(null);
-    setStatIdx(0);
-    setAnswerIdx(null);
-    setFunFact("");
-    setConfetti1(false);
-    setConfetti2(false);
-    setConfetti3(false);
-    setStoryIdx(0);
-    setStoryAnimDone(false);
-    setStoryTextComplete(false);
-    setQuizCardKey(0);
-    setStatsCardKey(0);
-    // Note: Animated values are already initialized to 0 in useRef
-    // They will be reset naturally when animations restart
-  }, []);
-
-  // Epic motivational messages
-  const EPIC_MESSAGES = [
-    "In a world of infinite possibilities, your mind is the ultimate frontier. Every thought you nurture shapes your reality.",
-    "The journey of a thousand achievements begins with a single decision. Today, you choose to unlock your true potential."
-  ];
-  const [storyIdx, setStoryIdx] = useState(0);
-  const [storyAnimDone, setStoryAnimDone] = useState(false);
-  const [storyTextComplete, setStoryTextComplete] = useState(false);
-  
-  // Static gradient for logo (no animation)
-
-  // Finalizează quiz-ul
-  const finishQuiz = async (finalAnswers: any[], userName: string) => {
-    const tally: { [key: string]: number } = {};
-    for (const a of finalAnswers) tally[a] = (tally[a] || 0) + 1;
-    let best = Object.entries(tally).sort((a, b) => b[1] - a[1]);
-    const topTypes = best.filter(t => t[1] === best[0][1]).map(t => t[0]);
-    const type = topTypes[Math.floor(Math.random() * topTypes.length)];
-    setResult({ type: type as keyof typeof BRAIN_TYPE_DESC, desc: BRAIN_TYPE_DESC[type as keyof typeof BRAIN_TYPE_DESC], name: userName });
-    setName(userName);
-    // Save brain type and mark onboarding as completed
-    await setBrainType(type);
-    await setOnboardingChecked(true);
-    setScreen("result");
-  };
-
-  // Simple text display without animations
-  type StoryLetterFadeProps = { 
-    text: string; 
-    onDone: () => void; 
-    color?: string; 
-    fontFamily?: string; 
-    fontSize?: number;
-    instant?: boolean; // If true, show text instantly
-    onComplete?: () => void; // Called when text is fully displayed
-  };
-  function StoryLetterFade({ text, onDone, color = '#111', fontFamily = 'SpaceMono-Regular', fontSize = 38, instant = false, onComplete }: StoryLetterFadeProps) {
-    useEffect(() => {
-      // Call onComplete immediately
-      if (onComplete) {
-        onComplete();
-      }
-      // Call onDone after a short delay
-      const timer = setTimeout(() => {
-        onDone();
-      }, 100);
-      return () => clearTimeout(timer);
-    }, [text]);
-    
-    return (
-      <Text style={{ color, fontFamily, fontSize, fontWeight: 'bold', textAlign: 'center', alignSelf: 'center', marginBottom: 38, letterSpacing: 2.5, lineHeight: fontSize * 1.4, paddingHorizontal: 24, textTransform: 'none', width: '100%' }}>
-        {text}
-      </Text>
-    );
+async function requestNotifPermission() {
+  try {
+    const { status: existing } = await Notifications.getPermissionsAsync();
+    if (existing === 'granted') return true;
+    const { status } = await Notifications.requestPermissionsAsync();
+    return status === 'granted';
+  } catch {
+    return false;
   }
+}
 
-  
-  // Get theme for dark mode
+export default function OnboardingQuizScreen({ onFinish }: Props) {
   const { theme } = useTheme();
-  
-  // Handle exit from onboarding
-  const handleExitOnboarding = async () => {
-    // Mark onboarding as completed
-    await setOnboardingChecked(true);
-    // Call onFinish callback if provided
-    if (onFinish) {
-      onFinish();
+  const { clearNewUserFlag } = useAuth();
+  const { name: existingName, setName, setBrainType, setOnboardingChecked } = useXP();
+  const params = useLocalSearchParams<{ retake?: string }>();
+  const isRetake = params.retake === '1' || params.retake === 'true';
+
+  const [stage, setStage] = useState<Stage>(isRetake ? 'brief' : 'welcome');
+  const [displayName, setDisplayName] = useState(existingName && existingName !== 'Member' ? existingName : '');
+  const [step, setStep] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [answers, setAnswers] = useState<MindTypeId[]>([]);
+  const [resultId, setResultId] = useState<MindTypeId | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [notifStatus, setNotifStatus] = useState<'idle' | 'granted' | 'denied'>('idle');
+  const progressAnim = useRef(new Animated.Value(0)).current;
+
+  const progress = stage === 'quiz' ? (step + (selected !== null ? 0.35 : 0)) / QUESTIONS.length : stage === 'result' || stage === 'permissions' ? 1 : 0;
+
+  useEffect(() => {
+    Animated.timing(progressAnim, {
+      toValue: progress,
+      duration: 280,
+      useNativeDriver: false,
+    }).start();
+  }, [progress]);
+
+  const profile = useMemo(() => (resultId ? MIND_PROFILES[resultId] : null), [resultId]);
+
+  const finishAndGo = async (mind: MindTypeId, nameValue: string, nextRoute?: string) => {
+    setSaving(true);
+    try {
+      const clean = nameValue.trim() || existingName || 'Member';
+      if (!isRetake || clean !== existingName) await setName(clean);
+      await setBrainType(mind);
+      // Retake only updates mind type — never resets XP/coins/onboarding flag incorrectly
+      if (!isRetake) {
+        await setOnboardingChecked(true);
+        await clearNewUserFlag();
+        await onFinish?.();
+      }
+      if (nextRoute) {
+        router.replace(nextRoute as never);
+      } else if (isRetake) {
+        router.back();
+      } else {
+        router.replace('/(tabs)');
+      }
+    } catch {
+      if (!isRetake) {
+        await setOnboardingChecked(true);
+        await onFinish?.();
+      }
+      if (isRetake) router.back();
+      else router.replace('/(tabs)');
+    } finally {
+      setSaving(false);
     }
-    // Navigate to main app
-    router.replace('/(tabs)');
   };
 
-  // Dark purple theme colors for onboarding
-  const onboardingBg = '#0a0a0f';
-  const onboardingText = '#ffffff';
-  const onboardingTextSecondary = '#b8a0d9';
-  
-  // Static gradient for logo
+  const skip = async () => {
+    if (isRetake) {
+      router.back();
+      return;
+    }
+    setSaving(true);
+    try {
+      await setOnboardingChecked(true);
+      await clearNewUserFlag();
+      await onFinish?.();
+      router.replace('/(tabs)');
+    } finally {
+      setSaving(false);
+    }
+  };
 
-  // Animation values for smooth transitions - use simple fade animations
-  const [quizCardKey, setQuizCardKey] = useState(0);
-  const [statsCardKey, setStatsCardKey] = useState(0);
+  const chooseOption = (index: number) => {
+    if (selected !== null) return;
+    setSelected(index);
+    void Haptics.selectionAsync();
+    const choice = QUESTIONS[step].options[index].type;
+    const next = [...answers, choice];
+    setTimeout(() => {
+      if (step + 1 >= QUESTIONS.length) {
+        const mind = scoreMindType(next);
+        setAnswers(next);
+        setResultId(mind);
+        setStage('result');
+        setSelected(null);
+      } else {
+        setAnswers(next);
+        setStep((s) => s + 1);
+        setSelected(null);
+      }
+    }, 220);
+  };
+
+  const Header = ({ showSkip = true }: { showSkip?: boolean }) => (
+    <View style={styles.header}>
+      {showSkip ? (
+        <Pressable onPress={() => { void skip(); }} hitSlop={12} style={styles.headerSide}>
+          <Text style={[type.label, { color: theme.textTertiary }]}>{isRetake ? 'Close' : 'Skip'}</Text>
+        </Pressable>
+      ) : (
+        <View style={styles.headerSide} />
+      )}
+      <Text style={[type.brand, { color: theme.text }]}>ZENCADEMY</Text>
+      <View style={styles.headerSide} />
+    </View>
+  );
+
+  const Progress = () => (
+    <View style={[styles.progressTrack, { backgroundColor: theme.border }]}>
+      <Animated.View
+        style={[
+          styles.progressFill,
+          {
+            backgroundColor: theme.primary,
+            width: progressAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['0%', '100%'],
+            }),
+          },
+        ]}
+      />
+    </View>
+  );
 
   return (
-    <View style={{ flex: 1, backgroundColor: onboardingBg }}>
-      
-      {/* Cinematic story screen 1 */}
-      {screen === "story" && storyIdx === 0 && (
-        <SafeAreaView style={{ flex: 1, backgroundColor: onboardingBg, justifyContent: 'center', alignItems: 'center', padding: 0 }}>
-          {/* Professional header with logo and exit button */}
-          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100 }}>
-            <SafeAreaView>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 10, paddingBottom: 10 }}>
-                <Pressable
-                  onPress={handleExitOnboarding}
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 16,
-                    backgroundColor: 'rgba(139, 92, 246, 0.2)',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                  hitSlop={10}
-                >
-                  <Ionicons name="close" size={18} color={onboardingText} />
-                </Pressable>
-                <MaskedView
-                  maskElement={
-                    <Text style={{ fontSize: 24, fontWeight: '900', letterSpacing: 3, fontFamily: 'SpaceMono-Regular', textAlign: 'center' }}>
-                      ZENCADEMY
-                    </Text>
-                  }
-                >
-                  <LinearGradient
-                    colors={['#8B5CF6', '#A78BFA', '#C084FC', '#8B5CF6']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={{ paddingVertical: 8 }}
-                  >
-                    <Text style={{ fontSize: 24, fontWeight: '900', letterSpacing: 3, fontFamily: 'SpaceMono-Regular', textAlign: 'center', opacity: 0 }}>
-                      ZENCADEMY
-                    </Text>
-                  </LinearGradient>
-                </MaskedView>
-                <View style={{ width: 32 }} />
-              </View>
-            </SafeAreaView>
-          </View>
-          
-          {/* Tap to skip indicator */}
-          <View style={{ position: 'absolute', bottom: 50, left: 0, right: 0, alignItems: 'center', zIndex: 10 }}>
-            <Text style={{ color: onboardingTextSecondary, fontSize: 14, fontWeight: '600', letterSpacing: 1, fontFamily: 'SpaceMono-Regular', opacity: 0.6 }}>
-              {storyTextComplete ? 'Tap to continue' : 'Tap to reveal text'}
-            </Text>
-          </View>
-          
-          {/* Tap anywhere */}
-          <Pressable
-            onPress={() => {
-              if (!storyTextComplete) {
-                // First tap: complete text instantly
-                setStoryTextComplete(true);
-                // Force complete all letters
-                const allLetters = EPIC_MESSAGES[0].split('');
-                // This will be handled by setting instant prop
-              } else {
-                // Second tap: go to next screen
-                setScreen("ready");
-              }
-            }}
-            style={{ flex: 1, width: '100%', justifyContent: 'center', alignItems: 'center' }}
-          >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', paddingHorizontal: 24 }}>
-              <StoryLetterFade
-                key={`story-${storyIdx}-${storyTextComplete}`}
-                text={EPIC_MESSAGES[0]}
-                onDone={() => {
-                  if (!storyTextComplete) {
-                    setStoryTextComplete(true);
-                  }
-                }}
-                onComplete={() => setStoryTextComplete(true)}
-                color={onboardingText}
-                fontFamily="SpaceMono-Regular"
-                fontSize={36}
-                instant={storyTextComplete}
-              />
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }} edges={['top', 'bottom']}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        {stage === 'welcome' && (
+          <View style={styles.screenPad}>
+            <Header />
+            <View style={styles.hero}>
+              <FadeRise>
+                <Text style={[type.label, { color: theme.textTertiary, marginBottom: 14 }]}>Welcome</Text>
+                <Text style={[type.title, { color: theme.text, fontSize: 34, lineHeight: 40 }]}>
+                  Train the mind.{'\n'}Earn the edge.
+                </Text>
+                <Text style={[type.subtitle, { color: theme.textSecondary, marginTop: 14, maxWidth: 320 }]}>
+                  A short assessment maps how you think — so training starts where you are strongest.
+                </Text>
+              </FadeRise>
             </View>
-          </Pressable>
-        </SafeAreaView>
-      )}
-
-      {/* Cinematic story screen 2 (ready) */}
-      {screen === "ready" && (
-        <SafeAreaView style={{ flex: 1, backgroundColor: onboardingBg, justifyContent: 'center', alignItems: 'center', padding: 0 }}>
-          {/* Professional header with logo and exit button */}
-          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100 }}>
-            <SafeAreaView>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 10, paddingBottom: 10 }}>
-                <Pressable
-                  onPress={handleExitOnboarding}
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 16,
-                    backgroundColor: 'rgba(139, 92, 246, 0.2)',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                  hitSlop={10}
-                >
-                  <Ionicons name="close" size={18} color={onboardingText} />
-                </Pressable>
-                <MaskedView
-                  maskElement={
-                    <Text style={{ fontSize: 24, fontWeight: '900', letterSpacing: 3, fontFamily: 'SpaceMono-Regular', textAlign: 'center' }}>
-                      ZENCADEMY
-                    </Text>
-                  }
-                >
-                  <LinearGradient
-                    colors={['#8B5CF6', '#A78BFA', '#C084FC', '#8B5CF6']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={{ paddingVertical: 8 }}
-                  >
-                    <Text style={{ fontSize: 24, fontWeight: '900', letterSpacing: 3, fontFamily: 'SpaceMono-Regular', textAlign: 'center', opacity: 0 }}>
-                      ZENCADEMY
-                    </Text>
-                  </LinearGradient>
-                </MaskedView>
-                <View style={{ width: 32 }} />
-              </View>
-            </SafeAreaView>
-          </View>
-          
-          {/* Main content - no tap to skip */}
-          <View style={{ flex: 1, width: '100%', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 24 }}>
-            <View style={{ alignItems: 'center', marginBottom: 40 }}>
-              <Text style={{ fontFamily: 'SpaceMono-Regular', fontSize: 36, textAlign: 'center', lineHeight: 48 }}>
-                <Text style={{ color: onboardingTextSecondary }}>Are you </Text>
-                <Text style={{ color: '#A78BFA', fontWeight: '900' }}>READY</Text>
-                <Text style={{ color: onboardingTextSecondary }}> to unlock your true potential?</Text>
+            <FadeRise delay={80}>
+              <Pressable
+                onPress={() => setStage('name')}
+                style={[styles.primaryBtn, { backgroundColor: theme.primary }]}
+              >
+                <Text style={[type.button, { color: theme.buttonText }]}>Begin</Text>
+              </Pressable>
+              <Text style={[type.body, { color: theme.textTertiary, textAlign: 'center', marginTop: 14 }]}>
+                About 3 minutes · 12 questions
               </Text>
-            </View>
-            <FadeIn delay={0}>
-              <TouchableOpacity
-                onPress={() => setScreen("quiz")}
-                style={{
-                  backgroundColor: '#8B5CF6',
-                  borderRadius: 22,
-                  paddingVertical: 13,
-                  paddingHorizontal: 48,
-                  alignSelf: 'center',
-                  marginTop: 30,
-                  shadowColor: '#8B5CF6',
-                  shadowOpacity: 0.4,
-                  shadowRadius: 8,
-                  elevation: 4,
-                  zIndex: 2,
-                }}
-              >
-                <Text style={{ color: onboardingText, fontWeight: '900', fontSize: 22, letterSpacing: 2, fontFamily: 'SpaceMono-Regular' }}>YES</Text>
-              </TouchableOpacity>
-            </FadeIn>
+            </FadeRise>
           </View>
-        </SafeAreaView>
-      )}
+        )}
 
-
-      {/* PAGE: QUIZ */}
-      {screen === "quiz" && (
-        <SafeAreaView style={{ flex: 1, backgroundColor: onboardingBg }}>
-          <View style={{ width: '100%', alignItems: 'center', marginTop: 20, marginBottom: 0 }}>
-            <View style={[styles.progressBarWrap, { backgroundColor: '#1a1a2e' }]}>
-              <View
+        {stage === 'name' && (
+          <View style={styles.screenPad}>
+            <Header />
+            <FadeRise>
+              <Text style={[type.label, { color: theme.textTertiary, marginBottom: 10 }]}>Identity</Text>
+              <Text style={[type.title, { color: theme.text }]}>What should we call you?</Text>
+              <Text style={[type.subtitle, { color: theme.textSecondary, marginTop: 8 }]}>
+                Shown on your profile and leaderboard. You can change it later.
+              </Text>
+            </FadeRise>
+            <FadeRise delay={60}>
+              <TextInput
+                value={displayName}
+                onChangeText={setDisplayName}
+                placeholder="Your name"
+                placeholderTextColor={theme.textTertiary}
+                autoFocus
+                maxLength={24}
                 style={[
-                  styles.progressBarFill,
-                  { 
-                    width: `${progress * 100}%`,
-                    backgroundColor: '#8B5CF6'
-                  }
+                  styles.input,
+                  { color: theme.text, borderColor: theme.border, backgroundColor: theme.card },
                 ]}
+                returnKeyType="done"
+                onSubmitEditing={() => setStage('brief')}
               />
-            </View>
+            </FadeRise>
+            <Pressable
+              onPress={() => setStage('brief')}
+              style={[styles.primaryBtn, { backgroundColor: theme.primary, marginTop: 8 }]}
+            >
+              <Text style={[type.button, { color: theme.buttonText }]}>Continue</Text>
+            </Pressable>
           </View>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', paddingHorizontal: 20 }}>
-            <FadeIn key={`quiz-card-${quizCardKey}`} delay={0} duration={400}>
-              <View
-                style={[
-                  styles.quizCard,
-                  {
-                    backgroundColor: '#1a1a2e',
-                    borderColor: '#8B5CF6',
-                    borderWidth: 2,
-                  }
-                ]}
-              >
-                <FadeIn delay={0}>
-                  <Text style={[styles.questionNo, { fontFamily: 'SpaceMono-Regular', color: onboardingTextSecondary }]}>
-                    Question {step + 1} of {QUESTIONS.length}
-                  </Text>
-                </FadeIn>
-                <FadeIn delay={110}>
-                  <Text style={[styles.questionText, { fontFamily: 'SpaceMono-Regular', color: onboardingText }]}>
-                    {QUESTIONS[step].q}
-                  </Text>
-                </FadeIn>
-                {QUESTIONS[step].options.map((o, i) => (
-                  <FadeIn key={i} delay={220 + i * 70}>
-                    <Pressable
-                      style={({ pressed }) => [
-                        styles.optionBtn,
-                        {
-                          backgroundColor: answerIdx === i ? '#8B5CF6' : '#0f0f1a',
-                          borderColor: answerIdx === i ? '#A78BFA' : '#2a2a3e',
-                          borderWidth: answerIdx === i ? 2 : 1.5,
-                          shadowColor: answerIdx === i ? '#8B5CF6' : 'transparent',
-                          shadowOpacity: answerIdx === i ? 0.5 : 0,
-                          shadowRadius: answerIdx === i ? 10 : 0,
-                          elevation: answerIdx === i ? 8 : 2,
-                          transform: [{ scale: pressed ? 0.98 : 1 }]
-                        }
-                      ]}
-                      onPress={() => {
-                        setAnswerIdx(i);
-                        setStatIdx(i);
-                        setScreen("stats");
-                      }}
-                    >
-                      <Text style={[
-                        styles.optionText,
-                        { 
-                          fontFamily: 'SpaceMono-Regular',
-                          color: answerIdx === i ? onboardingText : onboardingTextSecondary
-                        }
-                      ]}>
-                        {o.text}
-                      </Text>
-                    </Pressable>
-                  </FadeIn>
+        )}
+
+        {stage === 'brief' && (
+          <View style={styles.screenPad}>
+            <Header />
+            <FadeRise>
+              <Text style={[type.label, { color: theme.textTertiary, marginBottom: 10 }]}>
+                {isRetake ? 'Retake mind type' : 'Mind type'}
+              </Text>
+              <Text style={[type.title, { color: theme.text }]}>
+                {isRetake ? 'Update how you think' : 'How you think shapes how you train'}
+              </Text>
+              <Text style={[type.subtitle, { color: theme.textSecondary, marginTop: 10 }]}>
+                {isRetake
+                  ? 'Your XP, coins, and streak stay exactly as they are. Only your mind type updates.'
+                  : 'Answer honestly. There are no wrong choices — only a clearer starting profile.'}
+              </Text>
+            </FadeRise>
+            <FadeRise delay={70}>
+              <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                {[
+                  { icon: 'layers-outline' as const, text: '12 calibrated prompts' },
+                  { icon: 'analytics-outline' as const, text: 'One primary mind type' },
+                  { icon: 'barbell-outline' as const, text: 'Training paths matched to you' },
+                ].map((row) => (
+                  <View key={row.text} style={styles.infoRow}>
+                    <Ionicons name={row.icon} size={18} color={theme.primary} />
+                    <Text style={[type.body, { color: theme.text, flex: 1 }]}>{row.text}</Text>
+                  </View>
                 ))}
               </View>
-            </FadeIn>
+            </FadeRise>
+            <Pressable
+              onPress={() => {
+                setStep(0);
+                setAnswers([]);
+                setSelected(null);
+                setStage('quiz');
+              }}
+              style={[styles.primaryBtn, { backgroundColor: theme.primary }]}
+            >
+              <Text style={[type.button, { color: theme.buttonText }]}>Start assessment</Text>
+            </Pressable>
           </View>
-        </SafeAreaView>
-      )}
+        )}
 
-      {/* PAGE: STATS */}
-      {screen === "stats" && (
-        <SafeAreaView style={{ flex: 1, backgroundColor: onboardingBg, justifyContent: 'center', alignItems: 'center' }}>
-          <FadeIn key={`stats-card-${statsCardKey}`} delay={0} duration={400}>
-            <View 
-              style={[
-                styles.statsCard, 
-                { 
-                  backgroundColor: '#1a1a2e',
-                  borderColor: '#8B5CF6',
-                  borderWidth: 2,
-                  justifyContent: 'center', 
-                  alignItems: 'center',
-                }
-              ]}
-            > 
-              <FadeIn delay={0}>
-                <Text style={{ fontSize: 21, fontWeight: "900", textAlign: "center", marginBottom: 9, fontFamily: 'SpaceMono-Regular', color: onboardingText }}>
-                  {QUESTIONS[step].options[statIdx].text}
+        {stage === 'quiz' && (
+          <View style={{ flex: 1 }}>
+            <View style={[styles.screenPad, { paddingBottom: 0 }]}>
+              <Header showSkip />
+              <Progress />
+              <Text style={[type.label, { color: theme.textTertiary, marginTop: 14, marginBottom: 6 }]}>
+                Question {step + 1} of {QUESTIONS.length}
+              </Text>
+            </View>
+            <ScrollView
+              contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40, paddingTop: 8 }}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
+              <FadeRise key={QUESTIONS[step].id}>
+                <Text style={[type.title, { color: theme.text, fontSize: 22, lineHeight: 30 }]}>
+                  {QUESTIONS[step].prompt}
                 </Text>
-              </FadeIn>
-              <FadeIn delay={80}>
-                <Text style={{ fontSize: 17, textAlign: "center", marginBottom: 9, fontFamily: 'SpaceMono-Regular', color: onboardingTextSecondary }}>
-                  <Text style={{ fontWeight: "700", color: "#A78BFA" }}>
-                    {STATS_PER_QUESTION[step][statIdx]}%
-                  </Text> of users chose this!
-                </Text>
-              </FadeIn>
-              <View style={{ flexDirection: "column", width: "100%", marginBottom: 14, alignItems: 'center', justifyContent: 'center' }}>
-                {QUESTIONS[step].options.map((op, opi) => {
-                  const barWidth = `${STATS_PER_QUESTION[step][opi]}%`;
-                  
+                {QUESTIONS[step].hint ? (
+                  <Text style={[type.body, { color: theme.textTertiary, marginTop: 8 }]}>
+                    {QUESTIONS[step].hint}
+                  </Text>
+                ) : null}
+              </FadeRise>
+              <View style={{ marginTop: 22, gap: 10 }}>
+                {QUESTIONS[step].options.map((opt, i) => {
+                  const on = selected === i;
                   return (
-                    <FadeIn key={opi} delay={130 + opi * 60}>
-                      <View style={{
-                        flexDirection: "row", 
-                        alignItems: "center", 
-                        marginVertical: 4, 
-                        justifyContent: 'center', 
-                        alignSelf: 'center',
-                        width: '100%',
-                        maxWidth: 300
-                      }}>
-                        <View style={{
-                          flex: 1,
-                          height: 10,
-                          backgroundColor: '#0f0f1a',
-                          borderRadius: 5,
-                          marginRight: 10,
-                          overflow: 'hidden'
-                        }}>
-                          <View
-                            style={{
-                              height: '100%',
-                              width: barWidth,
-                              backgroundColor: opi === statIdx ? '#8B5CF6' : '#2a2a3e',
-                              borderRadius: 5,
-                            }}
-                          />
-                        </View>
-                        <Text style={{
-                          fontSize: 14,
-                          color: opi === statIdx ? '#A78BFA' : onboardingTextSecondary,
-                          fontWeight: opi === statIdx ? "800" : "500",
-                          fontFamily: 'SpaceMono-Regular',
-                          minWidth: 45
-                        }}>
-                          {STATS_PER_QUESTION[step][opi]}%
+                    <Pressable
+                      key={opt.label}
+                      onPress={() => chooseOption(i)}
+                      style={[
+                        styles.option,
+                        {
+                          backgroundColor: on ? theme.surface : theme.card,
+                          borderColor: on ? theme.primary : theme.border,
+                          borderWidth: on ? 2 : 1,
+                        },
+                      ]}
+                    >
+                      <View
+                        style={[
+                          styles.optionIndex,
+                          { backgroundColor: on ? theme.primary : theme.surface, borderColor: theme.border },
+                        ]}
+                      >
+                        <Text style={[type.label, { color: on ? theme.buttonText : theme.textSecondary, letterSpacing: 0 }]}>
+                          {String.fromCharCode(65 + i)}
                         </Text>
                       </View>
-                    </FadeIn>
+                      <Text style={[type.body, { color: theme.text, flex: 1, fontWeight: '600' }]}>{opt.label}</Text>
+                    </Pressable>
                   );
                 })}
               </View>
-              {!!funFact && (
-                <FadeIn delay={360}>
-                  <View style={{ marginBottom: 10, backgroundColor: '#0f0f1a', padding: 16, borderRadius: 12, borderWidth: 1, borderColor: '#2a2a3e' }}>
-                    <Text style={[styles.funFactLabel, { fontFamily: 'SpaceMono-Regular', color: '#A78BFA' }]}>Fun fact</Text>
-                    <Text style={[styles.funFact, { fontFamily: 'SpaceMono-Regular', color: onboardingTextSecondary }]}>{funFact}</Text>
-                  </View>
-                </FadeIn>
-              )}
-              <FadeIn delay={500}>
-                <Pressable
-                  style={({ pressed }) => [
-                    {
-                      backgroundColor: '#8B5CF6',
-                      paddingHorizontal: 32,
-                      paddingVertical: 14,
-                      borderRadius: 14,
-                      shadowColor: '#8B5CF6',
-                      shadowOpacity: 0.4,
-                      shadowRadius: 10,
-                      elevation: 8,
-                      transform: [{ scale: pressed ? 0.95 : 1 }]
-                    }
-                  ]}
-                  onPress={() => {
-                    const nextAnswers = [...answers, QUESTIONS[step].options[statIdx].type];
-                    setAnswers(nextAnswers);
-                    setAnswerIdx(null);
-                  if (step + 1 === QUESTIONS.length) {
-                    finishQuiz(nextAnswers, userName);
-                  } else {
-                      setStep(step + 1);
-                      setQuizCardKey(prev => prev + 1);
-                      setScreen("quiz");
-                    }
-                  }}
-                >
-                  <Text style={{ color: onboardingText, fontWeight: "700", fontSize: 16, fontFamily: 'SpaceMono-Regular' }}>
-                    {step + 1 === QUESTIONS.length ? 'See Results' : 'Next'}
-                  </Text>
-                </Pressable>
-              </FadeIn>
-            </View>
-          </FadeIn>
-        </SafeAreaView>
-      )}
-
-      {/* PAGE: RESULT */}
-      {screen === "result" && result && (
-        <SafeAreaView style={{ flex: 1, backgroundColor: onboardingBg, justifyContent: 'center', alignItems: 'center' }}>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-            {confetti1 && (
-              <ConfettiCannon
-                count={90}
-                origin={{ x: SCREEN_WIDTH * 0.5, y: 0 }}
-                fallSpeed={2800}
-                explosionSpeed={480}
-                fadeOut={true}
-                autoStart={true}
-              />
-            )}
-            {confetti2 && (
-              <ConfettiCannon
-                count={120}
-                origin={{ x: 30, y: 30 }}
-                fallSpeed={3200}
-                explosionSpeed={620}
-                fadeOut={true}
-                autoStart={true}
-              />
-            )}
-            {confetti3 && (
-              <ConfettiCannon
-                count={150}
-                origin={{ x: SCREEN_WIDTH - 30, y: 0 }}
-                fallSpeed={3500}
-                explosionSpeed={730}
-                fadeOut={true}
-                autoStart={true}
-              />
-            )}
-            <FadeIn delay={70}>
-              <MaskedView
-                maskElement={
-                  <Text style={[styles.finalTitle, { fontFamily: 'SpaceMono-Regular', textAlign: 'center' }]}>
-                    {result.name}
-                  </Text>
-                }
-              >
-                <LinearGradient
-                  colors={["#0b63ce", "#33e3ff"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
-                  <Text style={[styles.finalTitle, { opacity: 0, fontFamily: 'SpaceMono-Regular', textAlign: 'center' }]}>{result.name}</Text>
-                </LinearGradient>
-              </MaskedView>
-            </FadeIn>
-            <FadeIn delay={340}>
-              <MaskedView
-                maskElement={
-                  <Text style={[styles.brainTypeText, { fontFamily: 'SpaceMono-Regular', textAlign: 'center' }]}>{result.type}</Text>
-                }
-              >
-                <LinearGradient
-                  colors={GRADIENTS[result.type] as [string, string]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
-                  <Text style={[styles.brainTypeText, { opacity: 0, fontFamily: 'SpaceMono-Regular', textAlign: 'center' }]}>{result.type}</Text>
-                </LinearGradient>
-              </MaskedView>
-            </FadeIn>
-            <FadeIn delay={700}>
-              <Text style={[styles.finalDesc, { fontFamily: 'SpaceMono-Regular', textAlign: 'center', color: onboardingText }]}>
-                {result.desc}
-              </Text>
-            </FadeIn>
-            <FadeIn delay={970}>
-              <Text style={[styles.finalMotiv, { fontFamily: 'SpaceMono-Regular', textAlign: 'center', color: onboardingTextSecondary }]}>
-                The best investment you'll ever make is in yourself.
-                <Text style={{ fontWeight: "bold", color: "#A78BFA", fontFamily: 'SpaceMono-Regular' }}> Your brain, your superpower!</Text>
-              </Text>
-            </FadeIn>
-            <FadeIn delay={1230}>
-              <Pressable 
-                style={({ pressed }) => [
-                  {
-                    backgroundColor: '#8B5CF6',
-                    paddingHorizontal: 40,
-                    paddingVertical: 16,
-                    borderRadius: 18,
-                    marginTop: 8,
-                    shadowColor: '#8B5CF6',
-                    shadowOpacity: 0.4,
-                    shadowRadius: 12,
-                    elevation: 8,
-                    transform: [{ scale: pressed ? 0.95 : 1 }]
-                  }
-                ]} 
-                onPress={() => {
-                  if (onFinish) onFinish();
-                  setTimeout(() => {
-                    router.replace('/(tabs)');
-                  }, 0);
-                }}
-              >
-                <Text style={{ color: onboardingText, fontWeight: "700", fontSize: 18, fontFamily: 'SpaceMono-Regular', textAlign: 'center' }}>
-                  Enter the App
-                </Text>
-              </Pressable>
-            </FadeIn>
+            </ScrollView>
           </View>
-        </SafeAreaView>
-      )}
-    </View>
+        )}
+
+        {stage === 'result' && profile && (
+          <ScrollView contentContainerStyle={[styles.screenPad, { paddingBottom: 48 }]} showsVerticalScrollIndicator={false}>
+            <Header showSkip={false} />
+            <FadeRise>
+              <Text style={[type.label, { color: theme.textTertiary, marginBottom: 10 }]}>Your mind type</Text>
+              <LinearGradient
+                colors={[theme.surface, theme.card]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={[styles.resultCard, { borderColor: theme.border }]}
+              >
+                <Text style={[type.title, { color: theme.text, fontSize: 28 }]}>{profile.title}</Text>
+                <Text style={[type.subtitle, { color: theme.primary, marginTop: 6, fontWeight: '700' }]}>
+                  {profile.tagline}
+                </Text>
+                <Text style={[type.body, { color: theme.textSecondary, marginTop: 14 }]}>{profile.body}</Text>
+              </LinearGradient>
+            </FadeRise>
+
+            <FadeRise delay={70}>
+              <Text style={[type.label, { color: theme.textTertiary, marginTop: 22, marginBottom: 10 }]}>Strengths</Text>
+              <View style={{ gap: 8 }}>
+                {profile.strengths.map((s) => (
+                  <View key={s} style={[styles.chipRow, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                    <Ionicons name="checkmark-circle" size={16} color={theme.primary} />
+                    <Text style={[type.body, { color: theme.text }]}>{s}</Text>
+                  </View>
+                ))}
+              </View>
+            </FadeRise>
+
+            <FadeRise delay={110}>
+              <Text style={[type.label, { color: theme.textTertiary, marginTop: 22, marginBottom: 10 }]}>
+                Start training here
+              </Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                {profile.train.map((t) => (
+                  <View
+                    key={t}
+                    style={{
+                      paddingHorizontal: 12,
+                      paddingVertical: 8,
+                      borderRadius: 999,
+                      borderWidth: 1,
+                      borderColor: theme.border,
+                      backgroundColor: theme.surface,
+                    }}
+                  >
+                    <Text style={[type.label, { color: theme.textSecondary, letterSpacing: 0.4 }]}>{t}</Text>
+                  </View>
+                ))}
+              </View>
+            </FadeRise>
+
+            <Text style={[type.body, { color: theme.textTertiary, marginTop: 20 }]}>
+              XP unlocks Medium at level 2 and Hard at level 5. Coins buy shop items — never training access.
+            </Text>
+
+            <Pressable
+              disabled={saving}
+              onPress={() => {
+                if (isRetake) {
+                  void finishAndGo(profile.id, displayName);
+                } else {
+                  setStage('permissions');
+                }
+              }}
+              style={[styles.primaryBtn, { backgroundColor: theme.primary, marginTop: 24, opacity: saving ? 0.6 : 1 }]}
+            >
+              <Text style={[type.button, { color: theme.buttonText }]}>
+                {isRetake ? (saving ? 'Saving…' : 'Save mind type') : 'Continue'}
+              </Text>
+            </Pressable>
+          </ScrollView>
+        )}
+
+        {stage === 'permissions' && profile && (
+          <View style={styles.screenPad}>
+            <Header showSkip={false} />
+            <FadeRise>
+              <Text style={[type.label, { color: theme.textTertiary, marginBottom: 10 }]}>Stay sharp</Text>
+              <Text style={[type.title, { color: theme.text }]}>Turn on reminders?</Text>
+              <Text style={[type.subtitle, { color: theme.textSecondary, marginTop: 10 }]}>
+                One streak saver per day and optional training nudges. You can change this anytime in Settings.
+              </Text>
+            </FadeRise>
+            <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border, marginVertical: 28 }]}>
+              <View style={styles.infoRow}>
+                <Ionicons name="notifications-outline" size={18} color={theme.primary} />
+                <Text style={[type.body, { color: theme.text, flex: 1 }]}>
+                  {notifStatus === 'granted'
+                    ? 'Notifications enabled'
+                    : notifStatus === 'denied'
+                      ? 'Permission declined — you can enable later'
+                      : 'Protect your streak with one evening reminder'}
+                </Text>
+              </View>
+            </View>
+            <Pressable
+              disabled={saving}
+              onPress={async () => {
+                const ok = await requestNotifPermission();
+                setNotifStatus(ok ? 'granted' : 'denied');
+                await finishAndGo(profile.id, displayName, profile.startRoute);
+              }}
+              style={[styles.primaryBtn, { backgroundColor: theme.primary, opacity: saving ? 0.6 : 1 }]}
+            >
+              <Text style={[type.button, { color: theme.buttonText }]}>
+                {saving ? 'Saving…' : profile.startLabel}
+              </Text>
+            </Pressable>
+            <Pressable
+              disabled={saving}
+              onPress={() => { void finishAndGo(profile.id, displayName); }}
+              style={[styles.primaryBtn, { backgroundColor: 'transparent', borderWidth: 1, borderColor: theme.border, marginTop: 10 }]}
+            >
+              <Text style={[type.button, { color: theme.text }]}>Enter Home instead</Text>
+            </Pressable>
+          </View>
+        )}
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
-const safeStyles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: "#fafbfc",
-  },
-  inner: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 10,
-    paddingBottom: 10,
-    justifyContent: "flex-start",
-  }
-});
-
 const styles = StyleSheet.create({
-  header: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    minHeight: 60,
+  screenPad: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
     paddingTop: 8,
-    marginBottom: 2,
-    backgroundColor: "#fafbfc",
-    zIndex: 22,
+    paddingBottom: 28,
+    justifyContent: 'space-between',
   },
-  exitBtn: {
-    marginLeft: -8,
-    marginTop: 0,
-    backgroundColor: "#f8f8fa",
-    borderRadius: 25,
-    padding: 7,
-    shadowColor: "#aaa", shadowOpacity: 0.09, shadowRadius: 6, elevation: 5,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+    minHeight: 40,
   },
-  nameScreenWrap: {
-    paddingTop: 42,
-    flex: 1,
-    alignItems: "center",
+  headerSide: { width: 56, alignItems: 'flex-start' },
+  hero: { flex: 1, justifyContent: 'center', paddingVertical: 24 },
+  primaryBtn: {
+    borderRadius: 14,
+    paddingVertical: 16,
+    alignItems: 'center',
   },
-  quizTitle: { fontSize: 30, fontWeight: "900", marginBottom: 10, color: "#131313", letterSpacing: 0.8, textAlign: "center" },
-  quizDesc: { fontSize: 18, color: "#232323", marginBottom: 17, textAlign: "center", fontWeight: "600", opacity: 0.88 },
-  nameInput: {
-    backgroundColor: "#fff", borderRadius: 11, padding: 15, fontSize: 20,
-    borderWidth: 1.5, borderColor: "#e3e3e3", width: 270, textAlign: "center", marginBottom: 13, color: "#222", fontWeight: "700"
+  input: {
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 17,
+    fontWeight: '600',
+    marginTop: 28,
+    marginBottom: 16,
   },
-  startBtn: {
-    backgroundColor: "#181818", paddingHorizontal: 32, paddingVertical: 16, borderRadius: 18,
-    marginTop: 15, alignItems: "center", shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 5, elevation: 2
+  infoCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 16,
+    gap: 14,
+    marginVertical: 28,
   },
-  progressBarWrap: {
-    width: "92%", height: 11, backgroundColor: "#eaeaea", borderRadius: 7,
-    alignSelf: "center", marginTop: 5, marginBottom: 13, overflow: "hidden"
+  infoRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  progressTrack: {
+    height: 4,
+    borderRadius: 2,
+    overflow: 'hidden',
+    marginTop: 4,
   },
-  progressBarFill: {
-    height: 11, backgroundColor: "#181818", borderRadius: 7
+  progressFill: { height: '100%', borderRadius: 2 },
+  option: {
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
-  statsCard: {
-    width: "98%",
-    alignSelf: "center",
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 28,
-    marginTop: 35,
-    marginBottom: 22,
-    shadowColor: "#111", shadowOpacity: 0.09, shadowRadius: 10, elevation: 3,
-    alignItems: "center",
+  optionIndex: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  funFactLabel: {
-    color: "#20a0fa",
-    fontSize: 15,
-    fontWeight: "800",
-    textAlign: "center",
-    letterSpacing: 1,
-    marginBottom: 1,
-    marginTop: 6,
+  resultCard: {
+    borderRadius: 18,
+    borderWidth: 1,
+    padding: 20,
   },
-  funFact: {
-    fontSize: 15,
-    color: "#3b3b3b",
-    textAlign: "center",
-    fontWeight: "600",
-    opacity: 0.87,
-    marginBottom: 6,
-  },
-  quizCard: {
-    flex: 1, backgroundColor: "#fff", borderRadius: 22, width: "100%", alignSelf: "center", padding: 26,
-    marginTop: 0, alignItems: "center", shadowColor: "#181818", shadowOpacity: 0.08, shadowRadius: 12, elevation: 4,
-    marginBottom: 12, minHeight: 290, justifyContent: "flex-start"
-  },
-  questionNo: {
-    color: "#bbb", fontSize: 16, marginBottom: 6, fontWeight: "700", letterSpacing: 0.9
-  },
-  questionText: {
-    color: "#131313", fontSize: 22, textAlign: "center", fontWeight: "900", marginBottom: 18, letterSpacing: 0.11
-  },
-  optionBtn: {
-    backgroundColor: "#fafbfc", borderRadius: 13, paddingVertical: 15, paddingHorizontal: 20, marginVertical: 7, width: "100%",
-    alignItems: "center", borderWidth: 2.2, borderColor: "#ececec", shadowColor: "#181818", shadowOpacity: 0.06,
-    shadowRadius: 8, elevation: 2, minHeight: 56, transitionDuration: "110ms"
-  },
-  optionText: {
-    fontSize: 18, color: "#181818", textAlign: "center", fontWeight: "700", letterSpacing: 0.1
-  },
-  finalWrap: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    padding: 18,
-    paddingTop: 60,
-  },
-  finalTitle: {
-    fontSize: 38,
-    fontWeight: "900",
-    marginBottom: 7,
-    textAlign: "center",
-    letterSpacing: 1.4
-  },
-  brainTypeText: {
-    fontSize: 48,
-    fontWeight: "900",
-    letterSpacing: 1.5,
-    marginBottom: 7,
-    marginTop: 2,
-    textAlign: "center",
-    textTransform: "uppercase",
-  },
-  finalDesc: {
-    fontSize: 22,
-    color: "#181818",
-    textAlign: "center",
-    marginBottom: 17,
-    marginTop: 11,
-    fontWeight: "700",
-    opacity: 0.88
-  },
-  finalMotiv: {
-    fontSize: 18,
-    color: "#333",
-    fontWeight: "700",
-    marginBottom: 24,
-    textAlign: "center",
-    opacity: 0.92
+  chipRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
   },
 });

@@ -1,24 +1,16 @@
 import { Feather, FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Dimensions, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../components/ThemeContext';
+import { AppHeader } from '../../components/ui/AppHeader';
+import { type } from '../../components/ui/type';
 
 const width = Dimensions.get('window').width;
 const mapSize = Math.min(width, 340);
 
-// Updatează rutele după structura ta din /games/
-const domainRoutes = {
-  mobility: '/PhysicalTraining/MobilityTrainingScreen',
-  strength: '/PhysicalTraining/StrengthTrainingScreen',
-  stretching: '/PhysicalTraining/StretchingTrainingScreen',
-  breathing: '/PhysicalTraining/BreathingTrainingScreen',
-  endurance: '/PhysicalTraining/EnduranceTrainingScreen',
-  balance: '/PhysicalTraining/BalanceTrainingScreen',
-  coordination: '/PhysicalTraining/CoordinationTrainingScreen',
-  relaxation: '/PhysicalTraining/RelaxationTrainingScreen',
-  posture: '/PhysicalTraining/PostureTrainingScreen',
-};
+const openCategory = (key: string) => `/games/ExerciseCatalog?category=${key}` as const;
 
 
 const domains = [
@@ -56,25 +48,15 @@ export default function PhysicalTrainingScreen() {
   const selectedDomain = domains.find(d => d.key === selected);
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
-      {/* HEADER */}
-      <View style={[styles.headerBar, { backgroundColor: theme.background, borderBottomColor: theme.borderLight }]}>
-        <TouchableOpacity
-          style={styles.backBtn}
-          onPress={() => router.push('/TrainingHub')}
-          activeOpacity={0.7}
-        >
-          <Feather name="arrow-left" size={24} color={theme.text} />
-        </TouchableOpacity>
-        <Text style={[styles.logo, { color: theme.text }]}>ZENCADEMY</Text>
-      </View>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]} edges={['bottom']}>
+      <AppHeader onBack={() => router.push('/TrainingHub')} showWallet />
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator
       >
-        <Text style={[styles.title, { color: theme.text }]}>Physical Training</Text>
-        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+        <Text style={[type.title, { color: theme.text, textAlign: 'center', marginTop: 12 }]}>Physical Training</Text>
+        <Text style={[type.subtitle, { color: theme.textSecondary, textAlign: 'center', marginBottom: 10 }]}>
           Tap any area or button to see more and start training.
         </Text>
         {/* CERC/Brain Map */}
@@ -131,7 +113,7 @@ export default function PhysicalTrainingScreen() {
         <View style={{ marginTop: 10, marginBottom: 14 }}>
           <TouchableOpacity
             style={[styles.trainBtnMain, { backgroundColor: theme.primary }]}
-            onPress={() => router.push(domainRoutes[selected])}
+            onPress={() => router.push(openCategory(selected))}
             activeOpacity={0.90}
           >
             <Text style={[styles.trainBtnTextMain, { color: theme.buttonText }]}>
@@ -195,7 +177,7 @@ export default function PhysicalTrainingScreen() {
             </ScrollView>
             <TouchableOpacity
               style={[styles.trainBtn, { backgroundColor: theme.primary }]}
-              onPress={() => router.push(domainRoutes[selected])}
+              onPress={() => router.push(openCategory(selected))}
               activeOpacity={0.88}
             >
               <Text style={[styles.trainBtnText, { color: theme.buttonText }]}>Start Training</Text>

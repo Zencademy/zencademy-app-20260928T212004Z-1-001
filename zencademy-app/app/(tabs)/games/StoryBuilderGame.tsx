@@ -1,10 +1,12 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../lib/progression';
+import { useGameReward } from '../../../hooks/useGameReward';
+import { WinPulse } from '../../../components/WinPulse';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import ConfettiCannon from 'react-native-confetti-cannon';
 import { useXP } from '../../../components/XPContext';
 
-const WIN_XP = 35; // Hard
+const WIN_XP = 28; // Hard
 
 const PROMPTS = [
 	['an old key', 'a silent train', 'a forgotten promise'],
@@ -18,7 +20,8 @@ function randomPrompts() {
 
 export default function StoryBuilderGame() {
 	const router = useRouter();
-	const { addXp } = useXP();
+	const { plan } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
 	const [seeds, setSeeds] = useState<string[]>(randomPrompts());
 	const [text, setText] = useState('');
 	const [showWin, setShowWin] = useState(false);
@@ -26,7 +29,7 @@ export default function StoryBuilderGame() {
 
 	const done = () => {
 		if (text.trim().split(/\s+/).length >= 60) { // 60+ words
-			addXp(WIN_XP); setShowWin(true);
+			void awardFor('Hard'); setShowWin(true);
 		}
 	};
 
@@ -57,7 +60,7 @@ export default function StoryBuilderGame() {
 			<Modal visible={showWin} transparent animationType="fade" onRequestClose={() => setShowWin(false)}>
 				<View style={styles.modalBackdrop}>
 					<View style={[styles.modalCard, { alignItems: 'center' }]}> 
-						<ConfettiCannon count={140} origin={{ x: 180, y: 0 }} fadeOut autoStart explosionSpeed={420} fallSpeed={2100} />
+						<WinPulse active />
 						<Text style={styles.winTitle}>Wonderful imagination!</Text>
 						<Text style={styles.winText}>+{WIN_XP} XP</Text>
 						<TouchableOpacity style={styles.primaryBtn} onPress={() => { setShowWin(false); setText(''); setSeeds(randomPrompts()); }}><Text style={styles.primaryText}>Write Another</Text></TouchableOpacity>

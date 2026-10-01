@@ -1,3 +1,5 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../../lib/progression';
+import { useGameReward } from '../../../../hooks/useGameReward';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -7,7 +9,7 @@ import { useXP } from '../../../../components/XPContext';
 
 const { width } = Dimensions.get('window');
 // Medium: flat +15 on success; plan bonuses (Lite +10, Elite +25)
-const BASE_REWARD_MEDIUM = 15;
+const BASE_REWARD_MEDIUM = 18;
 const GRID_ROWS = 4;
 const GRID_COLS = 6;
 const TOTAL_CELLS = GRID_ROWS * GRID_COLS;
@@ -24,7 +26,8 @@ function getRandomPattern(count: number, total: number) {
 }
 
 export default function GridPatternMemoryGame() {
-  const { addXP, incrementCompletedGame, plan } = useXP();
+  const { incrementCompletedGame, plan } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
   const router = useRouter();
   const { theme } = useTheme();
   const [pattern, setPattern] = useState(getRandomPattern(PATTERN_COUNT, TOTAL_CELLS));
@@ -65,7 +68,7 @@ export default function GridPatternMemoryGame() {
       setFailed(!correct);
       if (correct) {
         const planBonus = plan === 'elite' ? 25 : (plan === 'lite' ? 10 : 0);
-        addXP(BASE_REWARD_MEDIUM + planBonus);
+        void awardFor('Medium');
         incrementCompletedGame({ category: 'memory', difficulty: 'medium' });
         setStreak(streak + 1);
       } else {

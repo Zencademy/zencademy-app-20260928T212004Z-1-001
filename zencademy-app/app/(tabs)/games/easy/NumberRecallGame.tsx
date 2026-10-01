@@ -1,3 +1,5 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../../lib/progression';
+import { useGameReward } from '../../../../hooks/useGameReward';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -9,14 +11,15 @@ const { width } = Dimensions.get('window');
 const DIGIT_COUNT = 7;
 const SHOW_TIME = 2000;
 // Easy: flat +10 on success; plan bonuses (Lite +10, Elite +25)
-const BASE_REWARD_EASY = 10;
+const BASE_REWARD_EASY = 12;
 
 function generateDigits(count: number) {
   return Array.from({ length: count }, () => Math.floor(Math.random() * 10));
 }
 
 export default function NumberRecallGame() {
-  const { addXP, incrementCompletedGame, plan } = useXP();
+  const { incrementCompletedGame, plan } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
   const router = useRouter();
   const { theme } = useTheme();
   const [digits, setDigits] = useState(generateDigits(DIGIT_COUNT));
@@ -54,7 +57,7 @@ export default function NumberRecallGame() {
       setGameOver(true);
       setFailed(false);
       const planBonus = plan === 'elite' ? 25 : (plan === 'lite' ? 10 : 0);
-      addXP(BASE_REWARD_EASY + planBonus);
+      void awardFor('Easy');
       incrementCompletedGame({ category: 'memory', difficulty: 'easy' });
       setStreak(streak + 1);
     }

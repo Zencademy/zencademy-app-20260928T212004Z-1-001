@@ -2,27 +2,28 @@ import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { useAuth } from '../components/AuthContext';
+import { useTheme } from '../components/ThemeContext';
 
 export default function Index() {
   const router = useRouter();
-  const { user, loading, isInitialized } = useAuth();
+  const { user, loading, isInitialized, recovery } = useAuth();
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (!loading && isInitialized) {
-      console.log("Index: Auth loading complete - User:", user ? user.email : "null");
-      if (user) {
-        console.log("Index: Redirecting to main app (user is logged in)");
+      if (user && recovery) {
+        router.replace('/(auth)/reset-password');
+      } else if (user) {
         router.replace('/(tabs)');
       } else {
-        console.log("Index: Redirecting to login (no user)");
         router.replace('/(auth)/login');
       }
     }
-  }, [user, loading, isInitialized, router]);
+  }, [user, loading, isInitialized, recovery, router]);
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
-      <ActivityIndicator size="large" color="#000" />
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.background }}>
+      <ActivityIndicator size="large" color={theme.primary} />
     </View>
   );
 }

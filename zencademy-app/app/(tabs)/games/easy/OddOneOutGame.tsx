@@ -1,10 +1,13 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../../lib/progression';
+import { useGameReward } from '../../../../hooks/useGameReward';
+import { WinPulse } from '../../../../components/WinPulse';
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Dimensions, Modal, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import ConfettiCannon from 'react-native-confetti-cannon';
 import GameHeader from '../../../../components/GameHeader';
 import { useTheme } from '../../../../components/ThemeContext';
 import { useXP } from '../../../../components/XPContext';
+import { playSfx } from '../../../../lib/sound/SoundPack';
 
 // Dynamic pools for randomized questions (monochrome uppercase)
 const POOLS: Record<string, string[]> = {
@@ -21,7 +24,7 @@ const POOLS: Record<string, string[]> = {
 };
 
 const XP_PER_CORRECT = 5; // easy games: +5 points per correct answer
-const XP_REWARD = 25; // Bonus for completing the game
+const XP_REWARD = 12;
 function shuffleArray<T>(array: T[]): T[] {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -64,7 +67,7 @@ function generateOddOneOutQuestion() {
 }
 
 const STREAK_TO_WIN = 5;
-const MAX_XP = 15;
+const MAX_XP = 12;
 const FULL_WIDTH = Dimensions.get('window').width;
 
 function getRandomQuestion() {
@@ -75,7 +78,8 @@ type OddQ = { _id: number; items: string[]; answer: string; explanation: string 
 export default function OddOneOutGame() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { addXp } = useXP();
+  const { plan } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
   const { theme } = useTheme();
 
   const [currentQ, setCurrentQ] = useState<OddQ>(null);
@@ -145,6 +149,7 @@ export default function OddOneOutGame() {
     if (isAnimating) return;
     setSelected(i);
     if (currentQ && choice === currentQ.answer) {
+      playSfx('correct');
       setIsAnimating(true);
       Animated.sequence([
         Animated.timing(correctScale, { toValue: 1.08, duration: 110, useNativeDriver: true }),
@@ -174,6 +179,7 @@ export default function OddOneOutGame() {
         }
       }, 600);
     } else {
+      playSfx('wrong');
       setWrong(true);
       setStreak(0);
     }
@@ -183,7 +189,7 @@ export default function OddOneOutGame() {
 
   useEffect(() => {
     if (win && xpThisGame > 0 && !xpAwarded) {
-      addXp(xpThisGame);
+      void awardFor('Easy');
       setShowConfetti(true);
       setXpAwarded(true);
     }
@@ -225,7 +231,7 @@ export default function OddOneOutGame() {
     <Modal visible={showWin} transparent animationType="fade" onRequestClose={() => setShowWin(false)}>
       <View style={{ flex:1, backgroundColor: theme.overlay, alignItems:'center', justifyContent:'center' }}>
         <View style={{ backgroundColor: theme.card, padding:18, borderRadius:14, width:'86%', alignItems:'center' }}>
-          <ConfettiCannon count={140} origin={{ x: FULL_WIDTH / 2, y: 0 }} fadeOut autoStart explosionSpeed={420} fallSpeed={2100} />
+          <WinPulse active />
           <Text style={[styles.bigText, { color: theme.text, fontSize: 30, marginBottom: 12 }]}>Congratulations!</Text>
           <Text style={{ color: theme.text, fontSize:16, marginBottom:12, textAlign:'center' }}>Streak: {STREAK_TO_WIN} correct • +{MAX_XP} XP</Text>
           <TouchableOpacity style={[styles.tryAgainBtn, { backgroundColor: theme.primary }]} onPress={() => { setShowWin(false); startGame(); }}>

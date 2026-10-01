@@ -1,7 +1,8 @@
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
 import { HapticTab } from '@/components/HapticTab';
+import { useAuth } from '@/components/AuthContext';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
@@ -9,10 +10,18 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { user, recovery, loading } = useAuth();
+
+  if (!loading && !user) {
+    return <Redirect href="/(auth)/login" />;
+  }
+  if (!loading && user && recovery) {
+    return <Redirect href="/(auth)/reset-password" />;
+  }
 
   return (
     <>
-      <StatusBar style={colorScheme === 'dark' ? "light" : "dark"} hidden={true} />
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} hidden={true} />
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -22,7 +31,8 @@ export default function TabLayout() {
           tabBarStyle: {
             display: 'none',
           },
-        }}>
+        }}
+      >
         <Tabs.Screen
           name="index"
           options={{

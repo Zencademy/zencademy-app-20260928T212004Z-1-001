@@ -1,12 +1,15 @@
+import { sessionXp, partialSessionXp, coinsForXp } from '../../../lib/progression';
+import { useGameReward } from '../../../hooks/useGameReward';
+import { WinPulse } from '../../../components/WinPulse';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ConfettiCannon from 'react-native-confetti-cannon';
 import GameHeader from '../../../components/GameHeader';
 import { useTheme } from '../../../components/ThemeContext';
 import { useXP } from '../../../components/XPContext';
+import { playSfx } from '../../../lib/sound/SoundPack';
 
-const WIN_XP = 40; // hard
+const WIN_XP = 28; // Hard
 const GRID = 5; // more tiles (5x5)
 
 function makePattern() {
@@ -19,7 +22,8 @@ function makePattern() {
 
 export default function SpeedPatternGame() {
   const router = useRouter();
-  const { addXp } = useXP();
+  const { plan } = useXP();
+  const { award, awardFor, reset: resetReward } = useGameReward();
   const { theme } = useTheme();
   const [pattern, setPattern] = useState<boolean[]>(makePattern());
   const [selection, setSelection] = useState<boolean[]>(Array(GRID * GRID).fill(false));
@@ -33,7 +37,7 @@ export default function SpeedPatternGame() {
   useEffect(() => {
     if (time <= 0) {
       const ok = selection.every((v, i) => v === pattern[i]);
-      if (ok) { addXp(WIN_XP); setShowWin(true); } else { reset(); }
+      if (ok) { playSfx('correct'); void awardFor('Hard'); setShowWin(true); } else { playSfx('wrong'); reset(); }
       return;
     }
     const t = setTimeout(() => setTime(time - 1), 1000);
@@ -90,7 +94,7 @@ export default function SpeedPatternGame() {
       <Modal visible={showWin} transparent animationType="fade" onRequestClose={() => setShowWin(false)}>
         <View style={[styles.modalBackdrop, { backgroundColor: theme.overlay }]}>
           <View style={[styles.modalCard, { backgroundColor: theme.card, alignItems: 'center' }]}> 
-            <ConfettiCannon count={120} origin={{ x: 180, y: 0 }} fadeOut autoStart explosionSpeed={420} fallSpeed={2100} />
+            <WinPulse active />
             <Text style={[styles.winTitle, { color: theme.text }]}>Great speed!</Text>
             <Text style={[styles.winText, { color: theme.primary }]}>+{WIN_XP} XP</Text>
             <TouchableOpacity style={[styles.primaryBtn, { backgroundColor: theme.primary }]} onPress={() => { setShowWin(false); reset(); }}>

@@ -82,8 +82,8 @@ export default function SideMenuDrawer({ visible, onClose }: SideMenuDrawerProps
         <Text style={styles.headerSubtitle}>Navigate and explore</Text>
         <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
           <MenuItem icon="person-outline" label="Profile" to="/ProfileScreen" />
-          <MenuItem icon="document-text-outline" label="Journal" to={{ pathname: '/(tabs)', params: { initialPage: 2 } }} />
-          <MenuItem icon="podium-outline" label="Leaderboard" to={{ pathname: '/(tabs)', params: { initialPage: 3 } }} />
+          <MenuItem icon="document-text-outline" label="Journal" to={{ pathname: '/(tabs)', params: { initialPage: 3 } }} />
+          <MenuItem icon="podium-outline" label="Leaderboard" to={{ pathname: '/(tabs)', params: { initialPage: 4 } }} />
           <MenuItem icon="home-outline" label="Home" to={{ pathname: '/(tabs)', params: { initialPage: 1 } }} />
           <MenuItem icon="cart-outline" label="Shop" to="/ShopScreen" />
           <MenuItem icon="barbell-outline" label="Training Hub" to="/TrainingHub" />
